@@ -10,7 +10,7 @@ class Employer(models.Model):
    contact_person = models.CharField(max_length=100, null=True, blank=True)
    number_of_employees = models.PositiveIntegerField(null=True, blank=True)
    contact_phone = models.CharField(max_length=30, null=True, blank=True)
-   password = models.CharField(max_length=200)
+   password = models.CharField(max_length=200, blank=True)
 
    def __str__(self) -> str:
       return 'employer: ' + self.name + ', email: ' + self.email
@@ -43,7 +43,9 @@ class Role(models.Model):
    department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
 
    def __str__(self) -> str:
-      return self.title + self.department.name if self.department.name else ''
+      if self.department:
+         return self.title + ' in ' + self.department.name
+      return self.title
 
 class CareerTimestamp(models.Model):
    worker = models.ForeignKey(Worker, on_delete=models.CASCADE)
@@ -52,10 +54,10 @@ class CareerTimestamp(models.Model):
    date_left = models.DateField(null=True, blank=True)  
 
    def __str__(self) -> str:
-      if self.worker.name and self.role.title:
-         period = self.date_started 
+      if self.worker and self.role:
+         period = str(self.date_started) 
          if self.date_left:
-            period += ' - ' + self.date_left
+            period += ' - ' + str(self.date_left)
          return period + ': ' + self.worker.name + ' as ' + self.role.title
       return super().__str__()
 
