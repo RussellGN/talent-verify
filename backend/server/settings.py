@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from pathlib import Path
 import os
 from decouple import config
+import dj_database_url
 
 is_dev = config('ENVIRONMENT') == 'development'
 
