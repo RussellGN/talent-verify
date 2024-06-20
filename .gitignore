@@ -41,6 +41,24 @@ next-env.d.ts
 
 # ----------backend files and folders----------
 
-.venv/
-db.sqlite3
+# Python
+*.pyc
+__pycache__/
+
+# Environment variables
 .env
+
+# Django
+db.sqlite3
+
+# Migrations
+**/migrations/*.pyc
+**/migrations/__pycache__/
+
+# Virtual Environment
+.venv/
+venv/
+
+# IDEs
+.vscode/
+.idea/
