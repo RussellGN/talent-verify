@@ -48,7 +48,7 @@ class Role(models.Model):
       return self.title
 
 class CareerTimestamp(models.Model):
-   employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+   employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True)
    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
    date_started = models.DateField(auto_now_add=True)  
    date_left = models.DateField(null=True, blank=True)  
