@@ -52,6 +52,8 @@ This api has the following endpoints
    -  returns a success message and number of employees updated on successful patch (JSON)
    -  returns an error message on failed patch (JSON)
 
+<strong>IMPORTNAT NOTE: All excel, csv and txt file uploads are processed to JSON on the frontend. Data send to the backend is only in the form of JSON<strong>
+
 <!--
 1. GET /
    -  returns a json list of all api endpoints and their documentation
