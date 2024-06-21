@@ -1,5 +1,9 @@
+from rest_framework import status 
 from rest_framework.response import Response   
 from rest_framework.decorators import api_view
+
+from .models import Employer, Employee, Department, Role, CareerTimestamp
+from .serializers import EmployerSerializer, EmployeeSerializer, DepartmentSerializer, RoleSerializer, CareerTimestampSerializer
 
 @api_view(['GET'])
 def endpoints(request):
@@ -57,3 +61,20 @@ def endpoints(request):
       }
    ]
    return Response(api_endpoints)
+
+@api_view(['GET'])
+def get_employer(request, id):
+   """
+   endpoint" : "GET /employer/(ID)
+   onSuccess" : "returns details of employer with given ID if found (JSON)
+   onError" : "returns error message if employer not found (JSON)
+   """
+   employer = None
+   try: 
+      employer = Employer.objects.get(id=id)
+   except Employer.DoesNotExist:
+      return Response({"error": f"employer with id: {id} was not found"}, status=status.HTTP_404_NOT_FOUND)
+
+   serializer = EmployerSerializer(employer, many=False)
+   return Response(serializer.data)
+

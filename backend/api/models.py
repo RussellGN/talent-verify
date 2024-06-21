@@ -1,3 +1,4 @@
+from typing import Iterable
 from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
 
@@ -22,6 +23,12 @@ class Employer(models.Model):
    def validate_password(self, raw_password):
       return check_password(raw_password, self.password)
 
+   def save(self, *args, **kwargs):
+      if not self.id and self.password:
+         self.password = make_password(self.password)
+      super().save(*args, **kwargs)
+
+         
 class Employee(models.Model):
    name = models.CharField(max_length=100)
    employer = models.ForeignKey(Employer, on_delete=models.SET_NULL, null=True, blank=True)
