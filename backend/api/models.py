@@ -22,7 +22,6 @@ class Employer(models.Model):
    def validate_password(self, raw_password):
       return check_password(raw_password, self.password)
 
-
 class Employee(models.Model):
    name = models.CharField(max_length=100)
    employer = models.ForeignKey(Employer, on_delete=models.SET_NULL, null=True, blank=True)
@@ -32,9 +31,12 @@ class Employee(models.Model):
       return self.name
 
 class Department(models.Model):
+   employer = models.ForeignKey(Employer, on_delete=models.SET_NULL, null=True, blank=True)
    name = models.CharField(max_length=100)
 
    def __str__(self) -> str:
+      if self.employer:
+         return self.name + ' at ' + self.employer.name
       return self.name
 
 class Role(models.Model):

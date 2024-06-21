@@ -57,5 +57,3 @@ def endpoints(request):
       }
    ]
    return Response(api_endpoints)
-
-
