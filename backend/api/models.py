@@ -23,10 +23,10 @@ class Employer(models.Model):
       return check_password(raw_password, self.password)
 
 
-class Worker(models.Model):
+class Employee(models.Model):
    name = models.CharField(max_length=100)
    employer = models.ForeignKey(Employer, on_delete=models.SET_NULL, null=True, blank=True)
-   worker_id = models.CharField(max_length=100, null=True, blank=True)
+   employee_id = models.CharField(max_length=100, null=True, blank=True)
 
    def __str__(self) -> str:
       return self.name
@@ -48,17 +48,17 @@ class Role(models.Model):
       return self.title
 
 class CareerTimestamp(models.Model):
-   worker = models.ForeignKey(Worker, on_delete=models.CASCADE)
+   employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True)
    date_started = models.DateField(auto_now_add=True)  
    date_left = models.DateField(null=True, blank=True)  
 
    def __str__(self) -> str:
-      if self.worker and self.role:
+      if self.employee and self.role:
          period = str(self.date_started) 
          if self.date_left:
             period += ' - ' + str(self.date_left)
-         return period + ': ' + self.worker.name + ' as ' + self.role.title
+         return period + ': ' + self.employee.name + ' as ' + self.role.title
       return super().__str__()
 
 
