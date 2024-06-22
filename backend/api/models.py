@@ -11,7 +11,7 @@ class EmployerAdmin(AbstractUser):
       return self.email
 
 class Employer(models.Model):
-   administrator = models.ForeignKey(EmployerAdmin, on_delete=models.SET_NULL)
+   administrator = models.OneToOneField(EmployerAdmin, on_delete=models.SET_NULL)
    name = models.CharField(max_length=100, unique=True, blank=True)
    email = models.EmailField(max_length=100, unique=True, blank=True)
    registration_number = models.CharField(max_length=100, unique=True, null=True, blank=True)
