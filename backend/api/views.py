@@ -1,9 +1,11 @@
+import json
 from rest_framework import status 
+from rest_framework.authtoken.models import Token  
 from rest_framework.response import Response   
 from rest_framework.decorators import api_view
 
 from .models import Employer, Employee, Department, Role, CareerTimestamp
-from .serializers import EmployerSerializer, EmployeeSerializer, DepartmentSerializer, RoleSerializer, CareerTimestampSerializer
+from .serializers import EmployerSerializer, EmployeeSerializer, DepartmentSerializer, RoleSerializer, CareerTimestampSerializer, EmployerRegistrationSerializer
 
 @api_view(['GET'])
 def endpoints(request):
@@ -19,25 +21,25 @@ def endpoints(request):
       }, 
       {
          "endpoint" : "POST /employer/register",
-         "expects" : "employer details (JSON)",
-         "onSuccess" : "returns employer details and auth token on successful registration (JSON)",
+         "expects" : "employer-admin credentials and partial/complete employer details (JSON)",
+         "onSuccess" : "returns employer details (with nested employer-admin) and auth token on successful registration (JSON)",
          "onError" : "returns error message on failed registration (JSON)",
       }, 
       {
          "endpoint" : "POST /employer/login",
-         "expects" : "employer email and passkey (JSON)",
-         "onSuccess" : "returns employer details and auth token on successful login (JSON)",
+         "expects" : "employer-admin credentials  (JSON)",
+         "onSuccess" : "returns employer details (with nested employer-admin) and auth token on successful login (JSON)",
          "onError" : "returns error message on failed login (JSON)",
       }, 
       {
          "endpoint" : "PATCH /employer",
-         "expects" : "partial/complete employer details and auth token assigned to employer (JSON)",
-         "onSuccess" : "returns updated employer details and auth token on successful patch (JSON)",
+         "expects" : "partial/complete employer and employer-admin details as well as auth token in request headers (JSON)",
+         "onSuccess" : "returns updated employer details (with nested employer-admin) on successful patch (JSON)",
          "onError" : "returns error message on failed patch (JSON)",
       }, 
       {
          "endpoint" : "POST /employer/logout",
-         "expects" : "auth token (JSON)",
+         "expects" : "auth token in request headers",
          "onSuccess" : "returns success message (JSON)",
          "onError" : "returns error message (JSON)",
       }, 
@@ -49,13 +51,13 @@ def endpoints(request):
       }, 
       {
          "endpoint" : "POST /employees",
-         "expects" : "an auth token and a list of one or more employees for adding to an employers list of employees (JSON)",
+         "expects" : "a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)",
          "onSuccess" : "returns a success message and number of employees added on successful upload (JSON)",
          "onError" : "returns an error message on failed upload (JSON)",
       }, 
       {
          "endpoint" : "PATCH /employees",
-         "expects" : "an auth token and a list of one or more employees's partial/complete details for updating (JSON)",
+         "expects" : "a list of one or more employees's partial/complete details for updating as well as an auth token in request headers (JSON)",
          "onSuccess" : "returns a success message and number of employees updated on successful patch (JSON)",
          "onError" : "returns an error message on failed patch (JSON)",
       }
@@ -65,9 +67,9 @@ def endpoints(request):
 @api_view(['GET'])
 def get_employer(request, id):
    """
-   endpoint" : "GET /employer/(ID)
-   onSuccess" : "returns details of employer with given ID if found (JSON)
-   onError" : "returns error message if employer not found (JSON)
+   endpoint : GET /employer/(ID)
+   onSuccess : returns details of employer with given ID if found (JSON)
+   onError : returns error message if employer not found (JSON)
    """
    employer = None
    try: 
