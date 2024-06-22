@@ -13,7 +13,7 @@ class EmployerAdminRegistrationSerializer(ModelSerializer):
       fields = ['password', 'email', 'name']
 
 class EmployerSerializer(ModelSerializer):
-   employerAdmin = EmployerAdminSerializer(many=False, read_only=False)
+   administrator = EmployerAdminSerializer(many=False, read_only=False)
    class Meta:
       model = Employer
       fields = '__all__'
