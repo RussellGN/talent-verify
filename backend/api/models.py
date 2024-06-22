@@ -5,6 +5,10 @@ class EmployerAdmin(AbstractUser):
    email = models.EmailField(max_length=100, unique=True)
    name = models.CharField(max_length=100, blank=True)
 
+   class Meta:
+      verbose_name = 'EmployerAdmin'
+      verbose_name_plural = 'Employer Admins'
+
    def __str__(self):
       if self.name:
          return f"{self.name} - {self.email}"
