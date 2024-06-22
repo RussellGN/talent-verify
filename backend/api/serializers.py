@@ -1,12 +1,27 @@
 from rest_framework.serializers import ModelSerializer
 
-from .models import Employer, Employee, Department, Role, CareerTimestamp
+from .models import Employer, EmployerAdmin, Employee, Department, Role, CareerTimestamp
+
+class EmployerAdminSerializer(ModelSerializer):
+   class Meta:
+      model = EmployerAdmin
+      fields = ['id', 'email', 'name']
+
+class EmployerAdminRegistrationSerializer(ModelSerializer):
+   class Meta:
+      model = EmployerAdmin
+      fields = ['password', 'email', 'name']
 
 class EmployerSerializer(ModelSerializer):
+   employerAdmin = EmployerAdminSerializer(many=False, read_only=False)
    class Meta:
       model = Employer
-      # fields = '__all__'
-      exclude = ('password',)
+      fields = '__all__'
+
+class EmployerRegistrationSerializer(ModelSerializer):
+   class Meta:
+      model = Employer
+      fields = '__all__'
 
 class EmployeeSerializer(ModelSerializer):
    employer = EmployerSerializer(many=False, read_only=True)
