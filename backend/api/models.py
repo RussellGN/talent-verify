@@ -1,34 +1,29 @@
-from typing import Iterable
-from django.contrib.auth.hashers import make_password, check_password
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+class EmployerAdmin(AbstractUser):
+   email = models.EmailField(max_length=100, unique=True)
+   name = models.CharField(max_length=100, blank=True)
+
+   def __str__(self):
+      if self.name:
+         return f"{self.name} - {self.email}"
+      return self.email
 
 class Employer(models.Model):
+   administrator = models.ForeignKey(EmployerAdmin, on_delete=models.SET_NULL)
+   name = models.CharField(max_length=100, unique=True, blank=True)
    email = models.EmailField(max_length=100, unique=True, blank=True)
-   name = models.CharField(max_length=100, blank=True)
-   registration_number = models.CharField(max_length=100, null=True, blank=True)
+   registration_number = models.CharField(max_length=100, unique=True, null=True, blank=True)
    registration_date = models.DateField(null=True, blank=True)
    address = models.CharField(max_length=100, null=True, blank=True)
    contact_person = models.CharField(max_length=100, null=True, blank=True)
    number_of_employees = models.PositiveIntegerField(null=True, blank=True)
    contact_phone = models.CharField(max_length=30, null=True, blank=True)
-   password = models.CharField(max_length=200, blank=True)
 
    def __str__(self) -> str:
-      return 'employer: ' + self.name + ', email: ' + self.email
+      return self.name
 
-   def set_password(self, raw_password):
-      self.password = make_password(raw_password)
-      self.save()
-
-   def validate_password(self, raw_password):
-      return check_password(raw_password, self.password)
-
-   def save(self, *args, **kwargs):
-      if not self.id and self.password:
-         self.password = make_password(self.password)
-      super().save(*args, **kwargs)
-
-         
 class Employee(models.Model):
    name = models.CharField(max_length=100)
    employer = models.ForeignKey(Employer, on_delete=models.SET_NULL, null=True, blank=True)
