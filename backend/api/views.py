@@ -3,9 +3,10 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token  
 from rest_framework.response import Response   
 from rest_framework.decorators import api_view
+from django.db.utils import IntegrityError
 
 from .models import Employer, Employee, Department, Role, CareerTimestamp
-from .serializers import EmployerSerializer, EmployeeSerializer, DepartmentSerializer, RoleSerializer, CareerTimestampSerializer, EmployerRegistrationSerializer
+from .serializers import EmployerAdminSerializer, EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, EmployeeSerializer, DepartmentSerializer, RoleSerializer, CareerTimestampSerializer
 
 @api_view(['GET'])
 def endpoints(request):
@@ -79,4 +80,33 @@ def get_employer(request, id):
 
    serializer = EmployerSerializer(employer, many=False)
    return Response(serializer.data)
+
+@api_view(['POST'])
+def register_employer(request):
+   """
+   endpoint : POST /employer/register
+   expects : employer-admin credentials and partial/complete employer details (JSON)
+   onSuccess : returns employer details (with nested employer-admin) and auth token on successful registration (JSON
+   onError : returns error message on failed registration (JSON)
+   """
+   data = json.loads(request.body)
+   print(data)
+   adminSerializer = EmployerAdminRegistrationSerializer(data=data.get('employer-admin'))
+   employerSerializer = EmployerRegistrationSerializer(data=data.get('employer'))
+   if not adminSerializer.is_valid():
+      return Response({"error": "registration failed", "details": {"employer-admin": adminSerializer.errors}}, status=status.HTTP_400_BAD_REQUEST)
+   if not employerSerializer.is_valid():
+      return Response({"error": "registration failed", "details": {"employer": employerSerializer.errors}}, status=status.HTTP_400_BAD_REQUEST)
+
+   admin = adminSerializer.save()
+   admin.set_password(data.get('employer-admin').get('password'))
+   admin.save()
+   token, created = Token.objects.get_or_create(user=admin)      
+
+   employer = employerSerializer.save()
+   employer.administrator = admin
+   employer.save()
+   employerSerializer = EmployerSerializer(instance=employer)
+
+   return Response({"message": "registration successful", "employer": employerSerializer.data, "token": token.key}, status=status.HTTP_201_CREATED)
 
