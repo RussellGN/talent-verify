@@ -186,9 +186,7 @@ def logout_employer(request):
       return Response("error logging out", status=status.HTTP_400_BAD_REQUEST)
    return Response("successfully logged out")
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-@authentication_classes([TokenAuthentication])
+# for handle employees_____________
 def add_employees(request):
    """
    endpoint : POST /employees
@@ -241,4 +239,73 @@ def add_employees(request):
    employees_added_serializer = CareerTimestampSerializer(instance=employees_added, many=True)
    existing_employees_updated_serializer = CareerTimestampSerializer(instance=existing_employees_updated, many=True)
    return Response({"employees_added": employees_added_serializer.data, "existing_employees_updated":  existing_employees_updated_serializer.data }, status=status.HTTP_201_CREATED)
+
+def update_employees(request):
+   """
+   endpoint : PATCH /employees
+   expects : a list of one or more employees's partial/complete details for updating as well as an auth token in request headers (JSON)
+   onSuccess : returns a list of updated employees if successful (JSON)
+   onError : returns an error message on failed patch (JSON)
+
+   data = [{...employee}, {...employee}, {...employee}]
+   employee = {id, name, national_id, employee_id, department_name, role_tile, role_duties, date_started, date_left}   
+   """ 
+   data = json.loads(request.body)
+   print(data)
+   employer = request.user.employer
+
+   employees_updated = []
+   data_item = 1
+   try:
+      for item in data:
+         # handle employee
+         employee = Employee.objects.get(id=item.get("id"))
+         if item.get("national_id"):
+            employee.national_id = item.get("national_id")
+         if item.get("name"):
+            employee.name = item.get("name")
+         if item.get("employee_id"):
+            employee.employee_id = item.get("employee_id")
+         employee.save()
+
+         # handle department
+         department, created = Department.objects.get_or_create(name=item.get("department_name"), employer=employer)
+
+         # handle role
+         role, created = Role.objects.update_or_create(title=item.get("role_title"), department=department, defaults={"duties": item.get("role_duties")})
+
+         # handle career-timestamp
+         career_timestamp_queryset = CareerTimestamp.objects.filter(employee=employee, role=role)
+         if career_timestamp_queryset.exists():
+            career_timestamp = career_timestamp_queryset.first()
+            if item.get("date_started"):
+               career_timestamp.date_started = item.get("date_started")
+            if item.get("date_left"):
+               career_timestamp.date_left = item.get("date_left")
+            career_timestamp.save()
+         else:
+            career_timestamp = CareerTimestamp.objects.create(employee=employee, role=role, date_started=item.get("date_started"), date_left=item.get("date_left"))
+
+         data_item += 1
+         # employees_updated.append(employee)
+         employees_updated.append(career_timestamp)
+   except Exception as e:
+      status_to_use = status.HTTP_207_MULTI_STATUS if len(employees_updated) else status.HTTP_400_BAD_REQUEST
+      # employees_updated_serializer = EmployeeSerializer(instance=employees_updated, many=True)
+      employees_updated_serializer = CareerTimestampSerializer(instance=employees_updated, many=True)
+      return Response({"error": f"failed to complete updates starting from data item #{data_item}", "details": f"{e}", "employees_updated":  employees_updated_serializer.data }, status=status_to_use)
+
+   # employees_updated_serializer = EmployeeSerializer(instance=employees_updated, many=True)
+   employees_updated_serializer = CareerTimestampSerializer(instance=employees_updated, many=True)
+   return Response({"employees_updated": employees_updated_serializer.data}, status=status.HTTP_200_OK)
+# _____________
+
+@api_view(['POST', 'PATCH'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def handle_employees(request):
+   if (request.method == 'POST'):
+      return add_employees(request)
+   if (request.method == 'PATCH'):
+      return update_employees(request)
 

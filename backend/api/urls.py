@@ -11,5 +11,5 @@ urlpatterns = [
    path('employer/logout/', views.logout_employer),
    path('employer/', views.patch_employer),
 
-   path('employees/', views.add_employees),
+   path('employees/', views.handle_employees),
 ]
