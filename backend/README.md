@@ -34,24 +34,30 @@ This api has the following endpoints
    -  expects auth token in request headers
    -  returns error/success message (JSON)
 
-7. GET /employees
+7. POST /employees
+
+   -  expects a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)
+   -  returns a list of employees added if successful (JSON)
+   -  returns an error message if unsuccessful (JSON)
+
+8. PATCH /employees
+
+   -  expects a list of one or more employees's partial/complete details for updating as well as an auth token in request headers (JSON)
+   -  returns a list of updated employees if successful (JSON)
+   -  returns an error message on failed patch (JSON)
+
+9. GET /employees
 
    -  expects a query object used to filter the employees retrieved (JSON)
    -  returns a list of zero or more employees matching the query criteria (JSON)
    -  returns an error message if the query object is of incorrect shape (JSON)
 
-8. POST /employees
+10.   POST /employees/(ID)/reassign
 
-   -  expects a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)
-   -  returns a success message and number of employees added on successful upload (JSON)
-   -  returns an error message on failed upload (JSON)
+      -  expects the employer id (if any) of which to reassign employee to, along with an auth token in request headers(JSON)
+      -  returns a success message if successfull (JSON)
+      -  returns an error message if unsuccessfull (JSON)
 
-9. PATCH /employees
-
-   -  expects a list of one or more employees's partial/complete details for updating as well as an auth token in request headers (JSON)
-   -  returns a success message and number of employees updated on successful patch (JSON)
-   -  returns an error message on failed patch (JSON)
-
-<strong>IMPORTNAT NOTE: All excel, csv and txt file uploads are processed to JSON on the frontend. Data send to the backend is only in the form of JSON<strong>
+<strong>IMPORTANT NOTE: All excel, csv and txt file uploads are processed to JSON on the frontend. Data sent to the backend is only in the form of JSON<strong>
 
 The API is accessible at [talent-verify-onrender.com](https://talent-verify-onrender.com)

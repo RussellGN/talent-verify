@@ -48,23 +48,29 @@ def endpoints(request):
          "onError" : "returns error message (JSON)",
       }, 
       {
+         "endpoint" : "POST /employees",
+         "expects" : "a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)",
+         "onSuccess" : "returns a list of employees added if successful (JSON)",
+         "onError" : "returns an error message if unsuccessful (JSON)",
+      }, 
+      {
+         "endpoint" : "PATCH /employees",
+         "expects" : "a list of one or more employees's partial/complete details for updating as well as an auth token in request headers (JSON)",
+         "onSuccess" : "returns a list of updated employees if successful (JSON)",
+         "onError" : "returns an error message on failed patch (JSON)",
+      },
+      {
          "endpoint" : "GET /employees",
          "expects" : "a query object used to filter the employees retrieved (JSON)",
          "onSuccess" : "returns a list of zero or more employees matching the query criteria (JSON)",
          "onError" : "returns an error message if the query object is of incorrect shape (JSON)",
       }, 
       {
-         "endpoint" : "POST /employees",
-         "expects" : "a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)",
-         "onSuccess" : "returns a success message and number of employees added on successful upload (JSON)",
-         "onError" : "returns an error message on failed upload (JSON)",
+         "endpoint" : "POST /employees/(ID)/reassign",
+         "expects" : "expects the employer id (if any) of which to reassign employee to, along with an auth token in request headers (JSON)",
+         "onSuccess" : "returns a success message (JSON)",
+         "onError" : "returns an error message (JSON)",
       }, 
-      {
-         "endpoint" : "PATCH /employees",
-         "expects" : "a list of one or more employees's partial/complete details for updating as well as an auth token in request headers (JSON)",
-         "onSuccess" : "returns a success message and number of employees updated on successful patch (JSON)",
-         "onError" : "returns an error message on failed patch (JSON)",
-      }
    ]
    return Response(api_endpoints)
 
@@ -193,7 +199,6 @@ def add_employees(request):
    data = json.loads(request.body)
    employer = request.user.employer
    return Response(data)
-
 
 
 
