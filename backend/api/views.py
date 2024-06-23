@@ -129,7 +129,7 @@ def login_employer(request):
    if employerAdmin is None:
       return Response({"error": "login failed", "details": "incorrect credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
-   token = Token.objects.get(user=employerAdmin)
+   token, created = Token.objects.get_or_create(user=employerAdmin)
    employerSerializer = EmployerSerializer(instance=employerAdmin.employer)
    return Response({"employer": employerSerializer.data, "token": token.key})
 
@@ -163,4 +163,19 @@ def patch_employer(request):
 
    return Response({"message": "patch successful", "employer": employerSerializer.data}, status=status.HTTP_201_CREATED)
 
-
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def logout_employer(request):
+   """
+   endpoint : POST /employer/logout
+   expects : auth token in request headers
+   onSuccess : returns success message (JSON)
+   onError : returns error message (JSON)
+   """
+   try:
+      token = request.auth
+      token.delete()
+   except:
+      return Response("error logging out", status=status.HTTP_400_BAD_REQUEST)
+   return Response("successfully logged out")
