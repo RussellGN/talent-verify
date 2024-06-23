@@ -1,8 +1,11 @@
 import json
 from rest_framework import status 
+from rest_framework.authentication import authenticate
 from rest_framework.authtoken.models import Token  
 from rest_framework.response import Response   
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 from django.db.utils import IntegrityError
 
 from .models import Employer, Employee, Department, Role, CareerTimestamp
@@ -109,4 +112,24 @@ def register_employer(request):
    employerSerializer = EmployerSerializer(instance=employer)
 
    return Response({"message": "registration successful", "employer": employerSerializer.data, "token": token.key}, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+def login_employer(request):
+   """
+   "endpoint" : "POST /employer/login",
+   "expects" : "employer-admin credentials  (JSON)",
+   "onSuccess" : "returns employer details (with nested employer-admin) and auth token on successful login (JSON)",
+   "onError" : "returns error message on failed login (JSON)",
+   """
+   data = json.loads(request.body)
+   username = data.get('username')   
+   password = data.get('password')   
+
+   employerAdmin = authenticate(request, username=username, password=password)
+   if employerAdmin is None:
+      return Response({"error": "login failed", "details": "incorrect credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+   token = Token.objects.get(user=employerAdmin)
+   employerSerializer = EmployerSerializer(instance=employerAdmin.employer)
+   return Response({"employer": employerSerializer.data, "token": token.key})
 
