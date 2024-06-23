@@ -193,12 +193,52 @@ def add_employees(request):
    """
    endpoint : POST /employees
    expects : a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)
-   onSuccess : returns a success message and number of employees added on successful upload (JSON)
-   onError : returns an error message on failed upload (JSON)
+   onSuccess : returns a list of employees added if successful (JSON)
+   onError : returns an error message if unsuccessful (JSON)
+
+   data = [{...employee}, {...employee}, {...employee}]
+   employee = {name, national_id, employee_id, department_name, role_tile, role_duties, date_started, date_left}   
    """ 
    data = json.loads(request.body)
+   print(data)
    employer = request.user.employer
-   return Response(data)
 
+   employees_added = []
+   existing_employees_updated = []
+   data_item = 1
+   try:
+      for item in data:
+         # handle department
+         department, created = Department.objects.get_or_create(name=item.get("department_name"), employer=employer)
 
+         # handle role
+         role, created = Role.objects.update_or_create(title=item.get("role_title"), department=department, defaults={"duties": item.get("role_duties")})
+
+         # handle employee
+         employee, created = Employee.objects.update_or_create(national_id=item.get("national_id"), defaults={"name": item.get("name"), "employee_id": item.get("employee_id"), "employer": employer})
+
+         # handle career-timestamp
+         career_timestamp, created = CareerTimestamp.objects.get_or_create(employee=employee, role=role, date_started=item.get("date_started"), date_left=item.get("date_left"))
+
+         # increment counter and add to employeesAdded
+         data_item += 1
+         if created:
+            # employees_added.append(employee)
+            employees_added.append(career_timestamp)
+         else:
+            # existing_employees_updated.append(employee)
+            existing_employees_updated.append(career_timestamp)
+   except Exception as e:
+      status_to_use = status.HTTP_207_MULTI_STATUS if len(employees_added) else status.HTTP_400_BAD_REQUEST
+      # employees_added_serializer = EmployeeSerializer(instance=employees_added, many=True)
+      # existing_employees_updated_serializer = EmployeeSerializer(instance=existing_employees_updated, many=True)
+      employees_added_serializer = CareerTimestampSerializer(instance=employees_added, many=True)
+      existing_employees_updated_serializer = CareerTimestampSerializer(instance=existing_employees_updated, many=True)
+      return Response({"error": f"failed to complete upload starting from data item #{data_item}", "details": f"{e}", "employees_added": employees_added_serializer.data, "existing_employees_updated":  existing_employees_updated_serializer.data }, status=status_to_use)
+
+   # employees_added_serializer = EmployeeSerializer(instance=employees_added, many=True)
+   # existing_employees_updated_serializer = EmployeeSerializer(instance=existing_employees_updated, many=True)
+   employees_added_serializer = CareerTimestampSerializer(instance=employees_added, many=True)
+   existing_employees_updated_serializer = CareerTimestampSerializer(instance=existing_employees_updated, many=True)
+   return Response({"employees_added": employees_added_serializer.data, "existing_employees_updated":  existing_employees_updated_serializer.data }, status=status.HTTP_201_CREATED)
 
