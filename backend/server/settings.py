@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 
 # User model
-# AUTH_USER_MODEL = 'api.User'
+AUTH_USER_MODEL = 'api.EmployerAdmin'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
