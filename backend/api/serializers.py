@@ -5,12 +5,12 @@ from .models import Employer, EmployerAdmin, Employee, Department, Role, CareerT
 class EmployerAdminSerializer(ModelSerializer):
    class Meta:
       model = EmployerAdmin
-      fields = ['id', 'email', 'name']
+      fields = ['id', 'username', 'email']
 
 class EmployerAdminRegistrationSerializer(ModelSerializer):
    class Meta:
       model = EmployerAdmin
-      fields = ['password', 'email', 'name']
+      fields = ['password', 'username', 'email']
 
 class EmployerSerializer(ModelSerializer):
    administrator = EmployerAdminSerializer(many=False, read_only=False)

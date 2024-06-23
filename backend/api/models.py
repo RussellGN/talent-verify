@@ -2,22 +2,20 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class EmployerAdmin(AbstractUser):
+   username = models.CharField(max_length=100, unique=True)
    email = models.EmailField(max_length=100, unique=True)
-   name = models.CharField(max_length=100, blank=True)
-
+   
    class Meta:
-      verbose_name = 'EmployerAdmin'
+      verbose_name = 'Employer Admin'
       verbose_name_plural = 'Employer Admins'
 
    def __str__(self):
-      if self.name:
-         return f"{self.name} - {self.email}"
-      return self.email
+      return self.username
 
 class Employer(models.Model):
    administrator = models.OneToOneField(EmployerAdmin, on_delete=models.SET_NULL, null=True, blank=True)
-   name = models.CharField(max_length=100, unique=True, blank=True)
-   email = models.EmailField(max_length=100, unique=True, blank=True)
+   name = models.CharField(max_length=100, unique=True)
+   email = models.EmailField(max_length=100, unique=True)
    registration_number = models.CharField(max_length=100, unique=True, null=True, blank=True)
    registration_date = models.DateField(null=True, blank=True)
    address = models.CharField(max_length=100, null=True, blank=True)
