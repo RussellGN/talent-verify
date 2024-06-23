@@ -1,1 +1,2 @@
 1. add expected, returned data shapes and their types to documentation
+2. make sure all errors are returned as json
