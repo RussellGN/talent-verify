@@ -116,10 +116,10 @@ def register_employer(request):
 @api_view(['POST'])
 def login_employer(request):
    """
-   "endpoint" : "POST /employer/login",
-   "expects" : "employer-admin credentials  (JSON)",
-   "onSuccess" : "returns employer details (with nested employer-admin) and auth token on successful login (JSON)",
-   "onError" : "returns error message on failed login (JSON)",
+   endpoint : POST /employer/login
+   expects : employer-admin credentials  (JSON)
+   onSuccess : returns employer details (with nested employer-admin) and auth token on successful login (JSON)
+   onError : returns error message on failed login (JSON)
    """
    data = json.loads(request.body)
    username = data.get('username')   
@@ -132,4 +132,35 @@ def login_employer(request):
    token = Token.objects.get(user=employerAdmin)
    employerSerializer = EmployerSerializer(instance=employerAdmin.employer)
    return Response({"employer": employerSerializer.data, "token": token.key})
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def patch_employer(request):
+   """
+   endpoint : PATCH /employer
+   expects : partial/complete employer and employer-admin details as well as auth token in request headers (JSON)
+   onSuccess : returns updated employer details (with nested employer-admin) on successful patch (JSON)
+   onError : returns error message on failed patch (JSON)
+   """
+   data = json.loads(request.body)
+   print(data)
+   admin = request.user 
+   adminSerializer = EmployerAdminRegistrationSerializer(instance=admin, data=data.get('employer-admin', {}), partial=True)
+   employerSerializer = EmployerRegistrationSerializer(instance=admin.employer, data=data.get('employer', {}), partial=True)
+   if not adminSerializer.is_valid():
+      return Response({"error": "patch failed", "details": {"employer-admin": adminSerializer.errors}}, status=status.HTTP_400_BAD_REQUEST)
+   if not employerSerializer.is_valid():
+      return Response({"error": "patch failed", "details": {"employer": employerSerializer.errors}}, status=status.HTTP_400_BAD_REQUEST)
+
+   admin = adminSerializer.save()
+   if data.get('employer-admin', {}).get('password', None):
+      admin.set_password(data.get('employer-admin').get('password'))
+      admin.save()
+
+   employer = employerSerializer.save()
+   employerSerializer = EmployerSerializer(instance=employer)
+
+   return Response({"message": "patch successful", "employer": employerSerializer.data}, status=status.HTTP_201_CREATED)
+
 
