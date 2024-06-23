@@ -179,3 +179,21 @@ def logout_employer(request):
    except:
       return Response("error logging out", status=status.HTTP_400_BAD_REQUEST)
    return Response("successfully logged out")
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def add_employees(request):
+   """
+   endpoint : POST /employees
+   expects : a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)
+   onSuccess : returns a success message and number of employees added on successful upload (JSON)
+   onError : returns an error message on failed upload (JSON)
+   """ 
+   data = json.loads(request.body)
+   employer = request.user.employer
+   return Response(data)
+
+
+
+

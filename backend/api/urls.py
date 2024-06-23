@@ -10,4 +10,6 @@ urlpatterns = [
    path('employer/login/', views.login_employer),
    path('employer/logout/', views.logout_employer),
    path('employer/', views.patch_employer),
+
+   path('employees/', views.add_employees),
 ]
