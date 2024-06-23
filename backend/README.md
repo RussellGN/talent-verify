@@ -48,13 +48,13 @@ This api has the following endpoints
 
 9. GET /employees
 
-   -  expects a query object used to filter the employees retrieved (JSON)
+   -  expects 'query' and optional 'is_date' search parameters used to filter the employees retrieved (JSON)
    -  returns a list of zero or more employees matching the query criteria (JSON)
    -  returns an error message if the query object is of incorrect shape (JSON)
 
-10.   POST /employees/(ID)/reassign
+10.   POST /employees/reassign
 
-      -  expects the employer id (if any) of which to reassign employee to, along with an auth token in request headers(JSON)
+      -  expects the id of the employee to reassign and employer id (if any) to reassign employee to, along with an auth token in request headers(JSON)
       -  returns a success message if successfull (JSON)
       -  returns an error message if unsuccessfull (JSON)
 

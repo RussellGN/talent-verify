@@ -12,4 +12,5 @@ urlpatterns = [
    path('employer/', views.patch_employer),
 
    path('employees/', views.handle_employees),
+   path('employees/reassign/', views.reassign_employee),
 ]

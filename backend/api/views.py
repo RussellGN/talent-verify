@@ -1,15 +1,17 @@
+from datetime import datetime, date
 import json
+
+from django.db.models import Q
 from rest_framework import status 
 from rest_framework.authentication import authenticate
 from rest_framework.authtoken.models import Token  
 from rest_framework.response import Response   
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated
-from django.db.utils import IntegrityError
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from .models import Employer, Employee, Department, Role, CareerTimestamp
-from .serializers import EmployerAdminSerializer, EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, EmployeeSerializer, DepartmentSerializer, RoleSerializer, CareerTimestampSerializer
+from .serializers import EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, CareerTimestampSerializer
 
 @api_view(['GET'])
 def endpoints(request):
@@ -60,14 +62,14 @@ def endpoints(request):
          "onError" : "returns an error message on failed patch (JSON)",
       },
       {
-         "endpoint" : "GET /employees",
-         "expects" : "a query object used to filter the employees retrieved (JSON)",
+         "endpoint" : "GET /employees?query=(query),is_date=(is_date)",
+         "expects" : "'query' and optional 'is_date' search parameters used to filter the employees retrieved (JSON)",
          "onSuccess" : "returns a list of zero or more employees matching the query criteria (JSON)",
          "onError" : "returns an error message if the query object is of incorrect shape (JSON)",
       }, 
       {
-         "endpoint" : "POST /employees/(ID)/reassign",
-         "expects" : "expects the employer id (if any) of which to reassign employee to, along with an auth token in request headers (JSON)",
+         "endpoint" : "POST /employees/reassign",
+         "expects" : "the id of the employee to reassign and employer id (if any) to reassign employee to, along with an auth token in request headers (JSON)",
          "onSuccess" : "returns a success message (JSON)",
          "onError" : "returns an error message (JSON)",
       }, 
@@ -187,6 +189,41 @@ def logout_employer(request):
    return Response("successfully logged out")
 
 # for handle employees_____________
+def get_employees(request):
+   """
+   endpoint : GET /employees?query=(query),is_date=(is_date)
+   expects : 'query' and optional 'is_date' search parameters used to filter the employees retrieved (JSON)
+   onSuccess : returns a list of zero or more employees matching the query criteria (JSON)
+   onError : returns an error message if the query object is of incorrect shape (JSON)
+   """
+   query = request.GET.get("query")
+   is_date = request.GET.get("is_date")
+   print(query, is_date)
+   if len(query) < 2:
+      return Response("query is too short", status=status.HTTP_400_BAD_REQUEST)
+
+   if is_date is not None and str.lower(is_date).strip() == 'true':
+      try:
+         datetime.fromisoformat(query)
+      except Exception:
+         return Response("unsupported date format, only ISO is supported", status=status.HTTP_400_BAD_REQUEST)
+
+      matched_career_timestamps = CareerTimestamp.objects.filter(
+         Q(date_started=query) |
+         Q(date_left=query)
+      )
+   else:      
+      matched_career_timestamps = CareerTimestamp.objects.filter(
+         Q(employee__name__icontains=query) |
+         Q(employee__national_id__icontains=query) |
+         Q(employee__employer__name__icontains=query) |
+         Q(role__title__icontains=query) |
+         Q(role__department__name__icontains=query)
+      )
+
+   career_timestamp_serializer = CareerTimestampSerializer(matched_career_timestamps, many=True)
+   return Response(career_timestamp_serializer.data)
+
 def add_employees(request):
    """
    endpoint : POST /employees
@@ -300,12 +337,46 @@ def update_employees(request):
    return Response({"employees_updated": employees_updated_serializer.data}, status=status.HTTP_200_OK)
 # _____________
 
-@api_view(['POST', 'PATCH'])
-@permission_classes([IsAuthenticated])
+@api_view(['GET', 'POST', 'PATCH'])
+@permission_classes([IsAuthenticatedOrReadOnly])
 @authentication_classes([TokenAuthentication])
 def handle_employees(request):
+   if (request.method == 'GET'):
+      return get_employees(request)
    if (request.method == 'POST'):
       return add_employees(request)
    if (request.method == 'PATCH'):
       return update_employees(request)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def reassign_employee(request):
+   """
+   endpoint : POST /employees/reassign
+   expects : the id of the employee to reassign and employer id (if any) to reassign employee to, along with an auth token in request headers (JSON)
+   onSuccess : returns a success message (JSON)
+   onError : returns an error message (JSON)
+   """
+   data = json.loads(request.body)
+   employee = Employee.objects.get(id=int(data.get('employee_id')))
+   current_employer = employee.employer
+   re_assign_to = None
+   if data.get('employer_id') is not None:
+      employer_queryset = Employer.objects.filter(id=int(data.get('employer_id')))
+      re_assign_to = employer_queryset.first() if employer_queryset.exists() else None
+
+   employee.employer = re_assign_to
+   employee.save()
+
+   if current_employer is not None:
+      incomplete_career_timestamps_at_current_employer = CareerTimestamp.objects.filter(employee=employee, role__department__employer=current_employer, date_left=None)
+      for stamp in incomplete_career_timestamps_at_current_employer:
+         stamp.date_left = date.today().isoformat()
+         stamp.save()
+   
+   current_employer_name = current_employer.name if current_employer else "no employer"
+   re_assigning_to = re_assign_to.name if re_assign_to else "no employer"
+   return Response(f"successfully reassigned {employee.name} with id {employee.id} from '{current_employer_name}' to '{re_assigning_to}'")
 
