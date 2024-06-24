@@ -1,7 +1,7 @@
 import { Typography } from "@mui/material";
 import SearchForm from "../components/SearchForm";
 
-export default function Home() {
+export default function HomePage() {
    return (
       <main className="min-h-[75vh] text-center flex items-center justify-center p-5">
          <div>

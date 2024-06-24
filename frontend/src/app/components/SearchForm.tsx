@@ -2,12 +2,24 @@
 
 import { Search } from "@mui/icons-material";
 import { IconButton, Typography } from "@mui/material";
-import React, { useRef } from "react";
+import { useRouter } from "next/navigation";
+import React, { FormEvent, useRef } from "react";
 
 export default function SearchForm() {
    const queryRef = useRef<HTMLInputElement>(null);
    const dateStartedRef = useRef<HTMLInputElement>(null);
    const dateLeftRef = useRef<HTMLInputElement>(null);
+   const router = useRouter();
+
+   function handleSubmit(e: FormEvent<HTMLFormElement>) {
+      e.preventDefault();
+      const query = queryRef.current?.value;
+      const date_started = dateStartedRef.current?.value;
+      const date_left = dateLeftRef.current?.value;
+      if (query || date_started || date_left) {
+         router.push(`/search?query=${query},date_started=${date_started},date_left=${date_left}`);
+      }
+   }
 
    function queryDisableOtherInputs(e: React.ChangeEvent<HTMLInputElement>) {
       if (!e.currentTarget.value) {
@@ -38,7 +50,7 @@ export default function SearchForm() {
    }
 
    return (
-      <form>
+      <form onSubmit={handleSubmit}>
          <input
             onChange={queryDisableOtherInputs}
             className="d-block min-w-[70%] md:min-w-[60%] rounded-[20px] border-4 shadow-md px-5 py-1.5"
