@@ -16,8 +16,12 @@ export default function SearchForm() {
       const query = queryRef.current?.value;
       const date_started = dateStartedRef.current?.value;
       const date_left = dateLeftRef.current?.value;
-      if (query || date_started || date_left) {
-         router.push(`/search?query=${query},date_started=${date_started},date_left=${date_left}`);
+      if (query) {
+         router.push(`/search?query=${query}`);
+      } else if (date_started) {
+         router.push(`/search?date_started=${date_started}`);
+      } else {
+         router.push(`/search?date_left=${date_left}`);
       }
    }
 
