@@ -1,21 +1,21 @@
-import { Business, FactCheck } from "@mui/icons-material";
+import { Business, Verified } from "@mui/icons-material";
 import { Button, Link as MuiLink } from "@mui/material";
 import Link from "next/link";
 import GoBack from "./GoBack";
 
 export default function Navbar() {
    return (
-      <header className="">
-         <div className="flex items-center justify-between">
+      <header>
+         <div className="flex items-center justify-between border shadow-md px-4 py-2 rounded-lg">
             <MuiLink
                underline="none"
                component={Link}
                href="/"
                className="flex items-center gap-1"
-               variant="h4"
-               color="primary"
+               variant="h5"
+               color="inherit"
             >
-               <FactCheck fontSize="inherit" />
+               <Verified color="primary" fontSize="inherit" />
                <span>Talent Verify</span>
             </MuiLink>
 

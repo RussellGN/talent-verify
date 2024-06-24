@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./providers/Providers";
 import Navbar from "./components/Navbar";
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 
 export const metadata: Metadata = {
    title: "Talent Verify",
@@ -18,9 +18,13 @@ export default function RootLayout({
       <Providers>
          <html lang="en">
             <body>
-               <Container sx={{ my: 3 }}>
+               <Container sx={{ my: 2 }}>
                   <Navbar />
                   {children}
+                  <footer className="border-t-2 px-10 pt-4 flex items-center justify-between">
+                     <Typography variant="caption">Talent Verify</Typography>
+                     <Typography variant="caption">By Russell Gundani</Typography>
+                  </footer>
                </Container>
             </body>
          </html>
