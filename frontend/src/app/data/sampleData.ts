@@ -1,0 +1,108 @@
+import { CareerTimestampInterface } from "../interfaces";
+
+export const sampleCareerTimestamps: CareerTimestampInterface[] = [
+   {
+      id: 8,
+      employee: {
+         id: 1,
+         employer: {
+            id: 1,
+            administrator: {
+               id: 2,
+               username: "econet hr",
+               email: "hr@econet.co.zw",
+            },
+            name: "econet",
+            email: "info@econet.co.zw",
+            registration_number: "22g221",
+            registration_date: null,
+            address: null,
+            contact_person: null,
+            number_of_employees: null,
+            contact_phone: null,
+         },
+         national_id: "1234h43hhb",
+         name: "john doe",
+         employee_id: null,
+      },
+      role: {
+         id: 3,
+         department: {
+            id: 3,
+            employer: {
+               id: 1,
+               administrator: {
+                  id: 2,
+                  username: "econet hr",
+                  email: "hr@econet.co.zw",
+               },
+               name: "econet",
+               email: "info@econet.co.zw",
+               registration_number: "22g221",
+               registration_date: null,
+               address: null,
+               contact_person: null,
+               number_of_employees: null,
+               contact_phone: null,
+            },
+            name: "management",
+         },
+         title: "COO",
+         duties: "management of operations",
+      },
+      date_started: "2024-08-03",
+      date_left: null,
+   },
+   {
+      id: 9,
+      employee: {
+         id: 3,
+         employer: {
+            id: 1,
+            administrator: {
+               id: 2,
+               username: "econet hr",
+               email: "hr@econet.co.zw",
+            },
+            name: "econet",
+            email: "info@econet.co.zw",
+            registration_number: "22g221",
+            registration_date: null,
+            address: null,
+            contact_person: null,
+            number_of_employees: null,
+            contact_phone: null,
+         },
+         national_id: "4h43hhb",
+         name: "takudzwa moyo",
+         employee_id: null,
+      },
+      role: {
+         id: 2,
+         department: {
+            id: 2,
+            employer: {
+               id: 1,
+               administrator: {
+                  id: 2,
+                  username: "econet hr",
+                  email: "hr@econet.co.zw",
+               },
+               name: "econet",
+               email: "info@econet.co.zw",
+               registration_number: "22g221",
+               registration_date: null,
+               address: null,
+               contact_person: null,
+               number_of_employees: null,
+               contact_phone: null,
+            },
+            name: "info tech",
+         },
+         title: "software developer",
+         duties: "maintanance of company systems",
+      },
+      date_started: "2024-01-23",
+      date_left: null,
+   },
+];
