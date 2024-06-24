@@ -6,3 +6,8 @@ body {
    min-height: 100.1vh;
    background-color: whitesmoke;
 }
+
+input:disabled {
+   cursor: not-allowed;
+   opacity: 0.5;
+}

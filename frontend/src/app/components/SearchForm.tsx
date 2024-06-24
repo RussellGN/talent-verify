@@ -8,9 +8,39 @@ export default function SearchForm() {
    const queryRef = useRef<HTMLInputElement>(null);
    const dateStartedRef = useRef<HTMLInputElement>(null);
    const dateLeftRef = useRef<HTMLInputElement>(null);
+
+   function queryDisableOtherInputs(e: React.ChangeEvent<HTMLInputElement>) {
+      if (!e.currentTarget.value) {
+         if (dateStartedRef.current) dateStartedRef.current.disabled = false;
+         if (dateLeftRef.current) dateLeftRef.current.disabled = false;
+         return;
+      }
+      if (dateStartedRef.current) dateStartedRef.current.disabled = true;
+      if (dateLeftRef.current) dateLeftRef.current.disabled = true;
+   }
+   function dateStartedDisableOtherInputs(e: React.ChangeEvent<HTMLInputElement>) {
+      if (!e.currentTarget.value) {
+         if (queryRef.current) queryRef.current.disabled = false;
+         if (dateLeftRef.current) dateLeftRef.current.disabled = false;
+         return;
+      }
+      if (queryRef.current) queryRef.current.disabled = true;
+      if (dateLeftRef.current) dateLeftRef.current.disabled = true;
+   }
+   function dateLeftDisableOtherInputs(e: React.ChangeEvent<HTMLInputElement>) {
+      if (!e.currentTarget.value) {
+         if (queryRef.current) queryRef.current.disabled = false;
+         if (dateStartedRef.current) dateStartedRef.current.disabled = false;
+         return;
+      }
+      if (queryRef.current) queryRef.current.disabled = true;
+      if (dateStartedRef.current) dateStartedRef.current.disabled = true;
+   }
+
    return (
       <form>
          <input
+            onChange={queryDisableOtherInputs}
             className="d-block min-w-[70%] md:min-w-[60%] rounded-[20px] border-4 shadow-md px-5 py-1.5"
             ref={queryRef}
             name="query"
@@ -23,6 +53,7 @@ export default function SearchForm() {
             <label className="flex flex-col gap-1" htmlFor="date_left">
                <span>Date Started</span>
                <input
+                  onChange={dateStartedDisableOtherInputs}
                   className="d-block rounded-[20px] border-4 shadow-md px-5 py-1.5"
                   ref={dateStartedRef}
                   id="date_started"
@@ -34,6 +65,7 @@ export default function SearchForm() {
             <label className="flex flex-col gap-1" htmlFor="date_left">
                <span>Date Left</span>
                <input
+                  onChange={dateLeftDisableOtherInputs}
                   className="d-block rounded-[20px] border-4 shadow-md px-5 py-1.5"
                   ref={dateLeftRef}
                   id="date_left"
@@ -45,6 +77,7 @@ export default function SearchForm() {
 
          <div className="mt-3">
             <IconButton
+               type="submit"
                size="large"
                sx={{
                   boxShadow: "2px 2px 10px grey",
