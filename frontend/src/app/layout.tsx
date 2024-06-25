@@ -20,8 +20,8 @@ export default function RootLayout({
             <body>
                <Container sx={{ my: 2 }}>
                   <Navbar />
-                  {children}
-                  <footer className="border-t-2 px-10 pt-4 flex items-center justify-between">
+                  <main>{children}</main>
+                  <footer className="mt-5 border-t-2 px-10 pt-4 flex items-center justify-between">
                      <Typography variant="caption">Talent Verify</Typography>
                      <Typography variant="caption">By Russell Gundani</Typography>
                   </footer>

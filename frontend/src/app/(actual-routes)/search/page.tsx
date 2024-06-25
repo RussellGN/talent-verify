@@ -22,9 +22,9 @@ export default function SearchPage({ searchParams: { query, date_started, date_l
    return (
       <div className="min-h-[75vh]">
          <Typography className="text-center p-4">Showing Results for {`'${resultsFor}'`}</Typography>
-         <Grid container>
+         <Grid container spacing={1}>
             {sampleCareerTimestamps.map((timeStamp) => (
-               <Grid key={timeStamp.employee.id} item xs={4}>
+               <Grid key={timeStamp.employee.id} item xs={3}>
                   <CareerTimestampCard careerTimestamp={timeStamp} />
                </Grid>
             ))}

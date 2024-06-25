@@ -1,16 +1,11 @@
 import { Box, Typography } from "@mui/material";
 import { CareerTimestampInterface } from "../interfaces";
 import { capitalizeWords, friendlyDate } from "../lib";
-import Link from "next/link";
-import { ArrowForward, Business, Contacts, People, AccessTime, Work } from "@mui/icons-material";
+import { Business, Contacts, People, AccessTime, Work, InfoSharp } from "@mui/icons-material";
 
-export default function CareerTimestampCard({ careerTimestamp }: { careerTimestamp: CareerTimestampInterface }) {
+export default function DetailedCareerTimestampCard({ careerTimestamp }: { careerTimestamp: CareerTimestampInterface }) {
    return (
-      <Box
-         component={Link}
-         href={`/search/${careerTimestamp.employee.id}`}
-         className="block border-slate-300 border-2 bg-slate-50 hover:bg-white hover:border-slate-400  shadow-md rounded-xl p-3"
-      >
+      <Box className="block border-slate-300 border-2 bg-slate-50   shadow-md rounded-xl p-3">
          <Typography className="border-b" variant="h6" sx={{ mb: 1, pb: 0.2 }}>
             {capitalizeWords(careerTimestamp.employee.name)}
          </Typography>
@@ -47,10 +42,10 @@ export default function CareerTimestampCard({ careerTimestamp }: { careerTimesta
                Ongoing
             </Typography>
          )}
-
-         <Typography color="primary" sx={{ mt: 2 }} className="flex items-center justify-end text-right gap-2 px-2">
-            <ArrowForward />
-            View
+         <br />
+         <Typography sx={{ mb: 0.5 }}>
+            <InfoSharp sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />
+            Duties: Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eveniet ex harum tenetur hic quibusdam ullam.
          </Typography>
       </Box>
    );

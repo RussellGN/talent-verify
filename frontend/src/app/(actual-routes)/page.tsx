@@ -3,7 +3,7 @@ import SearchForm from "../components/SearchForm";
 
 export default function HomePage() {
    return (
-      <main className="min-h-[75vh] text-center flex items-center justify-center p-5">
+      <div className="min-h-[75vh] text-center flex items-center justify-center p-5">
          <div>
             <Typography variant="h4" sx={{ mb: 2 }}>
                Search and verify talent&apos;s employment history
@@ -15,6 +15,6 @@ export default function HomePage() {
             </Typography>
             <SearchForm />
          </div>
-      </main>
+      </div>
    );
 }
