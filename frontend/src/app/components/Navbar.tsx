@@ -30,12 +30,12 @@ export default function Navbar() {
 
                <Button
                   component={Link}
-                  href="/signup"
+                  href="/register"
                   sx={{ textTransform: "capitalize" }}
                   variant="contained"
                   color="success"
                >
-                  Employer Signup
+                  Register Employer
                </Button>
 
                <>
