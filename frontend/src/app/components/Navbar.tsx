@@ -39,7 +39,7 @@ export default function Navbar() {
                </Button>
 
                <>
-                  <Button startIcon={<Business />} component={Link} href="/dashboard/details">
+                  <Button startIcon={<Business />} component={Link} href="/dashboard/employees">
                      Econet
                   </Button>
                   <Button sx={{ textTransform: "capitalize" }} variant="contained">
