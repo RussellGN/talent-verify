@@ -1,3 +1,15 @@
+export function capitalizeWords(str: string) {
+   let finalString = "";
+   const words = str
+      .trim()
+      .split(" ")
+      .filter((wrd) => wrd.trim() !== "");
+
+   words.forEach((word) => (finalString += word[0].toUpperCase() + word.slice(1) + " "));
+
+   return finalString;
+}
+
 export function friendlyDate(date: string | Date, format?: "second" | "third") {
    date = new Date(date);
    switch (format) {
