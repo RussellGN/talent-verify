@@ -5,8 +5,8 @@ import GoBack from "./GoBack";
 
 export default function Navbar() {
    return (
-      <header>
-         <div className="flex items-center justify-between border shadow-md px-4 py-2 rounded-lg">
+      <header className="sticky top-0 z-10 ">
+         <div className="bg-white flex items-center justify-between border shadow-md px-4 py-2 rounded-lg">
             <MuiLink
                underline="none"
                component={Link}
@@ -49,7 +49,7 @@ export default function Navbar() {
             </nav>
          </div>
 
-         <div className="mt-3">
+         <div className="mt-3 w-fit bg-white">
             <GoBack />
          </div>
       </header>
