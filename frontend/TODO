@@ -1,3 +1,4 @@
 1. properly setup eslint
 2. make sure your interfaces go hand in hand with api model schema
 3. implement summarized duties on detailed timestamp card
+4. add duties to sidebar of talent detailed view

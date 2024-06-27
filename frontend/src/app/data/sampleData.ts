@@ -12,11 +12,13 @@ export const sampleEmployeeAdmins: EmployerAdminInterface[] = [
       id: 1,
       username: "econet hr",
       email: "hr@econet.co.zw",
+      password: "123",
    },
    {
       id: 2,
       username: "nmb bank hr",
       email: "hr@nmb.co.zw",
+      password: "123",
    },
 ];
 

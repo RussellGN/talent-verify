@@ -2,6 +2,7 @@ export interface EmployerAdminInterface {
    id: number;
    username: string;
    email: string;
+   password: string;
 }
 
 export interface EmployerInterface {
@@ -44,4 +45,16 @@ export interface CareerTimestampInterface {
    role: RoleInterface;
    date_started: string | null;
    date_left: string | null;
+}
+
+export interface UnormalizedCurrentEmployeeInterface {
+   id: number | string;
+   national_id: string;
+   name: string;
+   employer?: string | null;
+   employee_id?: string | null;
+   department?: string | null;
+   role?: string | null;
+   date_started?: Date | string | null;
+   date_left?: Date | string | null;
 }

@@ -9,7 +9,7 @@ export default function LoginPage() {
                <Typography variant="h4" className="text-center" sx={{ mb: 4 }}>
                   Login
                </Typography>
-               <label className="flex mb-4 flex-col gap-1" htmlFor="username">
+               <label className="flex mb-4 flex-col gap-1" htmlFor="password">
                   <span className="px-5">
                      <InfoOutlined
                         fontSize="inherit"
@@ -25,16 +25,16 @@ export default function LoginPage() {
                      Username
                   </span>
                   <input
-                     className="min-w-[300px] d-block rounded-[20px] border-4 shadow-md px-5 py-1.5"
+                     className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                      id="username"
                      name="username"
-                     placeholder="Admin Username"
+                     placeholder="Admin password"
                      minLength={3}
                      required
                   />
                </label>
 
-               <label className="flex mb-4 flex-col gap-1" htmlFor="username">
+               <label className="flex mb-4 flex-col gap-1" htmlFor="password">
                   <span className="px-5">
                      <InfoOutlined
                         fontSize="inherit"
@@ -50,10 +50,10 @@ export default function LoginPage() {
                      Password
                   </span>
                   <input
-                     className="min-w-[300px] d-block rounded-[20px] border-4 shadow-md px-5 py-1.5"
+                     className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                      id="password"
                      name="password"
-                     placeholder="Admin Username"
+                     placeholder="Admin password"
                      type="password"
                      minLength={3}
                      required
