@@ -11,10 +11,10 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
 
    return (
       <div className="min-h-[75vh] relative mt-5">
-         <Grid container spacing={3}>
-            <Grid item xs={12} md={3}>
-               <div className="md:sticky top-[110px] shadow-md border rounded-[20px] p-8">
-                  <Typography className="border-b" variant="h5" sx={{ mb: 2, pb: 1 }}>
+         <Grid container spacing={2} wrap="nowrap">
+            <Grid item xs={12} md={2}>
+               <div className="md:sticky top-[110px] shadow-md border rounded-[20px] px-3 py-5">
+                  <Typography className="border-b" variant="h6" sx={{ mb: 2, pb: 1 }}>
                      <Business fontSize="inherit" sx={{ mt: -0.3, mr: 0.5 }} />
                      {capitalizeWords(employer.name)}
                   </Typography>
@@ -30,7 +30,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
                </div>
             </Grid>
 
-            <Grid item xs={12} md>
+            <Grid item xs={12} md={10}>
                <div>{children}</div>
             </Grid>
          </Grid>
