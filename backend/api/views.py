@@ -285,23 +285,17 @@ def add_employees(request):
          # increment counter and add to employeesAdded
          data_item += 1
          if created:
-            # employees_added.append(employee)
             employees_added.append(career_timestamp)
          else:
-            # existing_employees_updated.append(employee)
             existing_employees_updated.append(career_timestamp)
    except Exception as e:
       status_to_use = status.HTTP_207_MULTI_STATUS if len(employees_added) else status.HTTP_400_BAD_REQUEST
-      # employees_added_serializer = EmployeeSerializer(instance=employees_added, many=True)
-      # existing_employees_updated_serializer = EmployeeSerializer(instance=existing_employees_updated, many=True)
-      employees_added_serializer = CareerTimestampSerializer(instance=employees_added, many=True)
-      existing_employees_updated_serializer = CareerTimestampSerializer(instance=existing_employees_updated, many=True)
+      employees_added_serializer = CompactEmployeeSerializer(instance=employees_added, many=True)
+      existing_employees_updated_serializer = CompactEmployeeSerializer(instance=existing_employees_updated, many=True)
       return Response({"error": f"failed to complete upload starting from data item #{data_item}", "details": f"{e}", "employees_added": employees_added_serializer.data, "existing_employees_updated":  existing_employees_updated_serializer.data }, status=status_to_use)
 
-   # employees_added_serializer = EmployeeSerializer(instance=employees_added, many=True)
-   # existing_employees_updated_serializer = EmployeeSerializer(instance=existing_employees_updated, many=True)
-   employees_added_serializer = CareerTimestampSerializer(instance=employees_added, many=True)
-   existing_employees_updated_serializer = CareerTimestampSerializer(instance=existing_employees_updated, many=True)
+   employees_added_serializer = CompactEmployeeSerializer(instance=employees_added, many=True)
+   existing_employees_updated_serializer = CompactEmployeeSerializer(instance=existing_employees_updated, many=True)
    return Response({"employees_added": employees_added_serializer.data, "existing_employees_updated":  existing_employees_updated_serializer.data }, status=status.HTTP_201_CREATED)
 
 def update_employees(request):
@@ -351,16 +345,13 @@ def update_employees(request):
             career_timestamp = CareerTimestamp.objects.create(employee=employee, role=role, date_started=item.get("date_started"), date_left=item.get("date_left"))
 
          data_item += 1
-         # employees_updated.append(employee)
          employees_updated.append(career_timestamp)
    except Exception as e:
       status_to_use = status.HTTP_207_MULTI_STATUS if len(employees_updated) else status.HTTP_400_BAD_REQUEST
-      # employees_updated_serializer = EmployeeSerializer(instance=employees_updated, many=True)
-      employees_updated_serializer = CareerTimestampSerializer(instance=employees_updated, many=True)
+      employees_updated_serializer = CompactEmployeeSerializer(instance=employees_updated, many=True)
       return Response({"error": f"failed to complete updates starting from data item #{data_item}", "details": f"{e}", "employees_updated":  employees_updated_serializer.data }, status=status_to_use)
 
-   # employees_updated_serializer = EmployeeSerializer(instance=employees_updated, many=True)
-   employees_updated_serializer = CareerTimestampSerializer(instance=employees_updated, many=True)
+   employees_updated_serializer = CompactEmployeeSerializer(instance=employees_updated, many=True)
    return Response({"employees_updated": employees_updated_serializer.data}, status=status.HTTP_200_OK)
 # _____________
 
@@ -407,37 +398,37 @@ def reassign_employee(request):
    re_assigning_to = re_assign_to.name if re_assign_to else "no employer"
    return Response(f"successfully reassigned {employee.name} with id {employee.id} from '{current_employer_name}' to '{re_assigning_to}'")
 
-def get_talent(request):
-   """
-   endpoint : GET /employees
-   expects : expects an auth token in request headers  (JSON)
-   onSuccess : returns a list of zero or more employees belonging to an employer (JSON)
-   onError : returns an error message if unsuccessfull (JSON)
-   """
-   query = request.GET.get("query")
-   is_date = request.GET.get("is_date")
-   print(query, is_date)
-   if len(query) < 2:
-      return Response("query is too short", status=status.HTTP_400_BAD_REQUEST)
+# def get_talent(request):
+#    """
+#    endpoint : GET /employees
+#    expects : expects an auth token in request headers  (JSON)
+#    onSuccess : returns a list of zero or more employees belonging to an employer (JSON)
+#    onError : returns an error message if unsuccessfull (JSON)
+#    """
+#    query = request.GET.get("query")
+#    is_date = request.GET.get("is_date")
+#    print(query, is_date)
+#    if len(query) < 2:
+#       return Response("query is too short", status=status.HTTP_400_BAD_REQUEST)
 
-   if is_date is not None and str.lower(is_date).strip() == 'true':
-      try:
-         datetime.fromisoformat(query)
-      except Exception:
-         return Response("unsupported date format, only ISO is supported", status=status.HTTP_400_BAD_REQUEST)
+#    if is_date is not None and str.lower(is_date).strip() == 'true':
+#       try:
+#          datetime.fromisoformat(query)
+#       except Exception:
+#          return Response("unsupported date format, only ISO is supported", status=status.HTTP_400_BAD_REQUEST)
 
-      matched_career_timestamps = CareerTimestamp.objects.filter(
-         Q(date_started=query) |
-         Q(date_left=query)
-      )
-   else:      
-      matched_career_timestamps = CareerTimestamp.objects.filter(
-         Q(employee__name__icontains=query) |
-         Q(employee__national_id__icontains=query) |
-         Q(employee__employer__name__icontains=query) |
-         Q(role__title__icontains=query) |
-         Q(role__department__name__icontains=query)
-      )
+#       matched_career_timestamps = CareerTimestamp.objects.filter(
+#          Q(date_started=query) |
+#          Q(date_left=query)
+#       )
+#    else:      
+#       matched_career_timestamps = CareerTimestamp.objects.filter(
+#          Q(employee__name__icontains=query) |
+#          Q(employee__national_id__icontains=query) |
+#          Q(employee__employer__name__icontains=query) |
+#          Q(role__title__icontains=query) |
+#          Q(role__department__name__icontains=query)
+#       )
 
-   career_timestamp_serializer = CareerTimestampSerializer(matched_career_timestamps, many=True)
-   return Response(career_timestamp_serializer.data)
+#    career_timestamp_serializer = CareerTimestampSerializer(matched_career_timestamps, many=True)
+#    return Response(career_timestamp_serializer.data)
