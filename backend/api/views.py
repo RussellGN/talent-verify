@@ -11,7 +11,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from .models import Employer, Employee, Department, Role, CareerTimestamp
-from .serializers import DepartmentSerializer, EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, CareerTimestampSerializer
+from .serializers import DepartmentSerializer, EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, CareerTimestampSerializer, CompactEmployeeSerializer
+from .utils import get_latest_career_timestamp
 
 @api_view(['GET'])
 def endpoints(request):
@@ -62,10 +63,10 @@ def endpoints(request):
          "onError" : "returns an error message on failed patch (JSON)",
       },
       {
-         "endpoint" : "GET /employees?query=(query),is_date=(is_date)",
-         "expects" : "'query' and optional 'is_date' search parameters used to filter the employees retrieved (JSON)",
-         "onSuccess" : "returns a list of zero or more employees matching the query criteria (JSON)",
-         "onError" : "returns an error message if the query object is of incorrect shape (JSON)",
+         "endpoint" : "GET /employees",
+         "expects" : "expects an auth token in request headers  (JSON)",
+         "onSuccess" : "returns a list of zero or more employees belonging to an employer (JSON)",
+         "onError" : "returns an error message if unsuccessfull (JSON)",
       }, 
       {
          "endpoint" : "POST /employees/reassign",
@@ -73,6 +74,16 @@ def endpoints(request):
          "onSuccess" : "returns a success message (JSON)",
          "onError" : "returns an error message (JSON)",
       }, 
+      {
+         "endpoint" : "GET /talent?query=(query),is_date=(is_date)",
+         "expects" : "'query' and optional 'is_date' search parameters used to filter the employees retrieved (JSON)",
+         "onSuccess" : "returns a list of zero or more employees matching the query criteria (JSON)",
+      },
+      {
+         "endpoint": "GET /talent/(ID)",
+         "onSuccess" : "returns details of talent with given ID if found (JSON)",
+         "onError" : "returns an error message if talent not found (JSON)",
+      }
    ]
    return Response(api_endpoints)
 
@@ -230,38 +241,15 @@ def logout_employer(request):
 # for handle employees_____________
 def get_employees(request):
    """
-   endpoint : GET /employees?query=(query),is_date=(is_date)
-   expects : 'query' and optional 'is_date' search parameters used to filter the employees retrieved (JSON)
-   onSuccess : returns a list of zero or more employees matching the query criteria (JSON)
-   onError : returns an error message if the query object is of incorrect shape (JSON)
+   endpoint : GET /employees
+   expects : expects an auth token in request headers  (JSON)
+   onSuccess : returns a list of zero or more employees belonging to an employer (JSON)
+   onError : returns an error message if unsuccessfull (JSON)
    """
-   query = request.GET.get("query")
-   is_date = request.GET.get("is_date")
-   print(query, is_date)
-   if len(query) < 2:
-      return Response("query is too short", status=status.HTTP_400_BAD_REQUEST)
-
-   if is_date is not None and str.lower(is_date).strip() == 'true':
-      try:
-         datetime.fromisoformat(query)
-      except Exception:
-         return Response("unsupported date format, only ISO is supported", status=status.HTTP_400_BAD_REQUEST)
-
-      matched_career_timestamps = CareerTimestamp.objects.filter(
-         Q(date_started=query) |
-         Q(date_left=query)
-      )
-   else:      
-      matched_career_timestamps = CareerTimestamp.objects.filter(
-         Q(employee__name__icontains=query) |
-         Q(employee__national_id__icontains=query) |
-         Q(employee__employer__name__icontains=query) |
-         Q(role__title__icontains=query) |
-         Q(role__department__name__icontains=query)
-      )
-
-   career_timestamp_serializer = CareerTimestampSerializer(matched_career_timestamps, many=True)
-   return Response(career_timestamp_serializer.data)
+   employees = request.user.employer.employee_set.all()
+   latest_career_timestamps = [get_latest_career_timestamp(employee) for employee in employees]
+   compact_employee_serializer = CompactEmployeeSerializer(latest_career_timestamps, many=True)
+   return Response(compact_employee_serializer.data)
 
 def add_employees(request):
    """
@@ -419,3 +407,37 @@ def reassign_employee(request):
    re_assigning_to = re_assign_to.name if re_assign_to else "no employer"
    return Response(f"successfully reassigned {employee.name} with id {employee.id} from '{current_employer_name}' to '{re_assigning_to}'")
 
+def get_talent(request):
+   """
+   endpoint : GET /employees
+   expects : expects an auth token in request headers  (JSON)
+   onSuccess : returns a list of zero or more employees belonging to an employer (JSON)
+   onError : returns an error message if unsuccessfull (JSON)
+   """
+   query = request.GET.get("query")
+   is_date = request.GET.get("is_date")
+   print(query, is_date)
+   if len(query) < 2:
+      return Response("query is too short", status=status.HTTP_400_BAD_REQUEST)
+
+   if is_date is not None and str.lower(is_date).strip() == 'true':
+      try:
+         datetime.fromisoformat(query)
+      except Exception:
+         return Response("unsupported date format, only ISO is supported", status=status.HTTP_400_BAD_REQUEST)
+
+      matched_career_timestamps = CareerTimestamp.objects.filter(
+         Q(date_started=query) |
+         Q(date_left=query)
+      )
+   else:      
+      matched_career_timestamps = CareerTimestamp.objects.filter(
+         Q(employee__name__icontains=query) |
+         Q(employee__national_id__icontains=query) |
+         Q(employee__employer__name__icontains=query) |
+         Q(role__title__icontains=query) |
+         Q(role__department__name__icontains=query)
+      )
+
+   career_timestamp_serializer = CareerTimestampSerializer(matched_career_timestamps, many=True)
+   return Response(career_timestamp_serializer.data)

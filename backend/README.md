@@ -48,15 +48,25 @@ This api has the following endpoints
 
 9. GET /employees
 
-   -  expects 'query' and optional 'is_date' search parameters used to filter the employees retrieved (JSON)
-   -  returns a list of zero or more employees matching the query criteria (JSON)
-   -  returns an error message if the query object is of incorrect shape (JSON)
+   -  expects an auth token in request headers (JSON)
+   -  returns a list of zero or more employees belonging to an employer (JSON)
+   -  returns an error message if unsuccessfull (JSON)
 
 10.   POST /employees/reassign
 
       -  expects the id of the employee to reassign and employer id (if any) to reassign employee to, along with an auth token in request headers(JSON)
       -  returns a success message if successfull (JSON)
       -  returns an error message if unsuccessfull (JSON)
+
+11.   GET /talent?query=(query),is_date=(is_date)
+
+      -  expects 'query' and optional 'is_date' search parameters used to filter the employees retrieved (JSON)
+      -  returns a list of zero or more employees matching the query criteria (JSON)
+
+12.   GET /talent/(ID)
+
+      -  returns details of talent with given ID if found (JSON)
+      -  returns an error message if talent not found (JSON)
 
 <strong>IMPORTANT NOTE: All excel, csv and txt file uploads are processed to JSON on the frontend. Data sent to the backend is only in the form of JSON<strong>
 
