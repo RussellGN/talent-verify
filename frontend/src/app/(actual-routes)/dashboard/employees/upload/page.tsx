@@ -1,8 +1,16 @@
 "use client";
 
-import { excelToJson } from "@/app/lib";
+import { assignIdAndFormatDates, csvToJson, excelToJson, txtToJson } from "@/app/lib";
 import { NewEmployee } from "@/app/types";
-import { InfoOutlined, KeyboardDoubleArrowRight, Save, UploadFile, Warning } from "@mui/icons-material";
+import {
+   InfoOutlined,
+   KeyboardArrowDown,
+   KeyboardArrowUp,
+   KeyboardDoubleArrowRight,
+   Save,
+   UploadFile,
+   Warning,
+} from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { ChangeEvent, ReactNode, useRef, useState } from "react";
@@ -11,6 +19,7 @@ export default function UploadPage() {
    const [data, setData] = useState<NewEmployee[]>();
    const [error, setError] = useState<string>();
    const [key, setKey] = useState(1);
+   const [showTextFormating, setShowTextFormating] = useState(false);
    const inputRef = useRef<HTMLInputElement>(null);
 
    function clickInput() {
@@ -25,25 +34,42 @@ export default function UploadPage() {
          const file = e.target.files[0];
          const words = file.name.split(".");
          const extension = words[words.length - 1];
-         console.log(extension);
 
          switch (extension) {
             case "txt":
-               console.log("text");
-               // setData(txtToJson(file));
+               txtToJson(file)
+                  .then((json) => {
+                     json.forEach((emp, index) => assignIdAndFormatDates(emp, index));
+                     setData(json);
+                  })
+                  .catch((err: string) => setError(err));
                break;
             case "xlsx":
                excelToJson<NewEmployee>(file)
-                  .then((json) => setData(json))
+                  .then((json) => {
+                     json.forEach((emp, index) => assignIdAndFormatDates(emp, index));
+                     setData(json);
+                  })
                   .catch((err: string) => setError(err));
-               // setData(excelToJson(file));
+               break;
+            case "xls":
+               excelToJson<NewEmployee>(file)
+                  .then((json) => {
+                     json.forEach((emp, index) => assignIdAndFormatDates(emp, index));
+                     setData(json);
+                  })
+                  .catch((err: string) => setError(err));
                break;
             case "csv":
-               console.log("csv");
-               // setData(csvToJson(file));
+               csvToJson<NewEmployee>(file)
+                  .then((json) => {
+                     json.forEach((emp, index) => assignIdAndFormatDates(emp, index));
+                     setData(json);
+                  })
+                  .catch((err: string) => setError(err));
                break;
             default:
-               alert(`file uploaded '${file.name}' is not of supported types (.xlsx, .txt and .csv)`);
+               alert(`file uploaded '${file.name}' is not of supported types (.xlsx, .xls, .csv and .txt)`);
                return;
          }
       }
@@ -62,9 +88,12 @@ export default function UploadPage() {
             Error processing file: {error}
          </p>
       );
-   } else if (!data)
+   } else if (!data) {
       content = (
          <Box sx={{ mb: 3 }} className="text-left">
+            <Typography variant="h6" textAlign="center" sx={{ mb: 4 }}>
+               No data uploaded
+            </Typography>
             <Typography sx={{ mb: 3 }}>
                <InfoOutlined fontSize="inherit" sx={{ mr: 0.5, mt: -0.3 }} />
                Before uploading, please take note of the following
@@ -83,7 +112,7 @@ export default function UploadPage() {
                   <div className="flex items-start gap-1">
                      <KeyboardDoubleArrowRight fontSize="small" />
                      <Typography variant="subtitle2">
-                        Text file data items to be delimited by a tab space with each row on a new line
+                        Any fields not listed above but present in data will be completely ignored
                      </Typography>
                   </div>
                </li>
@@ -100,10 +129,59 @@ export default function UploadPage() {
                      <KeyboardDoubleArrowRight fontSize="small" />
 
                      <Typography variant="subtitle2">
-                        Date fields should be of the format &lsquo;dd/mm/yyyy&rsquo;
+                        Date fields should be of the format &lsquo;mm/dd/yyyy&rsquo;
                      </Typography>
                   </div>
                </li>
+               <li>
+                  <div className="flex items-start gap-1">
+                     <KeyboardDoubleArrowRight fontSize="small" />
+                     <div>
+                        <Typography variant="subtitle2">
+                           Text files should have the following format{" "}
+                           <Button
+                              size="small"
+                              sx={{ textTransform: "capitalize" }}
+                              onClick={() => setShowTextFormating((prev) => !prev)}
+                              endIcon={showTextFormating ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                           >
+                              {showTextFormating ? "Hide" : "Show"}
+                           </Button>
+                        </Typography>
+
+                        <Typography
+                           sx={{ display: showTextFormating ? "block" : "none", mb: 2 }}
+                           variant="caption"
+                           className="bg-slate-50 rounded-lg p-3"
+                        >
+                           Each record should contain key-value pairs. Key and value must be separated by a colon (:). Each
+                           key-value pair should be on a new line. Records should be separated by a blank line. For example:
+                           <br />
+                           <br />
+                           <span className="border-t border-b text-green-600">
+                              national_id: 1233f29 <br />
+                              name: John Doe <br />
+                              department: IT Systems <br />
+                              role: Software Engineer
+                              <br />
+                              <br />
+                              national_id: 1233f34 <br />
+                              name: Jane Smith <br />
+                              department: Management <br />
+                              role: COO <br />
+                              duties: Management and oversight of operations... <br />
+                              date_started: 02/23/2019
+                           </span>
+                           <br />
+                           <br />
+                           - Ensure there are no extra spaces around colons or at the end of lines. <br />
+                           - Each record must be separated by exactly one blank line. <br />- Ensure consistent formatting
+                           to avoid errors in processing.
+                        </Typography>
+                     </div>
+                  </div>
+               </li>
+
                <br />
                <li>
                   <div className="flex items-start gap-1 text-red-700">
@@ -117,7 +195,7 @@ export default function UploadPage() {
             </ul>
          </Box>
       );
-   else {
+   } else {
       content = (
          <>
             <Box sx={{ mb: 3 }} className="text-left max-w-prose flex items-start gap-1">
@@ -188,8 +266,6 @@ const cols: GridColDef[] = [
    { field: "department", headerName: "Department", type: "string" },
    { field: "role", headerName: "Role", type: "string" },
    { field: "duties", headerName: "Duties", type: "string" },
-   // { field: "date_started", headerName: "Date Started", type: "date" },
-   // { field: "date_left", headerName: "Date Left", type: "date" },
-   { field: "date_started", headerName: "Date Started", type: "string" },
-   { field: "date_left", headerName: "Date Left", type: "string" },
+   { field: "date_started", headerName: "Date Started", type: "date" },
+   { field: "date_left", headerName: "Date Left", type: "date" },
 ];
