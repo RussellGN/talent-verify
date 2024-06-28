@@ -47,8 +47,8 @@ export default function EmployeesPage() {
          <div className="p-5 ">
             <Typography variant="subtitle2">
                <InfoOutlined color="warning" fontSize="inherit" sx={{ mt: -0.3, mr: 0.5 }} />
-               To update an employee&apos;s details, click in any (editable) data cell and enter a new value. You will be
-               prompted for confirmation before saving.
+               To update an employee&apos;s details, click in any data cell and enter a new value. You will be prompted for
+               confirmation before saving.
             </Typography>
          </div>
 
