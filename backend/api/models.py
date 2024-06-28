@@ -45,7 +45,7 @@ class Department(models.Model):
 
 class Role(models.Model):
    title = models.CharField(max_length=100)
-   duties = models.TextField(max_length=400)
+   duties = models.TextField(max_length=400, null=True, blank=True)
    department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True)
 
    def __str__(self) -> str:
