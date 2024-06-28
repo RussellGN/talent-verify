@@ -1,3 +1,4 @@
 1. add expected, returned data shapes and their types to documentation
 2. make sure all errors are returned as json
 3. convert all camel case vars to snake case python vars
+4. give all routes names in the urls file
