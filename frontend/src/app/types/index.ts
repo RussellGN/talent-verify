@@ -1,13 +1,13 @@
 export type NewEmployee = {
    id?: number | string;
-   national_id: string;
-   name: string;
-   employee_id: string | number | undefined;
-   department: string | undefined;
-   role: string | undefined;
-   duties: string | undefined;
-   date_started: Date | string | undefined;
-   date_left: Date | string | undefined;
+   national_id: string | undefined;
+   name: string | undefined;
+   employee_id?: string | number | undefined;
+   department?: string | undefined;
+   role?: string | undefined;
+   duties?: string | undefined;
+   date_started?: Date | string | undefined;
+   date_left?: Date | string | undefined;
 };
 
 export type EmployeeAutocompleteOption = {

@@ -1,4 +1,5 @@
 import * as XLSX from "xlsx";
+import { NewEmployee } from "../types";
 
 export function capitalizeWords(str: string) {
    let finalString = "";
@@ -30,24 +31,33 @@ export function friendlyDate(date: string | Date, format?: "second" | "third") {
    }
 }
 
-export function arraysHaveSameElements<T>(arr1: T[], arr2: T[]): boolean {
-   const set1 = new Set(arr1);
-   const set2 = new Set(arr2);
+export function findMissingFields<T>(expectedArray: T[], actualArray: T[]): string {
+   const expectedSet = new Set(expectedArray);
+   const actualSet = new Set(actualArray);
 
-   if (set1.size !== set2.size) {
-      return false;
-   }
-
-   set1.forEach((item) => {
-      if (!set2.has(item)) {
-         return false;
+   let missingFields = "";
+   expectedSet.forEach((item) => {
+      if (!actualSet.has(item)) {
+         missingFields += missingFields ? ", " + item : item;
       }
    });
 
-   return true;
+   return missingFields;
 }
 
-export function excelToJson<T extends { id?: number | string }>(file: File): Promise<T[]> {
+export function assignIdAndFormatDates(emp: NewEmployee, index: number) {
+   emp.id = index;
+   if (emp.date_started && emp.date_started.toString().trim() !== "") {
+      console.log("date-started " + String(emp.date_started));
+      emp.date_started = new Date(emp.date_started);
+   } else emp.date_started = undefined;
+   if (emp.date_left && emp.date_left.toString().trim() !== "") {
+      console.log("date-left " + String(emp.date_left));
+      emp.date_left = new Date(emp.date_left);
+   } else emp.date_left = undefined;
+}
+
+export function excelToJson<T extends object>(file: File): Promise<T[]> {
    return new Promise((resolve, reject) => {
       const reader = new FileReader();
 
@@ -58,26 +68,25 @@ export function excelToJson<T extends { id?: number | string }>(file: File): Pro
             const firstSheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[firstSheetName];
 
-            const json = XLSX.utils.sheet_to_json<T>(worksheet);
-            const keys = Object.keys(json[0]);
+            const json = XLSX.utils.sheet_to_json<T>(worksheet, { raw: false });
+            if (!json.length) reject("Excel   file has no data");
+            const actualKeys = Object.keys(json[0]);
 
+            // check for compulsory fields only
             const expectedKeys = [
                "national_id",
                "name",
-               "employee_id",
-               "department",
-               "role",
-               "duties",
-               "date_started",
-               "date_left",
+               // "employee_id",
+               // "department",
+               // "role",
+               // "duties",
+               // "date_started",
+               // "date_left",
             ];
 
-            if (!arraysHaveSameElements<string>(keys, expectedKeys)) reject("Excel sheet has incorrect field structure");
+            const missingFields = findMissingFields<string>(expectedKeys, actualKeys);
+            if (missingFields !== "") reject("Excel sheet is missing compulsory field(s): " + missingFields);
 
-            console.log(json[0]);
-            json.forEach((emp, index) => {
-               emp.id = index;
-            });
             resolve(json);
          } catch (error) {
             reject("Error reading Excel file: " + String(error));
@@ -92,12 +101,107 @@ export function excelToJson<T extends { id?: number | string }>(file: File): Pro
    });
 }
 
-export function csvToJson(file: File) {
-   console.log(file);
-   return "";
+export function csvToJson<T extends object>(file: File): Promise<T[]> {
+   return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+         try {
+            const workbook = XLSX.read(e.target?.result, { type: "string" });
+
+            const firstSheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[firstSheetName];
+
+            const json = XLSX.utils.sheet_to_json<T>(worksheet, { raw: false });
+
+            if (!json.length) reject("CSV file has no data");
+            const actualKeys = Object.keys(json[0]);
+            console.log(json);
+
+            // check for compulsory fields only
+            const expectedKeys = [
+               "national_id",
+               "name",
+               // "employee_id",
+               // "department",
+               // "role",
+               // "duties",
+               // "date_started",
+               // "date_left",
+            ];
+
+            const missingFields = findMissingFields<string>(expectedKeys, actualKeys);
+            if (missingFields !== "") reject("CSV data is missing compulsory field(s): " + missingFields);
+
+            resolve(json);
+         } catch (error) {
+            reject("Error reading CSV file: " + String(error));
+         }
+      };
+
+      reader.onerror = function (error) {
+         reject("FileReader error: " + String(error));
+      };
+
+      reader.readAsText(file);
+   });
 }
 
-export function txtToJson(file: File) {
-   console.log(file);
-   return "";
+export function txtToJson(file: File): Promise<NewEmployee[]> {
+   return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+         try {
+            /* 
+               text file records are assumed to be in the format:
+
+               national_id: 123456d 
+               name: russell gundani 
+               
+               national_id: 233456d 
+               name: david moyo 
+               ...
+            */
+
+            const data = e.target?.result as string;
+            const lines = data.split("\n");
+            type JsonObj = { [key: string]: string | undefined } & NewEmployee;
+            const json: JsonObj[] = [];
+
+            let employee: JsonObj = { national_id: undefined, name: undefined };
+            lines.some((line) => {
+               if (line.trim() === "") {
+                  // found a delimiter
+                  if (Boolean(employee.national_id) && Boolean(employee.name)) {
+                     json.push(employee);
+                     employee = { national_id: undefined, name: undefined };
+                  } else {
+                     throw new Error("Employee records must have at least 'national_id' and 'name' key:value pairs");
+                  }
+               } else {
+                  const [key, value] = line.split(":").map((item) => item.trim());
+                  employee[key.toLowerCase()] = value !== "" ? value : undefined;
+               }
+            });
+
+            if (Object.keys(employee).length > 0) {
+               if (Boolean(employee.national_id) && Boolean(employee.name)) {
+                  json.push(employee);
+                  employee = { national_id: undefined, name: undefined };
+               } else throw new Error("Employee records must have at least 'national_id' and 'name' key:value pairs");
+            }
+
+            resolve(json);
+         } catch (error) {
+            reject("Error reading Text file: " + String(error));
+         }
+      };
+
+      reader.onerror = function (error) {
+         reject("FileReader error: " + String(error));
+      };
+
+      reader.readAsText(file);
+   });
 }
