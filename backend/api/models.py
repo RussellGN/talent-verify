@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractUser
 
 class EmployerAdmin(AbstractUser):
    username = models.CharField(max_length=100, unique=True)
-   email = models.EmailField(max_length=100, unique=True)
    
    class Meta:
       verbose_name = 'Employer Admin'
