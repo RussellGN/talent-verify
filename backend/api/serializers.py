@@ -14,9 +14,27 @@ class EmployerAdminRegistrationSerializer(serializers.ModelSerializer):
 
 class EmployerSerializer(serializers.ModelSerializer):
    administrator = EmployerAdminSerializer(many=False, read_only=False)
+   departments = serializers.SerializerMethodField()
    class Meta:
       model = Employer
-      fields = '__all__'
+      fields = [
+         'id',
+         'administrator',
+         'name',
+         'email',
+         'registration_number',
+         'registration_date',
+         'address',
+         'contact_person',
+         'number_of_employees',
+         'contact_phone',
+         'departments',
+      ]
+
+   def get_departments(self, obj):
+      deps = obj.department_set.all() 
+      depNames = [dep.name for dep in deps]
+      return depNames
 
 class EmployerRegistrationSerializer(serializers.ModelSerializer):
    class Meta:

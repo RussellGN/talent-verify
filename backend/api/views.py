@@ -11,7 +11,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from .models import Employer, Employee, Department, Role, CareerTimestamp
-from .serializers import EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, CareerTimestampSerializer
+from .serializers import DepartmentSerializer, EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, CareerTimestampSerializer
 
 @api_view(['GET'])
 def endpoints(request):
@@ -102,6 +102,8 @@ def register_employer(request):
    """
    data = json.loads(request.body)
    print(data)
+   department_list = data.get('departments', [])
+   department_list.append('general') 
    adminSerializer = EmployerAdminRegistrationSerializer(data=data.get('employer-admin'))
    employerSerializer = EmployerRegistrationSerializer(data=data.get('employer'))
    if not adminSerializer.is_valid():
@@ -117,9 +119,27 @@ def register_employer(request):
    employer = employerSerializer.save()
    employer.administrator = admin
    employer.save()
-   employerSerializer = EmployerSerializer(instance=employer)
 
-   return Response({"message": "registration successful", "employer": employerSerializer.data, "token": token.key}, status=status.HTTP_201_CREATED)
+   dep_errors = []
+   if department_list:
+      for dep in department_list:
+         if not Department.objects.filter(name=dep, employer=employer).exists():
+            depSerializer = DepartmentSerializer(data={'name': dep})
+            if not depSerializer.is_valid():
+               dep_errors.append(depSerializer.errors)
+            else:
+               dep = depSerializer.save()
+               dep.employer = employer
+               dep.save()
+
+   employerSerializer = EmployerSerializer(instance=employer)
+   resData = {"message": "registration successful", "employer": employerSerializer.data, "token": token.key}
+   resStatus = status.HTTP_201_CREATED
+   if len(dep_errors) > 0:
+      resData['departemnt_list_error'] = {'message': 'failed to create all departments provided', 'errors': dep_errors}
+      resStatus = status.HTTP_207_MULTI_STATUS
+
+   return Response(resData, status=resStatus)
 
 @api_view(['POST'])
 def login_employer(request):
@@ -153,6 +173,7 @@ def patch_employer(request):
    """
    data = json.loads(request.body)
    print(data)
+   new_department_list = data.get('departments', []) 
    admin = request.user 
    adminSerializer = EmployerAdminRegistrationSerializer(instance=admin, data=data.get('employer-admin', {}), partial=True)
    employerSerializer = EmployerRegistrationSerializer(instance=admin.employer, data=data.get('employer', {}), partial=True)
@@ -167,9 +188,27 @@ def patch_employer(request):
       admin.save()
 
    employer = employerSerializer.save()
-   employerSerializer = EmployerSerializer(instance=employer)
 
-   return Response({"message": "patch successful", "employer": employerSerializer.data}, status=status.HTTP_201_CREATED)
+   dep_errors = []
+   if new_department_list:
+      for dep in new_department_list:
+         if not Department.objects.filter(name=dep, employer=employer).exists():
+            depSerializer = DepartmentSerializer(data={'name': dep})
+            if not depSerializer.is_valid():
+               dep_errors.append(depSerializer.errors)
+            else:
+               dep = depSerializer.save()
+               dep.employer = employer
+               dep.save()
+
+   employerSerializer = EmployerSerializer(instance=employer)
+   resData = {"message": "patch successful", "employer": employerSerializer.data}
+   resStatus = status.HTTP_200_OK
+   if len(dep_errors) > 0:
+      resData['departemnt_list_error'] = {'message': 'failed to create all departments provided', 'errors': dep_errors}
+      resStatus = status.HTTP_207_MULTI_STATUS
+
+   return Response(resData, status=resStatus)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -244,7 +283,7 @@ def add_employees(request):
    try:
       for item in data:
          # handle department
-         department, created = Department.objects.get_or_create(name=item.get("department_name"), employer=employer)
+         department, created = Department.objects.get_or_create(name=item.get("department_name", "general"), employer=employer)
 
          # handle role
          role, created = Role.objects.update_or_create(title=item.get("role_title"), department=department, defaults={"duties": item.get("role_duties")})
@@ -306,7 +345,7 @@ def update_employees(request):
          employee.save()
 
          # handle department
-         department, created = Department.objects.get_or_create(name=item.get("department_name"), employer=employer)
+         department, created = Department.objects.get_or_create(name=item.get("department_name", "general"), employer=employer)
 
          # handle role
          role, created = Role.objects.update_or_create(title=item.get("role_title"), department=department, defaults={"duties": item.get("role_duties")})
