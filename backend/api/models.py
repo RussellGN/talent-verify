@@ -61,11 +61,8 @@ class CareerTimestamp(models.Model):
 
    def __str__(self) -> str:
       if self.employee and self.role:
-         period = "from " + str(self.date_started) 
-         if self.date_left:
-            period += ' to ' + str(self.date_left)
-         else:
-            period += ' to _ ' 
+         period = f"from {str(self.date_started) if self.date_started else '_'}" 
+         period += f' to {str(self.date_left) if self.date_left else "_"} ' 
          return f"{self.employee.name}, {self.role.title}, {self.role.department.name}, {self.role.department.employer.name} ({period})"
       return super().__str__()
 

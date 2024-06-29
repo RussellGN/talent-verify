@@ -1,3 +1,7 @@
 1. add expected, returned data shapes and their types to documentation
 2. make sure all errors are returned as json
 3. convert all camel case vars to snake case python vars
+4. give all routes names in the urls file
+5. ensure employee has employee_id reset after being terminated by employer
+6. work out how talent withou employer is going to be differantiated from regular talednt on GET /talent... routes
+7. consider renaming all identifiers with more sensible names 

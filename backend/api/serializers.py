@@ -91,3 +91,21 @@ class CompactEmployeeSerializer(serializers.ModelSerializer):
          'date_left',
       ]
 
+class HistoricalCareerTimestampSerializer(serializers.ModelSerializer):
+   employer = serializers.CharField(source='employee.employer.name') 
+   department = serializers.CharField(source='role.department.name') 
+   role = serializers.CharField(source='role.title') 
+   duties = serializers.CharField(source='role.duties') 
+
+   class Meta:
+      model = CareerTimestamp
+      fields = [
+         'id',
+         'employer',
+         'department',
+         'role',
+         'duties',
+         'date_started',
+         'date_left',
+      ]
+
