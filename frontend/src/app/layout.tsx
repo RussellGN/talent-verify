@@ -3,6 +3,7 @@ import "./globals.css";
 import Providers from "./providers/Providers";
 import Navbar from "./components/Navbar";
 import { Container, Typography } from "@mui/material";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export const metadata: Metadata = {
    title: "Talent Verify",
@@ -15,8 +16,8 @@ export default function RootLayout({
    children: React.ReactNode;
 }>) {
    return (
-      <Providers>
-         <html lang="en">
+      <html lang="en">
+         <Providers>
             <body>
                <Container sx={{ my: 2 }}>
                   <Navbar />
@@ -26,8 +27,9 @@ export default function RootLayout({
                      <Typography variant="caption">By Russell Gundani</Typography>
                   </footer>
                </Container>
+               <ReactQueryDevtools initialIsOpen={false} />
             </body>
-         </html>
-      </Providers>
+         </Providers>
+      </html>
    );
 }
