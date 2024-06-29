@@ -55,6 +55,7 @@ export interface UnormalizedCurrentEmployeeInterface {
    employee_id?: string | null;
    department?: string | null;
    role?: string | null;
+   duties?: string | null;
    date_started?: Date | string | null;
    date_left?: Date | string | null;
 }

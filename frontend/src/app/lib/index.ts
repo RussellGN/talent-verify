@@ -1,5 +1,6 @@
 import * as XLSX from "xlsx";
 import { NewEmployee } from "../types";
+import axios from "axios";
 
 export function capitalizeWords(str: string) {
    let finalString = "";
@@ -205,3 +206,7 @@ export function txtToJson(file: File): Promise<NewEmployee[]> {
       reader.readAsText(file);
    });
 }
+
+export const axiosClient = axios.create({
+   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+});

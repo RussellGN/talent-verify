@@ -1,33 +1,33 @@
 import { Box, Typography } from "@mui/material";
-import { CareerTimestampInterface } from "../interfaces";
+import { UnormalizedCurrentEmployeeInterface } from "../interfaces";
 import { capitalizeWords, friendlyDate } from "../lib";
 import Link from "next/link";
 import { ArrowForward, Business, Contacts, People, AccessTime, Work } from "@mui/icons-material";
 
-export default function CareerTimestampCard({ careerTimestamp }: { careerTimestamp: CareerTimestampInterface }) {
+export default function CareerTimestampCard({ careerTimestamp }: { careerTimestamp: UnormalizedCurrentEmployeeInterface }) {
    return (
       <Box
          component={Link}
-         href={`/search/${careerTimestamp.employee.id}`}
+         href={`/search/${careerTimestamp.id}`}
          className="block border-slate-300 border-2 bg-slate-50 hover:bg-white hover:border-slate-400  shadow-md rounded-xl p-3"
       >
          <Typography className="border-b" variant="h6" sx={{ mb: 1, pb: 0.2 }}>
-            {capitalizeWords(careerTimestamp.employee.name)}
+            {capitalizeWords(careerTimestamp.name)}
          </Typography>
          <Typography sx={{ mb: 0.5 }}>
             <Contacts sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> National ID:{" "}
-            {careerTimestamp.employee.national_id}
+            {careerTimestamp.national_id}
          </Typography>
          <Typography sx={{ mb: 0.5 }}>
             <Business sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> Employer:{" "}
-            {careerTimestamp.employee.employer?.name}
+            {careerTimestamp.employer || ""}
          </Typography>
          <Typography sx={{ mb: 0.5 }}>
             <People sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> Department:{" "}
-            {careerTimestamp.role.department.name}
+            {careerTimestamp.department || ""}
          </Typography>
          <Typography sx={{ mb: 0.5 }}>
-            <Work sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> Role: {careerTimestamp.role.title}
+            <Work sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> Role: {careerTimestamp.role || ""}
          </Typography>
 
          <br />

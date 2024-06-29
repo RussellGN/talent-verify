@@ -1,6 +1,8 @@
+"use client";
+
 import CareerTimestampCard from "@/app/components/CareerTimestampCard";
-import { sampleCareerTimestamps } from "@/app/data/sampleData";
-import { Grid, Typography } from "@mui/material";
+import useGetTalent from "@/app/hooks/useGetTalent";
+import { CircularProgress, Grid, Typography } from "@mui/material";
 
 type PropTypes = {
    searchParams: {
@@ -11,7 +13,11 @@ type PropTypes = {
 };
 
 export default function SearchPage({ searchParams: { query, date_started, date_left } }: PropTypes) {
-   const resultsFor = query
+   const q = query || date_started || date_left || "";
+   const isDate = Boolean(date_started || date_left);
+   const { isPending, isError, data, error } = useGetTalent(q, isDate);
+
+   const showingRsultsFor = query
       ? query
       : date_started
       ? `date started: ${new Date(date_started).toLocaleDateString()}`
@@ -19,12 +25,24 @@ export default function SearchPage({ searchParams: { query, date_started, date_l
       ? `date left: ${new Date(date_left).toLocaleDateString()}`
       : "";
 
+   if (isPending) {
+      return (
+         <div className="min-h-[75vh] pt-[4rem] text-center">
+            <CircularProgress />
+            <p>searching...</p>
+         </div>
+      );
+   }
+
+   if (isError) throw error;
+   console.log(data);
+
    return (
       <div className="min-h-[75vh]">
-         <Typography className="text-center p-4">Showing Results for {`'${resultsFor}'`}</Typography>
+         <Typography className="text-center p-4">Showing Results for {`'${showingRsultsFor}'`}</Typography>
          <Grid container spacing={1}>
-            {sampleCareerTimestamps.map((timeStamp) => (
-               <Grid key={timeStamp.employee.id} item xs={3}>
+            {data.map((timeStamp) => (
+               <Grid key={timeStamp.id} item xs={3}>
                   <CareerTimestampCard careerTimestamp={timeStamp} />
                </Grid>
             ))}
