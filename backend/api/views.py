@@ -11,7 +11,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from .models import Employer, Employee, Department, Role, CareerTimestamp
-from .serializers import DepartmentSerializer, EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, CareerTimestampSerializer, CompactEmployeeSerializer
+from .serializers import DepartmentSerializer, EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, HistoricalCareerTimestampSerializer, CompactEmployeeSerializer
 from .utils import get_latest_career_timestamp
 
 @api_view(['GET'])
@@ -366,7 +366,6 @@ def handle_employees(request):
    if (request.method == 'PATCH'):
       return update_employees(request)
 
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([TokenAuthentication])
@@ -408,28 +407,53 @@ def get_talent(request):
    query = request.GET.get("query")
    is_date = request.GET.get("is_date")
    print(query, is_date)
-   if len(query) < 2:
+   if not query or len(query) < 2:
       return Response("query is too short", status=status.HTTP_400_BAD_REQUEST)
 
+   filter_options = Q()
    if is_date is not None and str.lower(is_date).strip() == 'true':
       try:
          datetime.fromisoformat(query)
-      except Exception:
+      except ValueError:
          return Response("unsupported date format, only ISO is supported", status=status.HTTP_400_BAD_REQUEST)
+      filter_options |= Q(date_started=query) | Q(date_left=query)
 
-      matched_career_timestamps = CareerTimestamp.objects.filter(
-         Q(date_started=query) |
-         Q(date_left=query)
-      )
    else:      
-      matched_career_timestamps = CareerTimestamp.objects.filter(
-         Q(employee__name__icontains=query) |
-         Q(employee__national_id__icontains=query) |
-         Q(employee__employer__name__icontains=query) |
-         Q(role__title__icontains=query) |
+      filter_options |= (
+         Q(employee__name__icontains=query) | 
+         Q(employee__national_id__icontains=query) | 
+         Q(employee__employer__name__icontains=query) | 
+         Q(role__title__icontains=query) | 
          Q(role__department__name__icontains=query)
       )
 
+   # the folllowing logic is very ugly and inneficient, find a better implementation
+   all_employees = Employee.objects.all()
+   latest_career_timestamps = []
+   for employee in all_employees:
+      career_timestamp = get_latest_career_timestamp(employee)
+      latest_career_timestamps.append(career_timestamp)
+
+   latest_career_timestamps = CareerTimestamp.objects.filter(
+      id__in=[stamp.id for stamp in latest_career_timestamps]
+   )
+   matched_career_timestamps = latest_career_timestamps.filter(filter_options)
+
    career_timestamp_serializer = CompactEmployeeSerializer(matched_career_timestamps, many=True)
    return Response(career_timestamp_serializer.data)
+
+@api_view(['GET'])
+def get_detailed_info_on_talent(request, id):
+   """
+   endpoint: GET /talent/(ID)
+   onSuccess : returns details of talent with given ID if found (JSON)
+   onError : returns an error message if talent not found (JSON)
+   """   
+   employment_history_timestamps = CareerTimestamp.objects.filter(employee__id=int(id)).order_by('id')
+   latest_career_timestamp = employment_history_timestamps.last()
+
+   talent_s_current_employment_serializer = CompactEmployeeSerializer(latest_career_timestamp)
+   employment_history_serializer = HistoricalCareerTimestampSerializer(employment_history_timestamps, many=True)
+
+   return Response({'talent': talent_s_current_employment_serializer.data, 'employment_history': employment_history_serializer.data})
 
