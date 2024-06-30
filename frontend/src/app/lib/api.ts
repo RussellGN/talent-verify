@@ -1,6 +1,6 @@
 import { axiosClient } from ".";
 import { EmployerInterface, HistoricalCareerTimestampInterface, UnormalizedCurrentEmployeeInterface } from "../interfaces";
-import { EmployerRegistrationPayload } from "../types";
+import { Credentials, EmployerRegistrationPayload } from "../types";
 
 export default abstract class API {
    static async getTalent(query: string, isDate: boolean) {
@@ -43,17 +43,23 @@ export default abstract class API {
          .then((res) => res.data);
    }
 
+   static async loginEmployer(credentials: Credentials) {
+      // endpoint: POST /employer/login
+      // expects: employer-admin credentials  (JSON)
+      // onSuccess: returns employer details (with nested employer-admin) and auth token on successful login (JSON)
+      // onError: returns error message on failed login (JSON)
+
+      const json = JSON.stringify(credentials);
+      return await axiosClient
+         .post<{ employer: EmployerInterface; token: string }>("/employer/login/", json)
+         .then((res) => res.data);
+   }
+
    private unhandled_api_endpoints = [
       {
          endpoint: "GET /employer/(ID)",
          onSuccess: "returns details of employer with given ID if found (JSON)",
          onError: "returns error message if employer not found (JSON)",
-      },
-      {
-         endpoint: "POST /employer/login",
-         expects: "employer-admin credentials  (JSON)",
-         onSuccess: "returns employer details (with nested employer-admin) and auth token on successful login (JSON)",
-         onError: "returns error message on failed login (JSON)",
       },
       {
          endpoint: "PATCH /employer",
