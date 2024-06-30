@@ -1,6 +1,6 @@
 import * as XLSX from "xlsx";
 import { NewEmployee } from "../types";
-import axios from "axios";
+import axios, { isAxiosError } from "axios";
 
 export function capitalizeWords(str: string) {
    let finalString = "";
@@ -210,3 +210,12 @@ export function txtToJson(file: File): Promise<NewEmployee[]> {
 export const axiosClient = axios.create({
    baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
 });
+
+axiosClient.interceptors.response.use(
+   (res) => res,
+   (error) => {
+      if (isAxiosError(error)) {
+         return Promise.reject(error.response?.data);
+      } else return Promise.reject(error);
+   }
+);
