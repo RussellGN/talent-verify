@@ -16,6 +16,7 @@ export interface EmployerInterface {
    contact_person: string | null;
    number_of_employees: number | null;
    contact_phone: string | null;
+   departments?: string[];
 }
 
 export interface EmployeeInterface {
