@@ -15,3 +15,21 @@ export type EmployeeAutocompleteOption = {
    national_id: string;
    id: string | number;
 } | null;
+
+export type EmployerRegistrationPayload = {
+   "employer-admin": {
+      password: string;
+      username: string;
+   };
+   employer: {
+      name: string;
+      email: string | null;
+      registration_number: string | null;
+      registration_date: string | null;
+      address: string | null;
+      contact_person: string | null;
+      number_of_employees: number | null;
+      contact_phone: string | null;
+   };
+   departments: string[];
+};
