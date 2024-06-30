@@ -6,3 +6,4 @@
 6. get backend to handle no department assigned, maybe provide a general department
 7. implemnt 'matched-data-item' indicator for search result cards
 8. tpesafe error handling for axios calls
+9. make email field not required on backend
