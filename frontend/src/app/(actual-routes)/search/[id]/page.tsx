@@ -19,7 +19,7 @@ export default function DetailedView({ params: { id } }: { params: { id: string 
 
    if (isPending) {
       return (
-         <div className="min-h-[75vh] pt-[4rem] text-center">
+         <div className="min-h-[65vh] pt-[4rem] text-center">
             <CircularProgress />
             <p>searching...</p>
          </div>
@@ -29,7 +29,7 @@ export default function DetailedView({ params: { id } }: { params: { id: string 
    if (isError) throw error;
 
    return (
-      <div className="min-h-[75vh] relative mt-5">
+      <div className="min-h-[65vh] relative mt-5">
          <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
                <div className="md:sticky top-[110px] shadow-md border rounded-[20px] p-8">
