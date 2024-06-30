@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }: PropsWithChildren) {
    const employer = sampleEmployers[0];
 
    return (
-      <div className="min-h-[65vh] relative mt-5">
+      <div className="min-h-[72vh] relative mt-5">
          <Grid container spacing={2} wrap="nowrap">
             <Grid item xs={12} md={2}>
                <div className="md:sticky top-[110px] shadow-md border rounded-[20px] px-3 py-5">

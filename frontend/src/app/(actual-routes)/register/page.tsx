@@ -3,7 +3,7 @@ import { Box, Button, Typography } from "@mui/material";
 
 export default function LoginPage() {
    return (
-      <div className="min-h-[65vh] flex items-center justify-center">
+      <div className="min-h-[72vh] flex items-center justify-center">
          <form>
             <div className="w-full min-w-[400px] rounded-[20px] shadow-lg bg-slate-50 border px-10 py-20">
                <Typography variant="h4" className="text-center" sx={{ mb: 4 }}>
