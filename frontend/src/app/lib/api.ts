@@ -1,15 +1,13 @@
 import { axiosClient } from ".";
-import { HistoricalCareerTimestampInterface, UnormalizedCurrentEmployeeInterface } from "../interfaces";
+import { EmployerInterface, HistoricalCareerTimestampInterface, UnormalizedCurrentEmployeeInterface } from "../interfaces";
+import { EmployerRegistrationPayload } from "../types";
 
 export default abstract class API {
-   /**
-    * endpoint : GET `/talent?query=(query),is_date=(is_date)`
-    *
-    * expects : `query` and optional `is_date` search parameters used to filter the employees retrieved (JSON)
-    *
-    * onSuccess : returns a list of zero or more employees matching the query criteria (JSON)
-    */
    static async getTalent(query: string, isDate: boolean) {
+      // endpoint : GET /talent?query=(query),is_date=(is_date)
+      // expects : query and optional is_date search parameters used to filter the employees retrieved (JSON)
+      // onSuccess : returns a list of zero or more employees matching the query criteria (JSON)
+
       return await axiosClient
          .get<UnormalizedCurrentEmployeeInterface[]>("/talent", {
             params: {
@@ -20,14 +18,11 @@ export default abstract class API {
          .then((res) => res.data);
    }
 
-   /**
-    * endpoint: GET `/talent/(ID)`
-    *
-    * onSuccess: returns details of talent with given `ID` if found (JSON)
-    *
-    * onError: returns an error message if talent not found (JSON)
-    */
    static async getTalentWithID(id: string | number) {
+      // endpoint: GET /talent/(ID)
+      // onSuccess: returns details of talent with given ID if found (JSON)
+      // onError: returns an error message if talent not found (JSON)
+
       type ReturnType = {
          talent: UnormalizedCurrentEmployeeInterface;
          employment_history: HistoricalCareerTimestampInterface[];
@@ -36,18 +31,23 @@ export default abstract class API {
       return await axiosClient.get<ReturnType>(`/talent/${id}`).then((res) => res.data);
    }
 
+   static async registerEmployer(data: EmployerRegistrationPayload) {
+      // endpoint: POST /employer/register
+      // expects: employer-admin credentials and partial/complete employer details (JSON)
+      // onSuccess: returns employer details (with nested employer-admin) and auth token on successful registration (JSON)
+      // onError: returns error message on failed registration (JSON)
+
+      const json = JSON.stringify(data);
+      return await axiosClient
+         .post<{ employer: EmployerInterface; token: string }>("/employer/register/", json)
+         .then((res) => res.data);
+   }
+
    private unhandled_api_endpoints = [
       {
          endpoint: "GET /employer/(ID)",
          onSuccess: "returns details of employer with given ID if found (JSON)",
          onError: "returns error message if employer not found (JSON)",
-      },
-      {
-         endpoint: "POST /employer/register",
-         expects: "employer-admin credentials and partial/complete employer details (JSON)",
-         onSuccess:
-            "returns employer details (with nested employer-admin) and auth token on successful registration (JSON)",
-         onError: "returns error message on failed registration (JSON)",
       },
       {
          endpoint: "POST /employer/login",
