@@ -4,3 +4,5 @@
 4. add duties to sidebar of talent detailed view
 5. figure out why dates are all coming out as 1/1/1970
 6. get backend to handle no department assigned, maybe provide a general department
+7. implemnt 'matched-data-item' indicator for search result cards
+8. tpesafe error handling for axios calls
