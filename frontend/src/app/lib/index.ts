@@ -214,8 +214,8 @@ export const axiosClient = axios.create({
 axiosClient.interceptors.response.use(
    (res) => res,
    (error) => {
-      if (isAxiosError(error)) {
-         return Promise.reject(error.response?.data);
+      if (isAxiosError(error) && error.response?.data) {
+         return Promise.reject(new Error(String(error.response.data)));
       } else return Promise.reject(error);
    }
 );
