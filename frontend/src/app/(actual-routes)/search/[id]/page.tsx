@@ -1,5 +1,7 @@
+"use client";
+
 import DetailedCareerTimestampCard from "@/app/components/DetailedCareerTimestampCard";
-import { sampleCareerTimestamps, sampleEmployees } from "@/app/data/sampleData";
+import useGetTalentWithID from "@/app/hooks/useGetTalentWithID";
 import { capitalizeWords, friendlyDate } from "@/app/lib";
 import {
    AccessTime,
@@ -10,17 +12,21 @@ import {
    SubdirectoryArrowRight,
    Work,
 } from "@mui/icons-material";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, CircularProgress, Grid, Typography } from "@mui/material";
 
 export default function DetailedView({ params: { id } }: { params: { id: string } }) {
-   const employee = sampleEmployees.find((emp) => emp.id === Number(id));
+   const { isPending, isError, data, error } = useGetTalentWithID(id);
 
-   if (!employee) throw new Error(`Talent with id=${id} not found`);
+   if (isPending) {
+      return (
+         <div className="min-h-[75vh] pt-[4rem] text-center">
+            <CircularProgress />
+            <p>searching...</p>
+         </div>
+      );
+   }
 
-   // let careerTimestamps = sampleCareerTimestamps.filter((stamp) => stamp.employee.id === employee.id);
-   let careerTimestamps = sampleCareerTimestamps;
-   careerTimestamps = [...careerTimestamps, ...careerTimestamps, ...careerTimestamps];
-   const latestCareerTimestamp = careerTimestamps[0];
+   if (isError) throw error;
 
    return (
       <div className="min-h-[75vh] relative mt-5">
@@ -28,37 +34,36 @@ export default function DetailedView({ params: { id } }: { params: { id: string 
             <Grid item xs={12} md={4}>
                <div className="md:sticky top-[110px] shadow-md border rounded-[20px] p-8">
                   <Typography className="border-b" variant="h5" sx={{ mb: 2, pb: 1 }}>
-                     {capitalizeWords(employee.name)}
+                     {capitalizeWords(data.talent.name)}
                   </Typography>
                   <Typography sx={{ mb: 0.5 }}>
                      <Contacts sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
-                     <span style={{ fontSize: "90%" }}>National ID:</span> {employee.national_id}
+                     <span style={{ fontSize: "90%" }}>National ID:</span> {data.talent.national_id}
                   </Typography>
                   <br />
                   <Typography sx={{ mb: 0.5 }}>
                      <Business sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
-                     <span style={{ fontSize: "90%" }}>Current Employer:</span> {employee.employer?.name || "None"}
+                     <span style={{ fontSize: "90%" }}>Current Employer:</span> {data.talent.employer || "N/A"}
                   </Typography>
                   <Typography sx={{ mb: 0.5 }}>
                      <People sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
-                     <span style={{ fontSize: "90%" }}>Current Department:</span>{" "}
-                     {latestCareerTimestamp.role.department.name}
+                     <span style={{ fontSize: "90%" }}>Current Department:</span> {data.talent.department || "N/A"}
                   </Typography>
                   <Typography sx={{ mb: 0.5 }}>
                      <Work sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
-                     <span style={{ fontSize: "90%" }}>Current Role:</span> {latestCareerTimestamp.role.title}
+                     <span style={{ fontSize: "90%" }}>Current Role:</span> {data.talent.role || "N/A"}
                   </Typography>
 
                   <br />
                   <Typography sx={{ mb: 0.5 }}>
                      <AccessTime sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />
                      <span style={{ fontSize: "90%" }}>Date started:</span>{" "}
-                     {latestCareerTimestamp.date_started ? friendlyDate(latestCareerTimestamp.date_started) : "N/A"}
+                     {data.talent.date_started ? friendlyDate(data.talent.date_started) : "N/A"}
                   </Typography>
-                  {latestCareerTimestamp.date_left ? (
+                  {data.talent.date_left ? (
                      <Typography sx={{ mb: 0.5 }}>
                         <AccessTime sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />
-                        <span style={{ fontSize: "90%" }}>Date left:</span> {friendlyDate(latestCareerTimestamp.date_left)}
+                        <span style={{ fontSize: "90%" }}>Date left:</span> {friendlyDate(data.talent.date_left)}
                      </Typography>
                   ) : (
                      <Typography sx={{ mb: 0.5 }}>
@@ -77,9 +82,11 @@ export default function DetailedView({ params: { id } }: { params: { id: string 
 
                   <div className="bg-white">
                      <Grid container justifyContent="center" spacing={2}>
-                        {careerTimestamps.map((stamp, index) => {
+                        {data.employment_history.map((stamp, index) => {
                            const isEven = (index + 1) % 2 === 0;
-                           const isSecondLast = index === careerTimestamps.length - 2;
+                           const isLastOrSecondLast =
+                              index === data.employment_history.length - 2 || index === data.employment_history.length - 1;
+
                            return (
                               <Grid key={index} item xs={6} md={5}>
                                  <Box sx={{ pt: isEven ? 8 : 0 }}>
@@ -96,7 +103,7 @@ export default function DetailedView({ params: { id } }: { params: { id: string 
                                        sx={{
                                           fontSize: "4rem",
                                           color: "grey",
-                                          display: !isEven ? (!isSecondLast ? "block" : "none") : "none",
+                                          display: !isEven ? (!isLastOrSecondLast ? "block" : "none") : "none",
                                           transform: "rotateZ(90deg)",
                                           mt: 4,
                                           ml: "auto",
