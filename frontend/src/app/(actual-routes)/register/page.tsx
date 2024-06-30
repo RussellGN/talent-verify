@@ -1,6 +1,7 @@
 "use client";
 
 import useRegisterEmployer from "@/app/hooks/useRegisterEmployer";
+import { EmployerRegistrationPayload } from "@/app/types";
 import { ArrowBack, InfoOutlined, WarningOutlined } from "@mui/icons-material";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { redirect } from "next/navigation";
@@ -12,7 +13,7 @@ export default function RegistrationPage() {
    function handleSubmit(e: FormEvent<HTMLFormElement>) {
       e.preventDefault();
       const formData = new FormData(e.currentTarget);
-      const data = {
+      const data: EmployerRegistrationPayload = {
          employer: {
             name: formData.get("name")?.toString() || "",
             email: formData.get("email")?.toString() || null,
