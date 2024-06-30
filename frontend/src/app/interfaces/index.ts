@@ -16,6 +16,7 @@ export interface EmployerInterface {
    contact_person: string | null;
    number_of_employees: number | null;
    contact_phone: string | null;
+   departments?: string[];
 }
 
 export interface EmployeeInterface {
@@ -58,4 +59,14 @@ export interface UnormalizedCurrentEmployeeInterface {
    duties?: string | null;
    date_started?: Date | string | null;
    date_left?: Date | string | null;
+}
+
+export interface HistoricalCareerTimestampInterface {
+   id: number | string;
+   employer?: string | undefined;
+   department?: string | undefined;
+   role?: string | undefined;
+   duties?: string | undefined;
+   date_started?: string | Date | undefined;
+   date_left?: string | Date | undefined;
 }

@@ -27,7 +27,7 @@ export default function SearchPage({ searchParams: { query, date_started, date_l
 
    if (isPending) {
       return (
-         <div className="min-h-[75vh] pt-[4rem] text-center">
+         <div className="min-h-[72vh] pt-[4rem] text-center">
             <CircularProgress />
             <p>searching...</p>
          </div>
@@ -37,8 +37,16 @@ export default function SearchPage({ searchParams: { query, date_started, date_l
    if (isError) throw error;
    console.log(data);
 
+   if (data.length === 0) {
+      return (
+         <div className="min-h-[72vh] pt-[4rem]">
+            <Typography className="text-center p-4">No results found for {`'${showingRsultsFor}'`}</Typography>
+         </div>
+      );
+   }
+
    return (
-      <div className="min-h-[75vh]">
+      <div className="min-h-[72vh]">
          <Typography className="text-center p-4">Showing Results for {`'${showingRsultsFor}'`}</Typography>
          <Grid container spacing={1}>
             {data.map((timeStamp) => (
