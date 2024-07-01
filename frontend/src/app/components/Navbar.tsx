@@ -1,7 +1,8 @@
-import { Business, Verified } from "@mui/icons-material";
-import { Button, Link as MuiLink } from "@mui/material";
+import { Verified } from "@mui/icons-material";
+import { Link as MuiLink } from "@mui/material";
 import Link from "next/link";
 import GoBack from "./GoBack";
+import NavbarAuthButtons from "./NavbarAuthButtons";
 
 export default function Navbar() {
    return (
@@ -24,28 +25,7 @@ export default function Navbar() {
                   Home
                </MuiLink>
 
-               <Button component={Link} href="/login" sx={{ textTransform: "capitalize" }} variant="contained">
-                  Employer Login
-               </Button>
-
-               <Button
-                  component={Link}
-                  href="/register"
-                  sx={{ textTransform: "capitalize" }}
-                  variant="contained"
-                  color="success"
-               >
-                  Register Employer
-               </Button>
-
-               <>
-                  <Button startIcon={<Business />} component={Link} href="/dashboard/employees">
-                     Econet
-                  </Button>
-                  <Button sx={{ textTransform: "capitalize" }} variant="contained">
-                     Logout
-                  </Button>
-               </>
+               <NavbarAuthButtons />
             </nav>
          </div>
 
