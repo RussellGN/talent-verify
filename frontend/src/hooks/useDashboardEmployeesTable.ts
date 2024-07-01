@@ -42,7 +42,15 @@ export default function useDashboardEmployeesTable() {
 
    const dataAvailable = !(isPending || isError);
 
-   const rows: GridRowsProp & UnormalizedCurrentEmployeeInterface[] = dataAvailable ? data : [];
+   let rows: GridRowsProp & UnormalizedCurrentEmployeeInterface[] = [];
+   if (dataAvailable) {
+      const properlyFormatedData = data.map((employee) => ({
+         ...employee,
+         date_started: employee.date_started ? new Date(employee.date_started) : undefined,
+         date_left: employee.date_left ? new Date(employee.date_left) : undefined,
+      }));
+      rows = properlyFormatedData;
+   }
 
    const columns: GridColDef[] = [
       { field: "id", headerName: "ID", type: "string" },
