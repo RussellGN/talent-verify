@@ -1,6 +1,6 @@
 import DashboardEmployeesTable from "@/app/components/DashboardEmployeesTable";
-import { Add, InfoOutlined, Remove, UploadFile } from "@mui/icons-material";
-import { Button, Typography } from "@mui/material";
+import { Add, Remove, UploadFile } from "@mui/icons-material";
+import { Button } from "@mui/material";
 import Link from "next/link";
 
 export default function EmployeesPage() {
@@ -42,14 +42,6 @@ export default function EmployeesPage() {
             >
                Remove an Employee
             </Button>
-         </div>
-
-         <div className="p-5 ">
-            <Typography variant="subtitle2">
-               <InfoOutlined color="warning" fontSize="inherit" sx={{ mt: -0.3, mr: 0.5 }} />
-               To update an employee&apos;s details, click in any data cell and enter a new value. You will be prompted for
-               confirmation before saving.
-            </Typography>
          </div>
 
          <div className="py-5">
