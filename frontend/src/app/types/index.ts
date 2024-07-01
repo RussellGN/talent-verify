@@ -33,3 +33,5 @@ export type EmployerRegistrationPayload = {
    };
    departments: string[];
 };
+
+export type Credentials = { username: string; password: string };
