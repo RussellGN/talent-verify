@@ -82,7 +82,7 @@ export default abstract class API {
       return await axiosClient
          .get<{ employer: EmployerInterface; employees: UnormalizedCurrentEmployeeInterface[] }>("employer/", {
             headers: {
-               Authorization: `Bearer ${token}`,
+               Authorization: `Token ${token}`,
             },
          })
          .then((res) => res.data);
@@ -99,7 +99,7 @@ export default abstract class API {
       return await axiosClient
          .get<UnormalizedCurrentEmployeeInterface[]>("employees/", {
             headers: {
-               Authorization: `Bearer ${token}`,
+               Authorization: `Token ${token}`,
             },
          })
          .then((res) => res.data);
@@ -116,7 +116,7 @@ export default abstract class API {
       return await axiosClient
          .post<string>("employer/logout/", {
             headers: {
-               Authorization: `Bearer ${token}`,
+               Authorization: `Token ${token}`,
             },
          })
          .then((res) => res.data);
