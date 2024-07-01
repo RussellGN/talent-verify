@@ -22,7 +22,7 @@ def endpoints(request):
          "onSuccess" : "returns a list of all api endpoints and their documentation (JSON)",
       },
       {
-         "endpoint" : "GET /employer/(ID)",
+         "endpoint" : "GET /employer",
          "expects": "auth token in request headers",
          "onError" : "returns error message if employer not found (JSON)",
          "onSuccess" : """onSuccess : returns details of employer and list of employees for employer assigned with auth token in request headers (JSON)
@@ -42,11 +42,20 @@ def endpoints(request):
       {
          "endpoint" : "POST /employer/login",
          "expects" : "employer-admin credentials  (JSON)",
-         "onSuccess" : "returns employer details (with nested employer-admin) and auth token on successful login (JSON)",
          "onError" : "returns error message on failed login (JSON)",
+         "onSuccess" : """returns employer details (with nested employer-admin), list of employees and auth token on successful login (JSON)
+            {
+            token: string
+
+            employer: {id, administrator: {username, password}, name, email, registration_number, registration_date, address, contact_person, number_of_employees, contact_phone, departments: [string]}
+
+            employees : [{id, national_id, name, employee_id, employer, department, role, duties, date_started, date_left}]
+            }
+            """
+
       }, 
       {
-         "endpoint" : "PATCH /employer",
+         "endpoint" : "PATCH /employer/update",
          "expects" : "partial/complete employer and employer-admin details as well as auth token in request headers (JSON)",
          "onSuccess" : "returns updated employer details (with nested employer-admin) on successful patch (JSON)",
          "onError" : "returns error message on failed patch (JSON)",
@@ -99,7 +108,7 @@ def endpoints(request):
 @authentication_classes([TokenAuthentication])
 def get_employer(request):
    """
-   endpoint : GET /employer/(ID)
+   endpoint : GET /employer
    expects: auth token in request headers
    onError : returns error message if employer not found (JSON)
    onSuccess : returns details of employer and list of employees for employer assigned with auth token in request headers (JSON)
@@ -170,8 +179,15 @@ def login_employer(request):
    """
    endpoint : POST /employer/login
    expects : employer-admin credentials  (JSON)
-   onSuccess : returns employer details (with nested employer-admin) and auth token on successful login (JSON)
    onError : returns error message on failed login (JSON)
+   onSuccess : returns employer details (with nested employer-admin), list of employees and auth token on successful login (JSON)
+      {
+      token: string
+
+      employer: {id, administrator: {username, password}, name, email, registration_number, registration_date, address, contact_person, number_of_employees, contact_phone, departments: [string]}
+
+      employees : [{id, national_id, name, employee_id, employer, department, role, duties, date_started, date_left}]
+      }
    """
    data = json.loads(request.body)
    username = data.get('username')   
@@ -182,15 +198,18 @@ def login_employer(request):
       return Response({"error": "login failed", "details": "incorrect credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
    token, created = Token.objects.get_or_create(user=employerAdmin)
-   employerSerializer = EmployerSerializer(instance=employerAdmin.employer)
-   return Response({"employer": employerSerializer.data, "token": token.key})
+   employees = employerAdmin.employer.employee_set.all()
+   latest_career_timestamps = [get_latest_career_timestamp(employee) for employee in employees]
+   employer_serializer = EmployerSerializer(instance=employerAdmin.employer)
+   compact_employee_serializer = CompactEmployeeSerializer(latest_career_timestamps, many=True)
+   return Response({'employer': employer_serializer.data, 'employees': compact_employee_serializer.data, "token": token.key})
 
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([TokenAuthentication])
 def patch_employer(request):
    """
-   endpoint : PATCH /employer
+   endpoint : PATCH /employer/update
    expects : partial/complete employer and employer-admin details as well as auth token in request headers (JSON)
    onSuccess : returns updated employer details (with nested employer-admin) on successful patch (JSON)
    onError : returns error message on failed patch (JSON)

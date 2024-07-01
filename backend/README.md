@@ -26,8 +26,15 @@ This api has the following endpoints
 4. POST /employer/login
 
    -  expects employer-admin credentials (JSON)
-   -  returns employer details (with nested employer-admin) and auth token on successful login (JSON)
    -  returns error message on failed login (JSON)
+   -  returns employer details (with nested employer-admin), list of employees and auth token on successful login (JSON)
+      {
+      token: string
+
+      employer: {id, administrator: {username, password}, name, email, registration_number, registration_date, address, contact_person, number_of_employees, contact_phone, departments: [string]}
+
+      employees : [{id, national_id, name, employee_id, employer, department, role, duties, date_started, date_left}]
+      }
 
 5. PATCH /employer
 
