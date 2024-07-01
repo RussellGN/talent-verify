@@ -44,23 +44,51 @@ export default abstract class API {
    }
 
    static async loginEmployer(credentials: Credentials) {
-      // endpoint: POST /employer/login
-      // expects: employer-admin credentials  (JSON)
-      // onSuccess: returns employer details (with nested employer-admin) and auth token on successful login (JSON)
-      // onError: returns error message on failed login (JSON)
+      /* 
+         endpoint: POST /employer/login
+         expects: employer-admin credentials  (JSON)
+         onError: returns error message on failed login (JSON)
+         onSuccess: returns employer details (with nested employer-admin), list of employees and auth token on successful login (JSON)
+            {
+               token: string
+
+               employer: {id, administrator: {username, password}, name, email, registration_number, registration_date, address, contact_person, number_of_employees, contact_phone, departments: [string]}
+
+               employees : [{id, national_id, name, employee_id, employer, department, role, duties, date_started, date_left}]
+            }
+      */
 
       const json = JSON.stringify(credentials);
       return await axiosClient
-         .post<{ employer: EmployerInterface; token: string }>("/employer/login/", json)
+         .post<{ token: string; employer: EmployerInterface; employees: UnormalizedCurrentEmployeeInterface[] }>(
+            "/employer/login/",
+            json
+         )
+         .then((res) => res.data);
+   }
+
+   static async getEmployer(token: string) {
+      /* 
+         endpoint: GET /employer
+         expects: auth token in request headers
+         onError: returns error message if employer not found (JSON)
+         onSuccess: onSuccess : returns details of employer and list of employees for employer assigned with auth token in request headers (JSON)
+            {
+               employer: {id, administrator: {username, password}, name, email, registration_number, registration_date, address, contact_person, number_of_employees, contact_phone, departments: [string]}
+
+               employees : [{id, national_id, name, employee_id, employer, department, role, duties, date_started, date_left}]
+            }
+         */
+      return await axiosClient
+         .get<{ employer: EmployerInterface; employees: UnormalizedCurrentEmployeeInterface[] }>("/employer/", {
+            headers: {
+               Authorization: `Token ${token}`,
+            },
+         })
          .then((res) => res.data);
    }
 
    private unhandled_api_endpoints = [
-      {
-         endpoint: "GET /employer/(ID)",
-         onSuccess: "returns details of employer with given ID if found (JSON)",
-         onError: "returns error message if employer not found (JSON)",
-      },
       {
          endpoint: "PATCH /employer",
          expects: "partial/complete employer and employer-admin details as well as auth token in request headers (JSON)",
