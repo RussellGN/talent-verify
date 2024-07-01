@@ -8,7 +8,7 @@ export default function useLogout() {
    const queryClient = useQueryClient();
    const token = getCookie("token");
 
-   return useMutation({
+   const { mutate: logout, isPending: logoutPending } = useMutation({
       mutationFn: () => API.logoutEmployer(token || ""),
       onSuccess: async (data) => {
          console.log(data);
@@ -17,4 +17,6 @@ export default function useLogout() {
          router.push("/");
       },
    });
+
+   return { logout, logoutPending };
 }
