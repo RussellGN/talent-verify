@@ -1,7 +1,7 @@
 "use client";
 
-import { assignIdAndFormatDates, csvToJson, excelToJson, txtToJson } from "@/app/lib";
-import { NewEmployee } from "@/app/types";
+import { assignIdAndFormatDates, csvToJson, excelToJson, txtToJson } from "@/lib";
+import { NewEmployee } from "@/types";
 import {
    InfoOutlined,
    KeyboardArrowDown,

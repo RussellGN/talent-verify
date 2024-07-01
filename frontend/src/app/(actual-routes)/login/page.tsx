@@ -1,7 +1,7 @@
 "use client";
 
-import useLoginEmployer from "@/app/hooks/useLoginEmployer";
-import { Credentials } from "@/app/types";
+import useLoginEmployer from "@/hooks/useLoginEmployer";
+import { Credentials } from "@/types";
 import { ArrowBack, InfoOutlined, WarningOutlined } from "@mui/icons-material";
 import { Button, CircularProgress, Typography } from "@mui/material";
 import { redirect } from "next/navigation";

@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import SearchForm from "../components/SearchForm";
+import SearchForm from "../../components/SearchForm";
 
 export default function HomePage() {
    return (

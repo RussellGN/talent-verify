@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 import { Grid } from "@mui/material";
-import DashboardSidebar from "@/app/components/DashboardSidebar";
+import DashboardSidebar from "@/components/DashboardSidebar";
 
 export default function DashboardLayout({ children }: PropsWithChildren) {
    return (

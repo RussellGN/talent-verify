@@ -1,7 +1,7 @@
 "use client";
 
-import CareerTimestampCard from "@/app/components/CareerTimestampCard";
-import useGetTalent from "@/app/hooks/useGetTalent";
+import CareerTimestampCard from "@/components/CareerTimestampCard";
+import useGetTalent from "@/hooks/useGetTalent";
 import { CircularProgress, Grid, Typography } from "@mui/material";
 
 type PropTypes = {
