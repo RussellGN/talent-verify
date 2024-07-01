@@ -23,8 +23,15 @@ def endpoints(request):
       },
       {
          "endpoint" : "GET /employer/(ID)",
-         "onSuccess" : "returns details of employer with given ID if found (JSON)",
+         "expects": "auth token in request headers",
          "onError" : "returns error message if employer not found (JSON)",
+         "onSuccess" : """onSuccess : returns details of employer and list of employees for employer assigned with auth token in request headers (JSON)
+            {
+               employer: {id, administrator: {username, password}, name, email, registration_number, registration_date, address, contact_person, number_of_employees, contact_phone, departments: [string]}
+
+               employees : [{id, national_id, name, employee_id, employer, department, role, duties, date_started, date_left}]
+            }
+            """
       }, 
       {
          "endpoint" : "POST /employer/register",
@@ -88,20 +95,26 @@ def endpoints(request):
    return Response(api_endpoints)
 
 @api_view(['GET'])
-def get_employer(request, id):
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def get_employer(request):
    """
    endpoint : GET /employer/(ID)
-   onSuccess : returns details of employer with given ID if found (JSON)
+   expects: auth token in request headers
    onError : returns error message if employer not found (JSON)
-   """
-   employer = None
-   try: 
-      employer = Employer.objects.get(id=id)
-   except Employer.DoesNotExist:
-      return Response({"error": f"employer with id: {id} was not found"}, status=status.HTTP_404_NOT_FOUND)
+   onSuccess : returns details of employer and list of employees for employer assigned with auth token in request headers (JSON)
+      {
+         employer: {id, administrator: {username, password}, name, email, registration_number, registration_date, address, contact_person, number_of_employees, contact_phone, departments: [string]}
 
-   serializer = EmployerSerializer(employer, many=False)
-   return Response(serializer.data)
+         employees : [{id, national_id, name, employee_id, employer, department, role, duties, date_started, date_left}]
+      }
+   """
+   employer = request.user.employer
+   employees = employer.employee_set.all()
+   latest_career_timestamps = [get_latest_career_timestamp(employee) for employee in employees]
+   employer_serializer = EmployerSerializer(employer)
+   compact_employee_serializer = CompactEmployeeSerializer(latest_career_timestamps, many=True)
+   return Response({'employer': employer_serializer.data, 'employees': compact_employee_serializer.data})
 
 @api_view(['POST'])
 def register_employer(request):
