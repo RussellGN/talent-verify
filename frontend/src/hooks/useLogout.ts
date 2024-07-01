@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import API from "../lib/api";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { deleteCookie, getCookie } from "../lib";
 
 export default function useLogout() {
    const router = useRouter();
+   const pathname = usePathname();
    const queryClient = useQueryClient();
    const token = getCookie("token");
 
@@ -14,7 +15,7 @@ export default function useLogout() {
          console.log(data);
          deleteCookie("token");
          await queryClient.invalidateQueries({ queryKey: ["employer", "employees", { token }] });
-         router.push("/");
+         if (pathname.includes("/dashboard")) router.push("/");
       },
    });
 
