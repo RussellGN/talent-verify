@@ -25,6 +25,7 @@ export default function NavbarAuthButtons() {
                   {data.employer.name}
                </Button>
                <Button
+                  disabled={logoutPending}
                   className={logoutSuccess ? "hidden" : ""}
                   onClick={() => logout()}
                   sx={{ textTransform: "capitalize" }}
