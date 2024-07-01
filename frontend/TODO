@@ -10,3 +10,4 @@
 10.   remove unnecessary console logs
 11.   make sure to auth protect pages
 12.   move auxilliary folders from app to src
+13.   fix cookies error
