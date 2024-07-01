@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Providers from "./providers/Providers";
-import Navbar from "./components/Navbar";
+import Providers from "../providers/Providers";
+import Navbar from "../components/Navbar";
 import { Container, Typography } from "@mui/material";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 

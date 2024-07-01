@@ -1,4 +1,4 @@
-import { sampleEmployers } from "@/app/data/sampleData";
+import { sampleEmployers } from "@/data/sampleData";
 import { InfoOutlined } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 

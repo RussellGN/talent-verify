@@ -1,10 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import API from "../lib/api";
 import { Credentials } from "../types";
-import { setCookie } from "../lib";
+import { getCookie, setCookie } from "../lib";
+import { redirect } from "next/navigation";
 
 export default function useLoginEmployer() {
    const queryClient = useQueryClient();
+   const token = getCookie("token");
+   if (token) redirect("/dashboard/employees");
 
    return useMutation({
       mutationFn: (credentials: Credentials) => API.loginEmployer(credentials),
@@ -14,7 +17,7 @@ export default function useLoginEmployer() {
             employer: data.employer,
             employees: data.employees,
          });
-         queryClient.setQueryData(["employees"], data.employees);
+         queryClient.setQueryData(["employees", { token: data.token }], data.employees);
       },
    });
 }

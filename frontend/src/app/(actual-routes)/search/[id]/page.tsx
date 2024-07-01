@@ -1,8 +1,8 @@
 "use client";
 
-import DetailedCareerTimestampCard from "@/app/components/DetailedCareerTimestampCard";
-import useGetTalentWithID from "@/app/hooks/useGetTalentWithID";
-import { capitalizeWords, friendlyDate } from "@/app/lib";
+import DetailedCareerTimestampCard from "@/components/DetailedCareerTimestampCard";
+import useGetTalentWithID from "@/hooks/useGetTalentWithID";
+import { capitalizeWords, friendlyDate } from "@/lib";
 import {
    AccessTime,
    Business,

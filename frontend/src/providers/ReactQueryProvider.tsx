@@ -6,7 +6,9 @@ import { PropsWithChildren } from "react";
 const queryClient = new QueryClient({
    defaultOptions: {
       queries: {
-         retry: 1,
+         retry: false,
+         refetchOnWindowFocus: false,
+         staleTime: Infinity,
       },
    },
 });

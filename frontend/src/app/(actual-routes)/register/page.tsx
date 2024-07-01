@@ -1,7 +1,7 @@
 "use client";
 
-import useRegisterEmployer from "@/app/hooks/useRegisterEmployer";
-import { EmployerRegistrationPayload } from "@/app/types";
+import useRegisterEmployer from "@/hooks/useRegisterEmployer";
+import { EmployerRegistrationPayload } from "@/types";
 import { ArrowBack, InfoOutlined, WarningOutlined } from "@mui/icons-material";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { redirect } from "next/navigation";

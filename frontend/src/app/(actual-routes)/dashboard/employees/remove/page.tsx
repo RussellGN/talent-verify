@@ -1,7 +1,7 @@
 "use client";
 
-import { sampleEmployees } from "@/app/data/sampleData";
-import { EmployeeAutocompleteOption } from "@/app/types";
+import { sampleEmployees } from "@/data/sampleData";
+import { EmployeeAutocompleteOption } from "@/types";
 import { InfoOutlined } from "@mui/icons-material";
 import { Autocomplete, Button, TextField, Typography } from "@mui/material";
 import { FormEvent, SyntheticEvent, useState } from "react";
