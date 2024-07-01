@@ -6,10 +6,16 @@ This api has the following endpoints
 
    -  returns a json list of all api endpoints and their documentation
 
-2. GET /employer/(ID)
+2. GET /employer
 
-   -  returns details of employer with given ID if found (JSON)
+   -  expects auth token in request headers (JSON)
    -  returns error message if employer not found (JSON)
+   -  returns details of employer and list of employees for employer assigned with auth token in request headers (JSON)
+      {
+      employer: {id, administrator: {username, password}, name, email, registration_number, registration_date, address, contact_person, number_of_employees, contact_phone, departments: \[string\]}
+
+      employees : [{id, national_id, name, employee_id, employer, department, role, duties, date_started, date_left}]
+      }
 
 3. POST /employer/register
 
