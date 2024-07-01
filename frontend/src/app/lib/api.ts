@@ -9,7 +9,7 @@ export default abstract class API {
       // onSuccess : returns a list of zero or more employees matching the query criteria (JSON)
 
       return await axiosClient
-         .get<UnormalizedCurrentEmployeeInterface[]>("/talent", {
+         .get<UnormalizedCurrentEmployeeInterface[]>("talent", {
             params: {
                query: query,
                is_date: isDate,
@@ -28,7 +28,7 @@ export default abstract class API {
          employment_history: HistoricalCareerTimestampInterface[];
       };
 
-      return await axiosClient.get<ReturnType>(`/talent/${id}`).then((res) => res.data);
+      return await axiosClient.get<ReturnType>(`talent/${id}`).then((res) => res.data);
    }
 
    static async registerEmployer(data: EmployerRegistrationPayload) {
@@ -39,7 +39,7 @@ export default abstract class API {
 
       const json = JSON.stringify(data);
       return await axiosClient
-         .post<{ employer: EmployerInterface; token: string }>("/employer/register/", json)
+         .post<{ employer: EmployerInterface; token: string }>("employer/register/", json)
          .then((res) => res.data);
    }
 
@@ -61,7 +61,7 @@ export default abstract class API {
       const json = JSON.stringify(credentials);
       return await axiosClient
          .post<{ token: string; employer: EmployerInterface; employees: UnormalizedCurrentEmployeeInterface[] }>(
-            "/employer/login/",
+            "employer/login/",
             json
          )
          .then((res) => res.data);
@@ -80,9 +80,43 @@ export default abstract class API {
             }
          */
       return await axiosClient
-         .get<{ employer: EmployerInterface; employees: UnormalizedCurrentEmployeeInterface[] }>("/employer/", {
+         .get<{ employer: EmployerInterface; employees: UnormalizedCurrentEmployeeInterface[] }>("employer/", {
             headers: {
-               Authorization: `Token ${token}`,
+               Authorization: `Bearer ${token}`,
+            },
+         })
+         .then((res) => res.data);
+   }
+
+   static async getEmployees(token: string) {
+      /* 
+         endpoint: GET /employees
+         expects: expects an auth token in request headers  (JSON)
+         onError: returns an error message if unsuccessfull (JSON)
+         onSuccess: returns a list of zero or more employees belonging to an employer (JSON)
+            [{id, national_id, name, employee_id, employer, department, role, duties, date_started, date_left}]
+      */
+      return await axiosClient
+         .get<UnormalizedCurrentEmployeeInterface[]>("employees/", {
+            headers: {
+               Authorization: `Bearer ${token}`,
+            },
+         })
+         .then((res) => res.data);
+   }
+
+   static async logoutEmployer(token: string) {
+      /* 
+         endpoint: POST /employer/logout
+         expects: auth token in request headers
+         onSuccess: returns success message (JSON)
+         onError: returns error message (JSON)
+      */
+      console.log(token);
+      return await axiosClient
+         .post<string>("employer/logout/", {
+            headers: {
+               Authorization: `Bearer ${token}`,
             },
          })
          .then((res) => res.data);
@@ -94,12 +128,6 @@ export default abstract class API {
          expects: "partial/complete employer and employer-admin details as well as auth token in request headers (JSON)",
          onSuccess: "returns updated employer details (with nested employer-admin) on successful patch (JSON)",
          onError: "returns error message on failed patch (JSON)",
-      },
-      {
-         endpoint: "POST /employer/logout",
-         expects: "auth token in request headers",
-         onSuccess: "returns success message (JSON)",
-         onError: "returns error message (JSON)",
       },
       {
          endpoint: "POST /employees",
@@ -114,12 +142,6 @@ export default abstract class API {
             "a list of one or more employees's partial/complete details for updating as well as an auth token in request headers (JSON)",
          onSuccess: "returns a list of updated employees if successful (JSON)",
          onError: "returns an error message on failed patch (JSON)",
-      },
-      {
-         endpoint: "GET /employees",
-         expects: "expects an auth token in request headers  (JSON)",
-         onSuccess: "returns a list of zero or more employees belonging to an employer (JSON)",
-         onError: "returns an error message if unsuccessfull (JSON)",
       },
       {
          endpoint: "POST /employees/reassign",
