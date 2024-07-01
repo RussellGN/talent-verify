@@ -114,11 +114,15 @@ export default abstract class API {
       */
       console.log(token);
       return await axiosClient
-         .post<string>("employer/logout/", {
-            headers: {
-               Authorization: `Token ${token}`,
-            },
-         })
+         .post<string>(
+            "employer/logout/",
+            {},
+            {
+               headers: {
+                  Authorization: `Token ${token}`,
+               },
+            }
+         )
          .then((res) => res.data);
    }
 
