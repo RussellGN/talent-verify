@@ -32,13 +32,13 @@ export default function NavbarAuthButtons() {
       );
    }
 
+   console.log(pathname, pathname === "/register");
    return (
       <>
          <Button
             component={Link}
             href="/login"
-            sx={{ textTransform: "capitalize" }}
-            className={pathname === "/login" ? "hidden" : ""}
+            sx={{ textTransform: "capitalize", display: pathname === "/login" ? "none" : "inline-flex" }}
             variant="contained"
          >
             Employer Login
@@ -47,8 +47,7 @@ export default function NavbarAuthButtons() {
          <Button
             component={Link}
             href="/register"
-            sx={{ textTransform: "capitalize" }}
-            className={pathname === "/register" ? "hidden" : ""}
+            sx={{ textTransform: "capitalize", display: pathname === "/register" ? "none" : "inline-flex" }}
             variant="contained"
             color="success"
          >
