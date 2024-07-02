@@ -14,3 +14,4 @@
 14.   only redirect to homepage on logout if current page isnt a dashboard page
 15.   implement confirmation before logging out
 16.   consider creating actions on the datagrid and putting a link to employees's detailed view, and a link to reassign them
+17.   handle password field
