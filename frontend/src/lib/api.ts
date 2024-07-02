@@ -1,6 +1,6 @@
 import { axiosClient } from ".";
 import { EmployerInterface, HistoricalCareerTimestampInterface, UnormalizedCurrentEmployeeInterface } from "../interfaces";
-import { Credentials, EmployerRegistrationPayload } from "../types";
+import { Credentials, EmployerRegistrationPayload, EmployerUpdatePayload } from "../types";
 
 export default abstract class API {
    static async getTalent(query: string, isDate: boolean) {
@@ -126,13 +126,23 @@ export default abstract class API {
          .then((res) => res.data);
    }
 
+   static async updateEmployer(token: string, data: EmployerUpdatePayload) {
+      // endpoint: PATCH /employer/update
+      // expects: partial/complete employer and employer-admin details as well as auth token in request headers (JSON)
+      // onSuccess: "returns updated employer details (with nested employer-admin) on successful patch (JSON)",
+      // onError: "returns error message on failed patch (JSON)",
+
+      const json = JSON.stringify(data);
+      return await axiosClient
+         .patch<{ employer: EmployerInterface; message: string }>("employer/update/", json, {
+            headers: {
+               Authorization: `Token ${token}`,
+            },
+         })
+         .then((res) => res.data);
+   }
+
    private unhandled_api_endpoints = [
-      {
-         endpoint: "PATCH /employer",
-         expects: "partial/complete employer and employer-admin details as well as auth token in request headers (JSON)",
-         onSuccess: "returns updated employer details (with nested employer-admin) on successful patch (JSON)",
-         onError: "returns error message on failed patch (JSON)",
-      },
       {
          endpoint: "POST /employees",
          expects:
