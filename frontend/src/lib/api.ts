@@ -142,14 +142,27 @@ export default abstract class API {
          .then((res) => res.data);
    }
 
+   static async addEmployees(token: string, data: UnormalizedCurrentEmployeeInterface[]) {
+      /*
+         endpoint: POST /employees
+         expects: a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)
+         onSuccess: returns a list of employees added as well as a list of employees updated if successful (JSON)
+         onError: returns an error message if unsuccessful (JSON)
+      */
+      const json = JSON.stringify(data);
+      return await axiosClient
+         .post<{
+            employees_added: UnormalizedCurrentEmployeeInterface[];
+            existing_employees_updated: UnormalizedCurrentEmployeeInterface[];
+         }>("employees/", json, {
+            headers: {
+               Authorization: `Token ${token}`,
+            },
+         })
+         .then((res) => res.data);
+   }
+
    private unhandled_api_endpoints = [
-      {
-         endpoint: "POST /employees",
-         expects:
-            "a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)",
-         onSuccess: "returns a list of employees added if successful (JSON)",
-         onError: "returns an error message if unsuccessful (JSON)",
-      },
       {
          endpoint: "PATCH /employees",
          expects:
