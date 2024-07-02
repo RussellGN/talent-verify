@@ -11,6 +11,7 @@ export default function DetailsPage() {
    const { data: employerData } = useEmployer();
    const { mutate, reset, data, isPending, isSuccess, isError, error } = useAddEmployees();
    const formRef = useRef<HTMLFormElement>(null);
+
    function handleSubmit(e: FormEvent<HTMLFormElement>) {
       e.preventDefault();
       const formData = new FormData(e.currentTarget);
