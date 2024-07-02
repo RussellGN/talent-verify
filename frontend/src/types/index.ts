@@ -9,6 +9,18 @@ export type NewEmployee = {
    date_left?: string | undefined;
 };
 
+export type UploadEmployee = {
+   id?: number | string | undefined;
+   national_id: string | undefined;
+   name: string | undefined;
+   employee_id?: string | number | undefined;
+   department?: string | undefined;
+   role: string | undefined;
+   duties?: string | undefined;
+   date_started?: Date | string | undefined;
+   date_left?: Date | string | undefined;
+};
+
 export type EmployeeAutocompleteOption = {
    label: string;
    national_id: string;
