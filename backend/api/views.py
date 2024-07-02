@@ -287,7 +287,7 @@ def add_employees(request):
    """
    endpoint : POST /employees
    expects : a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)
-   onSuccess : returns a list of employees added if successful (JSON)
+   onSuccess : returns a list of employees added and existing employees updated if successful (JSON)
    onError : returns an error message if unsuccessful (JSON)
 
    data = [{...employee}, {...employee}, {...employee}]
@@ -309,14 +309,14 @@ def add_employees(request):
          role, created = Role.objects.update_or_create(title=item.get("role_title"), department=department, defaults={"duties": item.get("role_duties")})
 
          # handle employee
-         employee, created = Employee.objects.update_or_create(national_id=item.get("national_id"), defaults={"name": item.get("name"), "employee_id": item.get("employee_id"), "employer": employer})
+         employee, created_employee = Employee.objects.update_or_create(national_id=item.get("national_id"), defaults={"name": item.get("name"), "employee_id": item.get("employee_id"), "employer": employer})
 
          # handle career-timestamp
          career_timestamp, created = CareerTimestamp.objects.get_or_create(employee=employee, role=role, date_started=item.get("date_started"), date_left=item.get("date_left"))
 
          # increment counter and add to employeesAdded
          data_item += 1
-         if created:
+         if created_employee:
             employees_added.append(career_timestamp)
          else:
             existing_employees_updated.append(career_timestamp)

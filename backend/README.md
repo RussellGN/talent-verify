@@ -50,7 +50,7 @@ This api has the following endpoints
 7. POST /employees
 
    -  expects a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)
-   -  returns a list of employees added if successful (JSON)
+   -  returns a list of employees added and existing employees updated if successful (JSON)
    -  returns an error message if unsuccessful (JSON)
 
 8. PATCH /employees
