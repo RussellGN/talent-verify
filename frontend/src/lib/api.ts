@@ -148,6 +148,10 @@ export default abstract class API {
          expects: a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)
          onSuccess: returns a list of employees added as well as a list of employees updated if successful (JSON)
          onError: returns an error message if unsuccessful (JSON)
+
+         data = [{...employee}, {...employee}, {...employee}]
+         employee = {name, national_id, employee_id, department_name, role_title, role_duties, date_started, date_left}   
+
       */
       const json = JSON.stringify(data);
       return await axiosClient

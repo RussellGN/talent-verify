@@ -2,9 +2,9 @@ export type NewEmployee = {
    national_id: string | undefined;
    name: string | undefined;
    employee_id?: string | number | undefined;
-   department?: string | undefined;
-   role?: string | undefined;
-   duties?: string | undefined;
+   department_name: string | undefined;
+   role_title: string | undefined;
+   role_duties?: string | undefined;
    date_started?: string | undefined;
    date_left?: string | undefined;
 };

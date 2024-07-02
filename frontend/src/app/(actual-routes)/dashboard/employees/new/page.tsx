@@ -5,24 +5,24 @@ import useEmployer from "@/hooks/useEmployer";
 import { NewEmployee } from "@/types";
 import { ArrowBack, InfoOutlined, WarningOutlined } from "@mui/icons-material";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
-import { FormEvent } from "react";
+import { FormEvent, useRef } from "react";
 
 export default function DetailsPage() {
    const { data: employerData } = useEmployer();
    const { mutate, reset, data, isPending, isSuccess, isError, error } = useAddEmployees();
-
+   const formRef = useRef<HTMLFormElement>(null);
    function handleSubmit(e: FormEvent<HTMLFormElement>) {
       e.preventDefault();
       const formData = new FormData(e.currentTarget);
       const data: NewEmployee = {
          national_id: formData.get("national_id")?.toString(),
          name: formData.get("name")?.toString(),
-         employee_id: formData.get("employee_id")?.toString(),
-         department: formData.get("department")?.toString(),
-         role: formData.get("role")?.toString(),
-         duties: formData.get("duties")?.toString(),
-         date_started: formData.get("date_started")?.toString(),
-         date_left: formData.get("date_left")?.toString(),
+         employee_id: formData.get("employee_id")?.toString() || undefined,
+         department_name: formData.get("department")?.toString(),
+         role_title: formData.get("role")?.toString(),
+         role_duties: formData.get("duties")?.toString() || undefined,
+         date_started: formData.get("date_started")?.toString() || undefined,
+         date_left: formData.get("date_left")?.toString() || undefined,
       };
       console.log(data);
       mutate([data]);
@@ -38,6 +38,7 @@ export default function DetailsPage() {
          message = JSON.stringify(data);
       }
       alert(message);
+      formRef.current?.reset();
    }
 
    return (
@@ -71,7 +72,7 @@ export default function DetailsPage() {
          )}
 
          <div className={`min-h-[72vh] ${isPending || isError ? "hidden" : "flex"} items-center justify-center`}>
-            <form onSubmit={handleSubmit}>
+            <form ref={formRef} onSubmit={handleSubmit}>
                <Box
                   component="fieldset"
                   sx={{ border: "solid 2px", borderColor: "divider", borderRadius: "10px", p: 2, mb: 3 }}
