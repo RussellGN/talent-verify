@@ -17,3 +17,4 @@
 17.   handle password field
 18.   find out what an OPTIONS fetch method means
 19.   make sure error messages being sent from backend are strings and are clear
+20.   fix 'employee added' when it should be 'existing employee updated' message
