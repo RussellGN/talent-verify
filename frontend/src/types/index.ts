@@ -34,4 +34,22 @@ export type EmployerRegistrationPayload = {
    departments: string[];
 };
 
+export type EmployerUpdatePayload = {
+   "employer-admin": {
+      password?: string;
+      username: string;
+   };
+   employer: {
+      name: string;
+      email: string | null;
+      registration_number: string | null;
+      registration_date: string | null;
+      address: string | null;
+      contact_person: string | null;
+      number_of_employees: number | null;
+      contact_phone: string | null;
+   };
+   departments: string[];
+};
+
 export type Credentials = { username: string; password: string };
