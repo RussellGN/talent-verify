@@ -1,5 +1,5 @@
 import * as XLSX from "xlsx";
-import { NewEmployee } from "../types";
+import { UploadEmployee } from "../types";
 import axios, { isAxiosError } from "axios";
 
 export function capitalizeWords(str: string) {
@@ -46,7 +46,7 @@ export function findMissingFields<T>(expectedArray: T[], actualArray: T[]): stri
    return missingFields;
 }
 
-export function assignIdAndFormatDates(emp: NewEmployee, index: number) {
+export function assignIdAndFormatDates(emp: UploadEmployee, index: number) {
    emp.id = index;
    if (emp.date_started && emp.date_started.toString().trim() !== "") {
       console.log("date-started " + String(emp.date_started));
@@ -77,9 +77,9 @@ export function excelToJson<T extends object>(file: File): Promise<T[]> {
             const expectedKeys = [
                "national_id",
                "name",
+               "role",
                // "employee_id",
                // "department",
-               // "role",
                // "duties",
                // "date_started",
                // "date_left",
@@ -123,9 +123,9 @@ export function csvToJson<T extends object>(file: File): Promise<T[]> {
             const expectedKeys = [
                "national_id",
                "name",
+               "role",
                // "employee_id",
                // "department",
-               // "role",
                // "duties",
                // "date_started",
                // "date_left",
@@ -148,7 +148,7 @@ export function csvToJson<T extends object>(file: File): Promise<T[]> {
    });
 }
 
-export function txtToJson(file: File): Promise<NewEmployee[]> {
+export function txtToJson(file: File): Promise<UploadEmployee[]> {
    return new Promise((resolve, reject) => {
       const reader = new FileReader();
 
@@ -167,18 +167,20 @@ export function txtToJson(file: File): Promise<NewEmployee[]> {
 
             const data = e.target?.result as string;
             const lines = data.split("\n");
-            type JsonObj = { [key: string]: string | undefined } & NewEmployee;
+            type JsonObj = { [key: string]: string | undefined } & UploadEmployee;
             const json: JsonObj[] = [];
 
-            let employee: JsonObj = { national_id: undefined, name: undefined };
+            let employee: JsonObj = { national_id: undefined, name: undefined, role: undefined };
             lines.some((line) => {
                if (line.trim() === "") {
                   // found a delimiter
-                  if (Boolean(employee.national_id) && Boolean(employee.name)) {
+                  if (Boolean(employee.national_id) && Boolean(employee.name) && Boolean(employee.role)) {
                      json.push(employee);
-                     employee = { national_id: undefined, name: undefined };
+                     employee = { national_id: undefined, name: undefined, role: undefined };
                   } else {
-                     throw new Error("Employee records must have at least 'national_id' and 'name' key:value pairs");
+                     throw new Error(
+                        "Employee records must have at least 'national_id', 'name', and 'role' key:value pairs"
+                     );
                   }
                } else {
                   const [key, value] = line.split(":").map((item) => item.trim());
@@ -187,10 +189,11 @@ export function txtToJson(file: File): Promise<NewEmployee[]> {
             });
 
             if (Object.keys(employee).length > 0) {
-               if (Boolean(employee.national_id) && Boolean(employee.name)) {
+               if (Boolean(employee.national_id) && Boolean(employee.name) && Boolean(employee.role)) {
                   json.push(employee);
-                  employee = { national_id: undefined, name: undefined };
-               } else throw new Error("Employee records must have at least 'national_id' and 'name' key:value pairs");
+                  employee = { national_id: undefined, name: undefined, role: undefined };
+               } else
+                  throw new Error("Employee records must have at least 'national_id', 'name', and 'role' key:value pairs");
             }
 
             resolve(json);
