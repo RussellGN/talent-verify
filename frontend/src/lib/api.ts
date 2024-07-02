@@ -1,6 +1,6 @@
 import { axiosClient } from ".";
 import { EmployerInterface, HistoricalCareerTimestampInterface, UnormalizedCurrentEmployeeInterface } from "../interfaces";
-import { Credentials, EmployerRegistrationPayload, EmployerUpdatePayload } from "../types";
+import { Credentials, EmployerRegistrationPayload, EmployerUpdatePayload, NewEmployee } from "../types";
 
 export default abstract class API {
    static async getTalent(query: string, isDate: boolean) {
@@ -142,7 +142,7 @@ export default abstract class API {
          .then((res) => res.data);
    }
 
-   static async addEmployees(token: string, data: UnormalizedCurrentEmployeeInterface[]) {
+   static async addEmployees(token: string, data: NewEmployee[]) {
       /*
          endpoint: POST /employees
          expects: a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)
