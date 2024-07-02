@@ -1,6 +1,6 @@
 import { axiosClient } from ".";
 import { EmployerInterface, HistoricalCareerTimestampInterface, UnormalizedCurrentEmployeeInterface } from "../interfaces";
-import { Credentials, EmployerRegistrationPayload } from "../types";
+import { Credentials, EmployerRegistrationPayload, EmployerUpdatePayload, NewEmployee } from "../types";
 
 export default abstract class API {
    static async getTalent(query: string, isDate: boolean) {
@@ -126,20 +126,47 @@ export default abstract class API {
          .then((res) => res.data);
    }
 
+   static async updateEmployer(token: string, data: EmployerUpdatePayload) {
+      // endpoint: PATCH /employer/update
+      // expects: partial/complete employer and employer-admin details as well as auth token in request headers (JSON)
+      // onSuccess: "returns updated employer details (with nested employer-admin) on successful patch (JSON)",
+      // onError: "returns error message on failed patch (JSON)",
+
+      const json = JSON.stringify(data);
+      return await axiosClient
+         .patch<{ employer: EmployerInterface; message: string }>("employer/update/", json, {
+            headers: {
+               Authorization: `Token ${token}`,
+            },
+         })
+         .then((res) => res.data);
+   }
+
+   static async addEmployees(token: string, data: NewEmployee[]) {
+      /*
+         endpoint: POST /employees
+         expects: a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)
+         onSuccess: returns a list of employees added as well as a list of employees updated if successful (JSON)
+         onError: returns an error message if unsuccessful (JSON)
+
+         data = [{...employee}, {...employee}, {...employee}]
+         employee = {name, national_id, employee_id, department_name, role_title, role_duties, date_started, date_left}   
+
+      */
+      const json = JSON.stringify(data);
+      return await axiosClient
+         .post<{
+            employees_added: UnormalizedCurrentEmployeeInterface[];
+            existing_employees_updated: UnormalizedCurrentEmployeeInterface[];
+         }>("employees/", json, {
+            headers: {
+               Authorization: `Token ${token}`,
+            },
+         })
+         .then((res) => res.data);
+   }
+
    private unhandled_api_endpoints = [
-      {
-         endpoint: "PATCH /employer",
-         expects: "partial/complete employer and employer-admin details as well as auth token in request headers (JSON)",
-         onSuccess: "returns updated employer details (with nested employer-admin) on successful patch (JSON)",
-         onError: "returns error message on failed patch (JSON)",
-      },
-      {
-         endpoint: "POST /employees",
-         expects:
-            "a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)",
-         onSuccess: "returns a list of employees added if successful (JSON)",
-         onError: "returns an error message if unsuccessful (JSON)",
-      },
       {
          endpoint: "PATCH /employees",
          expects:
