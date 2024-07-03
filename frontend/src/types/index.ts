@@ -9,6 +9,18 @@ export type NewEmployee = {
    date_left?: string | undefined;
 };
 
+export type UpdatedEmployee = {
+   id: number;
+   national_id?: string | undefined;
+   name?: string | undefined;
+   employee_id?: string | number | undefined;
+   department_name?: string | undefined;
+   role_title?: string | undefined;
+   role_duties?: string | undefined;
+   date_started?: string | undefined;
+   date_left?: string | undefined;
+};
+
 export type UploadEmployee = {
    id?: number | string | undefined;
    national_id: string | undefined;
