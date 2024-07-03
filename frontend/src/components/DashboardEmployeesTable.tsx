@@ -8,8 +8,17 @@ import { Typography } from "@mui/material";
 import { InfoOutlined } from "@mui/icons-material";
 
 export default function DashboardEmployeesTable() {
-   const { rows, columns, processRowUpdate, handleProcessRowUpdateError, loading, snackbar, handleCloseSnackbar } =
-      useDashboardEmployeesTable();
+   const {
+      rows,
+      columns,
+      processRowUpdate,
+      updateData,
+      isUpdating,
+      isUpdateSuccess,
+      isUpdateError,
+      updateError,
+      resetUpdate,
+   } = useDashboardEmployeesTable();
 
    if (rows.length === 0) {
       return (
@@ -35,25 +44,40 @@ export default function DashboardEmployeesTable() {
                rows={rows}
                columns={columns}
                processRowUpdate={processRowUpdate}
-               onProcessRowUpdateError={handleProcessRowUpdateError}
-               autosizeOnMount
+               // autosizeOnMount
+               // disableColumnResize
                disableRowSelectionOnClick
-               disableColumnResize
+               density="compact"
                disableColumnSelector
                scrollbarSize={5}
-               loading={loading}
+               loading={isUpdating}
                showCellVerticalBorder
+               initialState={{
+                  sorting: {
+                     sortModel: [{ field: "id", sort: "desc" }],
+                  },
+               }}
             />
-            {!!snackbar && (
-               <Snackbar
-                  open
-                  anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-                  onClose={handleCloseSnackbar}
-                  autoHideDuration={6000}
+            <Snackbar
+               open={isUpdating || isUpdateError || isUpdateSuccess}
+               anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+               onClose={resetUpdate}
+               // autoHideDuration={6000}
+            >
+               <Alert
+                  variant="filled"
+                  severity={isUpdateError ? "error" : isUpdateSuccess ? "success" : "info"}
+                  onClose={resetUpdate}
                >
-                  <Alert {...snackbar} onClose={handleCloseSnackbar} />
-               </Snackbar>
-            )}
+                  {isUpdateError
+                     ? `Error saving changes: ${updateError?.message}`
+                     : isUpdateSuccess
+                     ? `${updateData?.employees_updated[0].name || "Employee"} was updated successfully`
+                     : isUpdating
+                     ? "Saving changes..."
+                     : "No changes made"}
+               </Alert>
+            </Snackbar>
          </div>
       </>
    );

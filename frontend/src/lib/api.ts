@@ -1,6 +1,6 @@
 import { axiosClient } from ".";
 import { EmployerInterface, HistoricalCareerTimestampInterface, UnormalizedCurrentEmployeeInterface } from "../interfaces";
-import { Credentials, EmployerRegistrationPayload, EmployerUpdatePayload, NewEmployee } from "../types";
+import { Credentials, EmployerRegistrationPayload, EmployerUpdatePayload, NewEmployee, UpdatedEmployee } from "../types";
 
 export default abstract class API {
    static async getTalent(query: string, isDate: boolean) {
@@ -166,14 +166,31 @@ export default abstract class API {
          .then((res) => res.data);
    }
 
-   private unhandled_api_endpoints = [
-      {
-         endpoint: "PATCH /employees",
-         expects:
-            "a list of one or more employees's partial/complete details for updating as well as an auth token in request headers (JSON)",
-         onSuccess: "returns a list of updated employees if successful (JSON)",
-         onError: "returns an error message on failed patch (JSON)",
+   static async updateEmployees(token: string, data: UpdatedEmployee[]) {
+      /*
+         endpoint: PATCH /employees
+         expects: a list of one or more employees's partial/complete details for updating as well as an auth token in request headers (JSON)
+         onSuccess: returns a list of updated employees if successful (JSON)
+         onError: returns an error message on failed patch (JSON)
       },
+
+         data = [{...employee}, {...employee}, {...employee}]
+         employee = {id, name, national_id, employee_id, department_name, role_title, role_duties, date_started, date_left}   
+
+      */
+      const json = JSON.stringify(data);
+      return await axiosClient
+         .patch<{
+            employees_updated: UnormalizedCurrentEmployeeInterface[];
+         }>("employees/", json, {
+            headers: {
+               Authorization: `Token ${token}`,
+            },
+         })
+         .then((res) => res.data);
+   }
+
+   private unhandled_api_endpoints = [
       {
          endpoint: "POST /employees/reassign",
          expects:
