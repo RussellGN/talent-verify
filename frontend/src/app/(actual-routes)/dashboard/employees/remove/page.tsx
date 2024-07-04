@@ -3,14 +3,15 @@
 import useEmployees from "@/hooks/useEmployees";
 import useRemoveEmployee from "@/hooks/useRemoveEmployee";
 import { EmployeeAutocompleteOption } from "@/types";
-import { ArrowBack, InfoOutlined, WarningOutlined } from "@mui/icons-material";
+import { ArrowBack, CheckCircle, InfoOutlined, WarningOutlined } from "@mui/icons-material";
 import { Autocomplete, Button, CircularProgress, TextField, Typography } from "@mui/material";
-import { FormEvent, SyntheticEvent, useState } from "react";
+import { FormEvent, SyntheticEvent, useMemo, useState } from "react";
 
 export default function RemovePage() {
    const [selectedValue, setSelectedValue] = useState<EmployeeAutocompleteOption>();
    const { mutate, reset, data, isPending, isSuccess, isError, error } = useRemoveEmployee();
    const { data: employees } = useEmployees();
+   const [key, setKey] = useState(1);
 
    function onChange(e: SyntheticEvent<Element, Event>, value: EmployeeAutocompleteOption) {
       setSelectedValue(value);
@@ -18,20 +19,26 @@ export default function RemovePage() {
 
    function handleSubmit(e: FormEvent<HTMLFormElement>) {
       e.preventDefault();
+      console.log(selectedValue);
+      console.log(employeeOptions);
       if (selectedValue) {
          console.log("removing ", selectedValue?.label);
          mutate(selectedValue.id);
       }
+      setSelectedValue(undefined);
+      setKey((prev) => prev + 1);
    }
 
-   const employeeOptions =
-      employees?.map((emp) => ({
-         label: `${emp.name} - ${emp.national_id}`,
-         national_id: emp.national_id,
-         id: emp.id,
-      })) || [];
-
-   if (isSuccess) alert(data);
+   const employeeOptions: EmployeeAutocompleteOption[] =
+      useMemo(
+         () =>
+            employees?.map((emp) => ({
+               label: `${emp.name} - ${emp.national_id}`,
+               national_id: emp.national_id,
+               id: emp.id,
+            })),
+         [employees]
+      ) || [];
 
    return (
       <>
@@ -63,8 +70,27 @@ export default function RemovePage() {
             </div>
          )}
 
-         <div className={`${isPending || isError ? "hidden" : "block"}`}>
-            <form onSubmit={handleSubmit} className="p-5">
+         {isSuccess && (
+            <div className="text-center px-10 py-20">
+               <CheckCircle color="success" fontSize="large" />
+               <p>
+                  {data}
+                  <br />
+                  <Button
+                     onClick={reset}
+                     type="button"
+                     startIcon={<ArrowBack />}
+                     variant="outlined"
+                     sx={{ mt: 3, textTransform: "capitalize" }}
+                  >
+                     Back to form
+                  </Button>
+               </p>
+            </div>
+         )}
+
+         <div className={`${isPending || isError || isSuccess ? "hidden" : "block"}`}>
+            <form key={key} onSubmit={handleSubmit} className="p-5">
                <Typography variant="subtitle2" sx={{ mb: 3 }} className="max-w-[100ch]">
                   <InfoOutlined fontSize="inherit" color="warning" sx={{ mt: -0.3, mr: 0.5 }} />
                   If you remove an employee, they will be excluded from your list of employees and assigned to no employer.
@@ -89,6 +115,7 @@ export default function RemovePage() {
                   </span>
                   <Autocomplete
                      // value={selectedValue}
+                     // clearOnBlur
                      onChange={onChange}
                      disablePortal
                      id="combo-box-employee"
