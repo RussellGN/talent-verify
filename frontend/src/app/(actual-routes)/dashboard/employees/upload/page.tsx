@@ -162,13 +162,19 @@ export default function UploadPage() {
             <DataGrid
                columns={cols}
                rows={fileData}
-               autosizeOnMount
                disableColumnMenu
                disableRowSelectionOnClick
-               disableColumnResize
                disableColumnSelector
                scrollbarSize={5}
                showCellVerticalBorder
+               // autosizeOnMount
+               // disableColumnResize
+               density="compact"
+               initialState={{
+                  sorting: {
+                     sortModel: [{ field: "name", sort: "asc" }],
+                  },
+               }}
             />
             <div className="text-right mt-5">
                <Button onClick={saveEmployees} color="success" variant="contained" endIcon={<Save />}>
