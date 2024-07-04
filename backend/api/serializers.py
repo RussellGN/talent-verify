@@ -71,10 +71,14 @@ class CompactEmployeeSerializer(serializers.ModelSerializer):
    national_id = serializers.CharField(source='employee.national_id') 
    name = serializers.CharField(source='employee.name') 
    employee_id = serializers.CharField(source='employee.employee_id') 
-   employer = serializers.CharField(source='employee.employer.name') 
-   department = serializers.CharField(source='role.department.name') 
-   role = serializers.CharField(source='role.title') 
-   duties = serializers.CharField(source='role.duties') 
+   # employer = serializers.CharField(source='employee.employer.name') 
+   # department = serializers.CharField(source='role.department.name') 
+   # role = serializers.CharField(source='role.title') 
+   # duties = serializers.CharField(source='role.duties') 
+   employer = serializers.SerializerMethodField() 
+   department = serializers.SerializerMethodField() 
+   role = serializers.SerializerMethodField() 
+   duties = serializers.SerializerMethodField() 
 
    class Meta:
       model = CareerTimestamp
@@ -91,11 +95,35 @@ class CompactEmployeeSerializer(serializers.ModelSerializer):
          'date_left',
       ]
 
+   def get_employer(self, obj):
+      if obj.employee and obj.employee.employer and obj.employee.employer.name is not None:
+         return obj.employee.employer.name
+      else: return None
+
+   def get_department(self, obj):
+      if obj.role and obj.role.department and obj.role.department.name is not None:
+         return obj.role.department.name
+      else: return None
+
+   def get_role(self, obj):
+      if obj.role and obj.role.title is not None:
+         return obj.role.title
+      else: return None
+
+   def get_duties(self, obj):
+      if obj.role and obj.role.duties is not None:
+         return obj.role.duties
+      else: return None
+
+
+
 class HistoricalCareerTimestampSerializer(serializers.ModelSerializer):
-   employer = serializers.CharField(source='employee.employer.name') 
-   department = serializers.CharField(source='role.department.name') 
-   role = serializers.CharField(source='role.title') 
-   duties = serializers.CharField(source='role.duties') 
+   # employer = serializers.CharField(source='employee.employer.name') 
+   # department = serializers.CharField(source='role.department.name') 
+   employer = serializers.SerializerMethodField()
+   department = serializers.SerializerMethodField()
+   role = serializers.SerializerMethodField()
+   duties = serializers.SerializerMethodField()
 
    class Meta:
       model = CareerTimestamp
@@ -108,4 +136,24 @@ class HistoricalCareerTimestampSerializer(serializers.ModelSerializer):
          'date_started',
          'date_left',
       ]
+
+   def get_employer(self, obj):
+      if obj.employee and obj.employee.employer and obj.employee.employer.name is not None:
+         return obj.employee.employer.name
+      else: return None
+
+   def get_department(self, obj):
+      if obj.role and obj.role.department and obj.role.department.name is not None:
+         return obj.role.department.name
+      else: return None
+
+   def get_role(self, obj):
+      if obj.role and obj.role.title is not None:
+         return obj.role.title
+      else: return None
+
+   def get_duties(self, obj):
+      if obj.role and obj.role.duties is not None:
+         return obj.role.duties
+      else: return None
 
