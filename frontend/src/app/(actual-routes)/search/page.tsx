@@ -1,6 +1,7 @@
 "use client";
 
 import CareerTimestampCard from "@/components/CareerTimestampCard";
+import UnemployedTalentCard from "@/components/UnemployedTalentCard";
 import useGetTalent from "@/hooks/useGetTalent";
 import { CircularProgress, Grid, Typography } from "@mui/material";
 
@@ -37,7 +38,7 @@ export default function SearchPage({ searchParams: { query, date_started, date_l
    if (isError) throw error;
    console.log(data);
 
-   if (data.length === 0) {
+   if (data.employed.length === 0 && data.unemployed.length === 0) {
       return (
          <div className="min-h-[72vh] pt-[4rem]">
             <Typography className="text-center p-4">No results found for {`'${showingRsultsFor}'`}</Typography>
@@ -49,9 +50,17 @@ export default function SearchPage({ searchParams: { query, date_started, date_l
       <div className="min-h-[72vh]">
          <Typography className="text-center p-4">Showing Results for {`'${showingRsultsFor}'`}</Typography>
          <Grid container spacing={1}>
-            {data.map((timeStamp) => (
+            {data.employed.map((timeStamp) => (
                <Grid key={timeStamp.id} item xs={3}>
                   <CareerTimestampCard careerTimestamp={timeStamp} />
+               </Grid>
+            ))}
+
+            <hr />
+
+            {data.unemployed.map((talent) => (
+               <Grid key={talent.id} item xs={3}>
+                  <UnemployedTalentCard talent={talent} />
                </Grid>
             ))}
          </Grid>

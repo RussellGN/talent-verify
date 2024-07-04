@@ -7,6 +7,7 @@ import {
    AccessTime,
    Business,
    Contacts,
+   InfoOutlined,
    People,
    PermIdentity,
    SubdirectoryArrowLeft,
@@ -41,39 +42,49 @@ export default function DetailedView({ params: { id } }: { params: { id: string 
                      <Contacts sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
                      <span style={{ fontSize: "90%" }}>National ID:</span> {data.talent.national_id}
                   </Typography>
-                  <br />
-                  <Typography sx={{ mb: 0.5 }}>
-                     <Business sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
-                     <span style={{ fontSize: "90%" }}>Current Employer:</span> {data.talent.employer || "N/A"}
-                  </Typography>
-                  <Typography sx={{ mb: 0.5 }}>
-                     <People sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
-                     <span style={{ fontSize: "90%" }}>Current Department:</span> {data.talent.department || "N/A"}
-                  </Typography>
-                  <Typography sx={{ mb: 0.5 }}>
-                     <Work sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
-                     <span style={{ fontSize: "90%" }}>Current Role:</span> {data.talent.role || "N/A"}
-                  </Typography>
-                  <Typography sx={{ mb: 0.5 }}>
-                     <PermIdentity sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
-                     <span style={{ fontSize: "90%" }}>Employee ID:</span> {data.talent.employee_id || "N/A"}
-                  </Typography>
 
                   <br />
-                  <Typography sx={{ mb: 0.5 }}>
-                     <AccessTime sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />
-                     <span style={{ fontSize: "90%" }}>Date started:</span>{" "}
-                     {data.talent.date_started ? friendlyDate(data.talent.date_started) : "N/A"}
-                  </Typography>
-                  {data.talent.date_left ? (
-                     <Typography sx={{ mb: 0.5 }}>
-                        <AccessTime sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />
-                        <span style={{ fontSize: "90%" }}>Date left:</span> {friendlyDate(data.talent.date_left)}
-                     </Typography>
+                  {data.talent.employer ? (
+                     <>
+                        <Typography sx={{ mb: 0.5 }}>
+                           <Business sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
+                           <span style={{ fontSize: "90%" }}>Current Employer:</span> {data.talent.employer || "N/A"}
+                        </Typography>
+                        <Typography sx={{ mb: 0.5 }}>
+                           <People sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
+                           <span style={{ fontSize: "90%" }}>Current Department:</span> {data.talent.department || "N/A"}
+                        </Typography>
+                        <Typography sx={{ mb: 0.5 }}>
+                           <Work sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
+                           <span style={{ fontSize: "90%" }}>Current Role:</span> {data.talent.role || "N/A"}
+                        </Typography>
+                        <Typography sx={{ mb: 0.5 }}>
+                           <PermIdentity sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
+                           <span style={{ fontSize: "90%" }}>Employee ID:</span> {data.talent.employee_id || "N/A"}
+                        </Typography>
+
+                        <br />
+                        <Typography sx={{ mb: 0.5 }}>
+                           <AccessTime sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />
+                           <span style={{ fontSize: "90%" }}>Date started:</span>{" "}
+                           {data.talent.date_started ? friendlyDate(data.talent.date_started) : "N/A"}
+                        </Typography>
+                        {data.talent.date_left ? (
+                           <Typography sx={{ mb: 0.5 }}>
+                              <AccessTime sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />
+                              <span style={{ fontSize: "90%" }}>Date left:</span> {friendlyDate(data.talent.date_left)}
+                           </Typography>
+                        ) : (
+                           <Typography sx={{ mb: 0.5 }}>
+                              <AccessTime sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />
+                              Ongoing
+                           </Typography>
+                        )}
+                     </>
                   ) : (
                      <Typography sx={{ mb: 0.5 }}>
-                        <AccessTime sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />
-                        Ongoing
+                        <InfoOutlined sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
+                        <span style={{ fontSize: "90%" }}>No employer at the moment</span>
                      </Typography>
                   )}
                </div>
