@@ -10,6 +10,7 @@ export default function useRemoveEmployee() {
       mutationFn: (id: number | string) => API.removeEmployee(token || "", id),
       onSuccess: async () => {
          await queryClient.invalidateQueries({ queryKey: ["employees", { token: token }] });
+         await queryClient.invalidateQueries({ queryKey: ["talent"] });
       },
    });
 }

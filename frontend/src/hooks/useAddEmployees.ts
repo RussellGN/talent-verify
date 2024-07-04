@@ -11,6 +11,7 @@ export default function useAddEmployees() {
       mutationFn: (data: NewEmployee[]) => API.addEmployees(token || "", data),
       onSuccess: async () => {
          await queryClient.invalidateQueries({ queryKey: ["employees", { token: token }] });
+         await queryClient.invalidateQueries({ queryKey: ["talent"] });
       },
    });
 }

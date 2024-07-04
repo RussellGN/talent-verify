@@ -11,6 +11,7 @@ export default function useUpdateEmployees() {
       mutationFn: (data: UpdatedEmployee[]) => API.updateEmployees(token || "", data),
       onSuccess: async () => {
          await queryClient.invalidateQueries({ queryKey: ["employees", { token: token }] });
+         await queryClient.invalidateQueries({ queryKey: ["talent"] });
       },
    });
 }
