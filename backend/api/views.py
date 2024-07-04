@@ -85,8 +85,8 @@ def endpoints(request):
          "onError" : "returns an error message if unsuccessfull (JSON)",
       }, 
       {
-         "endpoint" : "POST /employees/reassign",
-         "expects" : "the id of the employee to reassign and employer id (if any) to reassign employee to, along with an auth token in request headers (JSON)",
+         "endpoint" : "DELETE /employees/(ID)",
+         "expects" : "the (ID) of the employee to remove, along with an auth token in request headers (JSON)",
          "onSuccess" : "returns a success message (JSON)",
          "onError" : "returns an error message (JSON)",
       }, 
@@ -397,6 +397,61 @@ def handle_employees(request):
       return add_employees(request)
    if (request.method == 'PATCH'):
       return update_employees(request)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def remove_employee(request, id):
+   """
+   endpoint : DELETE /employees/(ID)
+   expects : the (ID) of the employee to remove, along with an auth token in request headers (JSON)
+   onSuccess : returns a success message (JSON)
+   onError : returns an error message (JSON)
+   """
+   try:
+      employee = Employee.objects.get(id=id)
+      employee.employer = None
+      employee.save()
+
+      incomplete_career_timestamps = CareerTimestamp.objects.filter(employee=employee, date_left=None)
+      for stamp in incomplete_career_timestamps:
+         stamp.date_left = date.today().isoformat()
+         stamp.save()
+      return Response(f"successfully removed {employee.name} with id {employee.id}")
+   except Exception as e:
+      return Response(f"encountered error removing employee with id {id}: {e}")
+
+
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# @authentication_classes([TokenAuthentication])
+# def reassign_employee(request):
+#    """
+#    endpoint : POST /employees/reassign
+#    expects : the id of the employee to reassign and employer id (if any) to reassign employee to, along with an auth token in request headers (JSON)
+#    onSuccess : returns a success message (JSON)
+#    onError : returns an error message (JSON)
+#    """
+#    data = json.loads(request.body)
+#    employee = Employee.objects.get(id=int(data.get('employee_id')))
+#    current_employer = employee.employer
+#    re_assign_to = None
+#    if data.get('employer_id') is not None:
+#       employer_queryset = Employer.objects.filter(id=int(data.get('employer_id')))
+#       re_assign_to = employer_queryset.first() if employer_queryset.exists() else None
+
+#    employee.employer = re_assign_to
+#    employee.save()
+
+#    if current_employer is not None:
+#       incomplete_career_timestamps_at_current_employer = CareerTimestamp.objects.filter(employee=employee, role__department__employer=current_employer, date_left=None)
+#       for stamp in incomplete_career_timestamps_at_current_employer:
+#          stamp.date_left = date.today().isoformat()
+#          stamp.save()
+   
+#    current_employer_name = current_employer.name if current_employer else "no employer"
+#    re_assigning_to = re_assign_to.name if re_assign_to else "no employer"
+#    return Response(f"successfully reassigned {employee.name} with id {employee.id} from '{current_employer_name}' to '{re_assigning_to}'")
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

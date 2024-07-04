@@ -65,9 +65,9 @@ This api has the following endpoints
    -  returns a list of zero or more employees belonging to an employer (JSON)
    -  returns an error message if unsuccessfull (JSON)
 
-10.   POST /employees/reassign
+10.   DELETE /employees/(ID)
 
-      -  expects the id of the employee to reassign and employer id (if any) to reassign employee to, along with an auth token in request headers(JSON)
+      -  expects the (ID) of the employee to remove, along with an auth token in request headers(JSON)
       -  returns a success message if successfull (JSON)
       -  returns an error message if unsuccessfull (JSON)
 
