@@ -22,3 +22,4 @@
 22.   somehow role is not required when adding an employee through the form but when uploading its required, fix this
 23.   convert POST /employees/reassign to DELETE /employees/(ID) in backend
 24.   fix remove page not working so great
+25.   prevent highjacking of employees. only unemployed talent should be able to be added to an employer's list of employees

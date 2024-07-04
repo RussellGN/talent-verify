@@ -27,6 +27,12 @@ export interface EmployeeInterface {
    employee_id: string | null;
 }
 
+export interface UnemployedTalentInterface {
+   id: number;
+   national_id: string;
+   name: string;
+}
+
 export interface DepartmentInterface {
    id: number;
    employer: EmployerInterface;

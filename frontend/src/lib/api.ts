@@ -1,15 +1,20 @@
 import { axiosClient } from ".";
-import { EmployerInterface, HistoricalCareerTimestampInterface, UnormalizedCurrentEmployeeInterface } from "../interfaces";
+import {
+   EmployerInterface,
+   HistoricalCareerTimestampInterface,
+   UnemployedTalentInterface,
+   UnormalizedCurrentEmployeeInterface,
+} from "../interfaces";
 import { Credentials, EmployerRegistrationPayload, EmployerUpdatePayload, NewEmployee, UpdatedEmployee } from "../types";
 
 export default abstract class API {
    static async getTalent(query: string, isDate: boolean) {
       // endpoint : GET /talent?query=(query),is_date=(is_date)
       // expects : query and optional is_date search parameters used to filter the employees retrieved (JSON)
-      // onSuccess : returns a list of zero or more employees matching the query criteria (JSON)
+      // onSuccess : returns a list of zero or more employees, and a list of zero or more unemployed talent matching the query criteria (JSON)
 
       return await axiosClient
-         .get<UnormalizedCurrentEmployeeInterface[]>("talent", {
+         .get<{ employed: UnormalizedCurrentEmployeeInterface[]; unemployed: UnemployedTalentInterface[] }>("talent", {
             params: {
                query: query,
                is_date: isDate,
