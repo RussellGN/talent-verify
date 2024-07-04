@@ -192,14 +192,13 @@ export default abstract class API {
 
    static async removeEmployee(token: string, id: number | string) {
       /*
-         endpoint: POST /employees/reassign
-         expects: the id of the employee to reassign and employer id (if any) to reassign employee to, along with an auth token in request headers (JSON)
+         endpoint: DELETE /employees/(ID)
+         expects: the (ID) of the employee to remove, along with an auth token in request headers (JSON)
          onSuccess: returns a success message (JSON)
          onError: returns an error message (JSON)
       */
-      const json = JSON.stringify({ employee_id: Number(id) });
       return await axiosClient
-         .post<string>("employees/reassign/", json, {
+         .delete<string>(`employees/${id}/`, {
             headers: {
                Authorization: `Token ${token}`,
             },
