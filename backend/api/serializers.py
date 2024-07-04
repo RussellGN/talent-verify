@@ -47,6 +47,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
       model = Employee
       fields = '__all__'
 
+class UnemployedTalentSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = Employee
+      fields = ['id', 'name', 'national_id']
+
 class DepartmentSerializer(serializers.ModelSerializer):
    employer = EmployerSerializer(many=False, read_only=True)
    class Meta:
@@ -115,8 +120,6 @@ class CompactEmployeeSerializer(serializers.ModelSerializer):
          return obj.role.duties
       else: return None
 
-
-
 class HistoricalCareerTimestampSerializer(serializers.ModelSerializer):
    # employer = serializers.CharField(source='employee.employer.name') 
    # department = serializers.CharField(source='role.department.name') 
@@ -138,8 +141,8 @@ class HistoricalCareerTimestampSerializer(serializers.ModelSerializer):
       ]
 
    def get_employer(self, obj):
-      if obj.employee and obj.employee.employer and obj.employee.employer.name is not None:
-         return obj.employee.employer.name
+      if obj.role and obj.role.department and obj.role.department.employer and obj.role.department.employer.name is not None:
+         return obj.role.department.employer.name
       else: return None
 
    def get_department(self, obj):
