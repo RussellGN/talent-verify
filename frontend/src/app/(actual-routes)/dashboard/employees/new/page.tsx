@@ -3,7 +3,7 @@
 import useAddEmployees from "@/hooks/useAddEmployees";
 import useEmployer from "@/hooks/useEmployer";
 import { NewEmployee } from "@/types";
-import { ArrowBack, InfoOutlined, WarningOutlined } from "@mui/icons-material";
+import { ArrowBack, CheckCircle, InfoOutlined, WarningOutlined } from "@mui/icons-material";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { FormEvent, useRef } from "react";
 
@@ -38,8 +38,26 @@ export default function DetailsPage() {
       } else {
          message = JSON.stringify(data);
       }
-      alert(message);
       formRef.current?.reset();
+
+      return (
+         <div className="text-center max-w-prose mx-auto py-20">
+            <CheckCircle fontSize="large" color="success" className="mb-3" />
+            <p>
+               {message}
+               <br />
+               <Button
+                  onClick={reset}
+                  type="button"
+                  startIcon={<ArrowBack />}
+                  variant="outlined"
+                  sx={{ mt: 3, textTransform: "capitalize" }}
+               >
+                  Back to form
+               </Button>
+            </p>
+         </div>
+      );
    }
 
    return (

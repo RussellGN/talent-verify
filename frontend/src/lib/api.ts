@@ -190,13 +190,19 @@ export default abstract class API {
          .then((res) => res.data);
    }
 
-   private unhandled_api_endpoints = [
-      {
-         endpoint: "POST /employees/reassign",
-         expects:
-            "the id of the employee to reassign and employer id (if any) to reassign employee to, along with an auth token in request headers (JSON)",
-         onSuccess: "returns a success message (JSON)",
-         onError: "returns an error message (JSON)",
-      },
-   ];
+   static async removeEmployee(token: string, id: number | string) {
+      /*
+         endpoint: DELETE /employees/(ID)
+         expects: the (ID) of the employee to remove, along with an auth token in request headers (JSON)
+         onSuccess: returns a success message (JSON)
+         onError: returns an error message (JSON)
+      */
+      return await axiosClient
+         .delete<string>(`employees/${id}/`, {
+            headers: {
+               Authorization: `Token ${token}`,
+            },
+         })
+         .then((res) => res.data);
+   }
 }

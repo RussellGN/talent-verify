@@ -8,6 +8,7 @@ import {
    Business,
    Contacts,
    People,
+   PermIdentity,
    SubdirectoryArrowLeft,
    SubdirectoryArrowRight,
    Work,
@@ -52,6 +53,10 @@ export default function DetailedView({ params: { id } }: { params: { id: string 
                   <Typography sx={{ mb: 0.5 }}>
                      <Work sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
                      <span style={{ fontSize: "90%" }}>Current Role:</span> {data.talent.role || "N/A"}
+                  </Typography>
+                  <Typography sx={{ mb: 0.5 }}>
+                     <PermIdentity sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
+                     <span style={{ fontSize: "90%" }}>Employee ID:</span> {data.talent.employee_id || "N/A"}
                   </Typography>
 
                   <br />
