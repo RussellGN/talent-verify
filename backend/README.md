@@ -74,7 +74,8 @@ This api has the following endpoints
 11.   GET /talent?query=(query),is_date=(is_date)
 
       -  expects 'query' and optional 'is_date' search parameters used to filter the employees retrieved (JSON)
-      -  returns a list of zero or more employees matching the query criteria (JSON)
+      -  returns a list of zero or more employees and a list of zero or more unemployed talent matching the query criteria (JSON)
+      -  res = {'employed': [{}, {}, {}], 'unemployed': [{}, {}]}
 
 12.   GET /talent/(ID)
 

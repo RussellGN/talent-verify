@@ -11,7 +11,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from .models import Employer, Employee, Department, Role, CareerTimestamp
-from .serializers import DepartmentSerializer, EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, HistoricalCareerTimestampSerializer, CompactEmployeeSerializer
+from .serializers import DepartmentSerializer, EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, HistoricalCareerTimestampSerializer, CompactEmployeeSerializer, UnemployedTalentSerializer
 from .utils import get_latest_career_timestamp
 
 @api_view(['GET'])
@@ -411,6 +411,7 @@ def remove_employee(request, id):
    try:
       employee = Employee.objects.get(id=id)
       employee.employer = None
+      employee.employee_id = None
       employee.save()
 
       incomplete_career_timestamps = CareerTimestamp.objects.filter(employee=employee, date_left=None)
@@ -489,7 +490,9 @@ def get_talent(request):
    """
    endpoint : GET /talent?query=(query),is_date=(is_date)
    expects : 'query' and optional 'is_date' search parameters used to filter the employees retrieved (JSON)
-   onSuccess : returns a list of zero or more employees matching the query criteria (JSON)
+   onSuccess : returns a list of zero or more employees and a list of zero or more unemployed talent matching the query criteria (JSON)
+
+   res = {'employed': [{}, {}, {}], 'unemployed': [{}, {}]}
    """
    query = request.GET.get("query")
    is_date = request.GET.get("is_date")
@@ -524,10 +527,16 @@ def get_talent(request):
    latest_career_timestamps = CareerTimestamp.objects.filter(
       id__in=[stamp.id for stamp in latest_career_timestamps]
    )
-   matched_career_timestamps = latest_career_timestamps.filter(filter_options)
+   matched_career_timestamps = latest_career_timestamps.filter(Q(employee__employer__isnull=False) & filter_options)
+   matched_unemployed_talent = Employee.objects.filter(
+      Q(employer__isnull=True) &
+      Q(name__icontains=query) | 
+      Q(national_id__icontains=query)
+   )
 
+   unemployed_talent_serializer = UnemployedTalentSerializer(matched_unemployed_talent, many=True)
    career_timestamp_serializer = CompactEmployeeSerializer(matched_career_timestamps, many=True)
-   return Response(career_timestamp_serializer.data)
+   return Response({'employed' : career_timestamp_serializer.data, 'unemployed': unemployed_talent_serializer.data})
 
 @api_view(['GET'])
 def get_detailed_info_on_talent(request, id):
