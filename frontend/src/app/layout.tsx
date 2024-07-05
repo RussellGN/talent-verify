@@ -19,10 +19,10 @@ export default function RootLayout({
       <html lang="en">
          <Providers>
             <body>
-               <Container sx={{ my: 2 }}>
+               <Container sx={{ my: 1 }}>
                   <Navbar />
                   <main>{children}</main>
-                  <footer className="mt-5 border-t-2 px-10 pt-4 flex items-center justify-between">
+                  <footer className="mt-5 border-t-2 p-3 sm:px-10 sm:pt-4 flex items-center justify-between">
                      <Typography variant="caption">Talent Verify</Typography>
                      <Typography variant="caption">By Russell Gundani</Typography>
                   </footer>
