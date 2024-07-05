@@ -262,3 +262,14 @@ export function getCookie(cname: string) {
       return null;
    }
 }
+
+export function generateAvatarLetters(string: string): string {
+   string = string.trim();
+   const words = string.split(" ");
+   const letters = words.map((word) => word[0]);
+
+   const finalLetters = letters.join("").toUpperCase();
+
+   if (finalLetters.length > 1) return finalLetters.slice(0, 2);
+   else return finalLetters;
+}
