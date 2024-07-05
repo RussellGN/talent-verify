@@ -24,3 +24,5 @@
 24.   fix remove page not working so great
 25.   prevent highjacking of employees. only unemployed talent should be able to be added to an employer's list of employees
 26.   implement pagination for search results or do a load more on frontend
+27.   set min query lentgh to 3 or more
+28.   create a features section for employer account creation
