@@ -17,15 +17,16 @@ export default function NavbarAuthButtons() {
    if (isSuccess) {
       return (
          <>
-            <Button disabled={logoutPending} startIcon={<Business />} component={Link} href="/dashboard/employees">
+            <Button
+               variant="outlined"
+               disabled={logoutPending}
+               startIcon={<Business />}
+               component={Link}
+               href="/dashboard/employees"
+            >
                {data.employer.name}
             </Button>
-            <Button
-               disabled={logoutPending}
-               onClick={() => logout()}
-               sx={{ textTransform: "capitalize" }}
-               variant="contained"
-            >
+            <Button disabled={logoutPending} onClick={() => logout()}>
                {logoutPending ? "Logging Out..." : "Logout"}
             </Button>
          </>
@@ -41,7 +42,7 @@ export default function NavbarAuthButtons() {
             sx={{ textTransform: "capitalize", display: pathname === "/login" ? "none" : "inline-flex" }}
             variant="contained"
          >
-            Employer Login
+            Login
          </Button>
 
          <Button

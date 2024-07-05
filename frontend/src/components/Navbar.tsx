@@ -7,7 +7,7 @@ import NavbarAuthButtons from "./NavbarAuthButtons";
 export default function Navbar() {
    return (
       <header className="sticky top-0 z-10 ">
-         <div className="bg-white flex items-center justify-between border shadow-md px-4 py-2 rounded-lg">
+         <div className="bg-white flex items-center justify-between border shadow-md px-2 sm:px-4 py-2 rounded-lg">
             <MuiLink
                underline="none"
                component={Link}
@@ -16,12 +16,13 @@ export default function Navbar() {
                variant="h5"
                color="inherit"
             >
-               <Verified color="primary" fontSize="inherit" />
-               <span>Talent Verify</span>
+               <Verified sx={{ color: "primary.light" }} fontSize="inherit" />
+               <span className="hidden sm:inline">Talent Verify</span>
+               <span className="sm:hidden">TV</span>
             </MuiLink>
 
-            <nav className="flex items-center gap-5">
-               <MuiLink component={Link} href="/">
+            <nav className="flex items-center gap-2 sm:gap-5">
+               <MuiLink component={Link} href="/" sx={{ display: { xs: "none", sm: "inline-block" } }}>
                   Home
                </MuiLink>
 
@@ -29,7 +30,7 @@ export default function Navbar() {
             </nav>
          </div>
 
-         <div className="mt-3 w-fit bg-white">
+         <div className="mt-1 sm:mt-3 w-fit bg-[whitesmoke]">
             <GoBack />
          </div>
       </header>
