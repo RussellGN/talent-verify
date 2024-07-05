@@ -2,45 +2,73 @@ import { Box, Typography } from "@mui/material";
 import { UnemployedTalentInterface } from "../interfaces";
 import { capitalizeWords } from "../lib";
 import Link from "next/link";
-import { ArrowForward, Business, Contacts, People, AccessTime, Work } from "@mui/icons-material";
+import { ArrowForward, Business, Contacts } from "@mui/icons-material";
 
-export default function UnemployedTalentCard({ talent }: { talent: UnemployedTalentInterface }) {
+import { findMatchedAttributesInStamp } from "../lib";
+import { matchedStyles } from "@/lib/constants";
+
+export default function UnemployedTalentCard({ talent, query }: { talent: UnemployedTalentInterface; query: string }) {
+   const matched = findMatchedAttributesInStamp(talent, query);
+
    return (
       <Box
          component={Link}
          href={`/search/${talent.id}`}
-         className="block border-slate-300 border-2 bg-slate-50 hover:bg-white hover:border-slate-400  shadow-md rounded-xl p-3"
+         className="h-full block border-slate-300 border-2 bg-white hover:bg-slate-50  hover:border-slate-400  shadow-md rounded-xl p-3"
       >
-         <Typography className="border-b" variant="h6" sx={{ mb: 1, pb: 0.2 }}>
-            {capitalizeWords(talent.name)}
-         </Typography>
-         <Typography sx={{ mb: 0.5 }}>
-            <Contacts sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> National ID: {talent.national_id}
-         </Typography>
-         <Typography sx={{ mb: 0.5 }}>
-            <Business sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> No employer
-         </Typography>
-         <Typography sx={{ mb: 0.5 }}>
-            <People sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> Department N/A
-         </Typography>
-         <Typography sx={{ mb: 0.5 }}>
-            <Work sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> Role N/A
-         </Typography>
+         <div className="h-full flex flex-col items-center justify-between">
+            <div className="w-full">
+               <Typography
+                  fontWeight="bold"
+                  className="border-b"
+                  variant="h6"
+                  sx={{ mb: 1, pb: 0.2, color: "primary.light" }}
+               >
+                  <Box component="span" sx={matched.find((item) => item === "name") ? matchedStyles : {}}>
+                     {capitalizeWords(talent.name)}
+                  </Box>
+               </Typography>
+               <Typography sx={{ mb: 0.5 }}>
+                  <Contacts sx={{ mr: 0.8, mt: -0.4, color: "success.light" }} fontSize="inherit" />
+                  National ID:{" "}
+                  <Box component="span" sx={matched.find((item) => item === "national_id") ? matchedStyles : {}}>
+                     {talent.national_id}
+                  </Box>
+               </Typography>
+               <Typography sx={{ mb: 0.5 }}>
+                  <Business sx={{ mr: 0.8, mt: -0.4, color: "success.light" }} fontSize="inherit" />
+                  No employer
+               </Typography>
+            </div>
 
-         <br />
-         <Typography sx={{ mb: 0.5 }}>
-            <AccessTime sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />
-            Date started N/A
-         </Typography>
-         <Typography sx={{ mb: 0.5 }}>
-            <AccessTime sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />
-            Date left N/A
-         </Typography>
+            {/* <>
+               <Typography sx={{ mb: 0.5 }}>
+                  <People sx={{ mr: 0.8, mt: -0.4, color: "success.light" }} fontSize="inherit" />
+                  Department N/A{" "}
+               </Typography>
+               <Typography sx={{ mb: 0.5 }}>
+                  <Work sx={{ mr: 0.8, mt: -0.4, color: "success.light" }} fontSize="inherit" />
+                  Role N/A{" "}
+               </Typography>
 
-         <Typography color="primary" sx={{ mt: 2 }} className="flex items-center justify-end text-right gap-2 px-2">
-            <ArrowForward />
-            View
-         </Typography>
+               <br />
+               <Typography sx={{ mb: 0.5 }}>
+                  <AccessTime sx={{ mr: 0.8, mt: -0.4, color: "success.light" }} fontSize="inherit" />
+                  Date started N/A
+               </Typography>
+               <Typography sx={{ mb: 0.5 }}>
+                  <AccessTime sx={{ mr: 0.8, mt: -0.4, color: "success.light" }} fontSize="inherit" />
+                  Date left N/A
+               </Typography>
+            </> */}
+
+            <div className="w-full">
+               <Typography sx={{ mt: 2 }} color="primary" className="flex items-center justify-end text-right gap-2 px-2">
+                  <ArrowForward />
+                  View
+               </Typography>
+            </div>
+         </div>
       </Box>
    );
 }

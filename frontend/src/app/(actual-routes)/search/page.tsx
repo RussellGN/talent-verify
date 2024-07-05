@@ -3,7 +3,8 @@
 import CareerTimestampCard from "@/components/CareerTimestampCard";
 import UnemployedTalentCard from "@/components/UnemployedTalentCard";
 import useGetTalent from "@/hooks/useGetTalent";
-import { CircularProgress, Grid, Typography } from "@mui/material";
+import { matchedStyles } from "@/lib/constants";
+import { Box, CircularProgress, Grid, Typography } from "@mui/material";
 
 type PropTypes = {
    searchParams: {
@@ -48,19 +49,24 @@ export default function SearchPage({ searchParams: { query, date_started, date_l
 
    return (
       <div className="min-h-[72vh]">
-         <Typography className="text-center p-4">Showing Results for {`'${showingRsultsFor}'`}</Typography>
+         <Typography variant="h6" sx={{ mb: 2 }} className="text-center p-4">
+            Showing Results for{" "}
+            <Box component="span" sx={matchedStyles}>
+               {`'${showingRsultsFor}'`}
+            </Box>
+         </Typography>
          <Grid container spacing={1}>
             {data.employed.map((timeStamp) => (
-               <Grid key={timeStamp.id} item xs={3}>
-                  <CareerTimestampCard careerTimestamp={timeStamp} />
+               <Grid key={timeStamp.id} item xs={12} sm={6} md={4} lg={3}>
+                  <CareerTimestampCard careerTimestamp={timeStamp} query={q} />
                </Grid>
             ))}
 
             <hr />
 
             {data.unemployed.map((talent) => (
-               <Grid key={talent.id} item xs={3}>
-                  <UnemployedTalentCard talent={talent} />
+               <Grid key={talent.id} item xs={12} sm={6} md={4} lg={3}>
+                  <UnemployedTalentCard talent={talent} query={q} />
                </Grid>
             ))}
          </Grid>
