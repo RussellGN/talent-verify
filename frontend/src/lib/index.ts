@@ -1,6 +1,7 @@
 import * as XLSX from "xlsx";
 import { UploadEmployee } from "../types";
 import axios, { isAxiosError } from "axios";
+import { UnormalizedCurrentEmployeeInterface } from "@/interfaces";
 
 export function capitalizeWords(str: string) {
    let finalString = "";
@@ -272,4 +273,16 @@ export function generateAvatarLetters(string: string): string {
 
    if (finalLetters.length > 1) return finalLetters.slice(0, 2);
    else return finalLetters;
+}
+
+export function findMatchedAttributesInStamp(careerTimestamp: UnormalizedCurrentEmployeeInterface, query: string) {
+   const matched: string[] = [];
+
+   Object.keys(careerTimestamp).forEach((key) => {
+      if ({ ...careerTimestamp }[key]?.toString().toLowerCase().includes(query.toLowerCase())) {
+         matched.push(key);
+      }
+   });
+
+   return matched;
 }
