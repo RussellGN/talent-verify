@@ -28,8 +28,8 @@ export default function LoginPage() {
          {/* had to return everything but conditionally render content in order to not clear form */}
 
          {(isPending || isSuccess) && (
-            <div className="min-h-[72vh] flex items-center justify-center">
-               <div className="w-full text-center max-w-[500px] min-w-[400px] rounded-[20px] shadow-lg bg-slate-50 border px-10 py-20">
+            <div className="min-h-[72vh] flex items-center justify-center text-center">
+               <div className="w-full max-w-[400px] mx-auto rounded-[20px] shadow-lg bg-white border px-5 sm:px-10 py-20">
                   <CircularProgress />
                   <p>submitting...</p>
                </div>
@@ -37,8 +37,8 @@ export default function LoginPage() {
          )}
 
          {isError && (
-            <div className="min-h-[72vh] flex items-center justify-center">
-               <div className="w-full max-w-[500px] text-center min-w-[400px] rounded-[20px] shadow-lg bg-slate-50 border px-10 py-20">
+            <div className="min-h-[72vh] flex items-center justify-center text-center">
+               <div className="w-full max-w-[400px] mx-auto rounded-[20px] shadow-lg bg-white border px-5 sm:px-10 py-20">
                   <WarningOutlined color="error" fontSize="large" />
                   <p>
                      <strong>Login error</strong> <br /> {error.message}
@@ -60,12 +60,13 @@ export default function LoginPage() {
          <div
             className={`min-h-[72vh] ${isPending || isError || isSuccess ? "hidden" : "flex"} items-center justify-center`}
          >
-            <form onSubmit={handleSubmit}>
-               <div className="w-full min-w-[400px] rounded-[20px] shadow-lg bg-slate-50 border px-10 py-20">
+            <form onSubmit={handleSubmit} className="w-full">
+               <div className="w-full max-w-[400px] mx-auto rounded-[20px] shadow-lg bg-white border px-5 sm:px-10 py-20">
                   <Typography variant="h4" className="text-center" sx={{ mb: 4 }}>
                      Login
                   </Typography>
-                  <label className="flex mb-4 flex-col gap-1" htmlFor="password">
+
+                  <label className="flex mb-4 flex-col gap-1" htmlFor="username">
                      <span className="px-5">
                         <InfoOutlined
                            fontSize="inherit"
@@ -81,10 +82,10 @@ export default function LoginPage() {
                         Username
                      </span>
                      <input
-                        className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
+                        className="w-full d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                         id="username"
                         name="username"
-                        placeholder="Admin password"
+                        placeholder="employer admin username"
                         minLength={3}
                         required
                      />
@@ -106,10 +107,10 @@ export default function LoginPage() {
                         Password
                      </span>
                      <input
-                        className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
+                        className="w-full d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                         id="password"
                         name="password"
-                        placeholder="Admin password"
+                        placeholder="employer admin password"
                         type="password"
                         minLength={3}
                         required

@@ -49,8 +49,8 @@ export default function RegistrationPage() {
          {/* had to return everything but conditionally render content in order to not clear form */}
 
          {(isPending || isSuccess) && (
-            <div className="min-h-[72vh] flex items-center justify-center">
-               <div className="w-full text-center max-w-[500px] min-w-[400px] rounded-[20px] shadow-lg bg-slate-50 border px-10 py-20">
+            <div className="min-h-[72vh] flex items-center justify-center text-center">
+               <div className="w-full max-w-[500px] mx-auto rounded-[20px] shadow-lg bg-white border px-5 sm:px-10 py-20">
                   <CircularProgress />
                   <p>submitting...</p>
                </div>
@@ -58,8 +58,8 @@ export default function RegistrationPage() {
          )}
 
          {isError && (
-            <div className="min-h-[72vh] flex items-center justify-center">
-               <div className="w-full max-w-[500px] text-center min-w-[400px] rounded-[20px] shadow-lg bg-slate-50 border px-10 py-20">
+            <div className="min-h-[72vh] flex items-center justify-center text-center">
+               <div className="w-full max-w-[500px] mx-auto rounded-[20px] shadow-lg bg-white border px-5 sm:px-10 py-20">
                   <WarningOutlined color="error" fontSize="large" />
                   <p>
                      <strong>Registration error</strong> <br /> {error.message}
@@ -79,10 +79,12 @@ export default function RegistrationPage() {
          )}
 
          <div
-            className={`min-h-[72vh] ${isPending || isError || isSuccess ? "hidden" : "flex"} items-center justify-center`}
+            className={`min-h-[72vh] ${
+               isPending || isError || isSuccess ? "hidden" : "flex"
+            } items-center justify-center mt-3`}
          >
-            <form onSubmit={handleSubmit}>
-               <div className="w-full min-w-[400px] rounded-[20px] shadow-lg bg-slate-50 border px-10 py-20">
+            <form onSubmit={handleSubmit} className="w-full">
+               <div className="w-full max-w-[500px] mx-auto rounded-[20px] shadow-lg bg-white border px-5 sm:px-10 py-20">
                   <Typography variant="h4" className="text-center" sx={{ mb: 4 }}>
                      Register
                   </Typography>
@@ -119,7 +121,7 @@ export default function RegistrationPage() {
                            Organization&apos;s name*
                         </span>
                         <input
-                           className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
+                           className="w-full d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                            id="name"
                            name="name"
                            minLength={3}
@@ -144,7 +146,7 @@ export default function RegistrationPage() {
                         </span>
 
                         <input
-                           className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
+                           className="w-full d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                            id="email"
                            name="email"
                            type="email"
@@ -169,7 +171,7 @@ export default function RegistrationPage() {
                         </span>
 
                         <input
-                           className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
+                           className="w-full d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                            id="address"
                            name="address"
                            placeholder="physical address"
@@ -193,7 +195,7 @@ export default function RegistrationPage() {
                         </span>
 
                         <input
-                           className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
+                           className="w-full d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                            id="contact_person"
                            name="contact_person"
                            placeholder="full name of contact person"
@@ -217,7 +219,7 @@ export default function RegistrationPage() {
                         </span>
 
                         <input
-                           className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
+                           className="w-full d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                            id="contact_phone"
                            name="contact_phone"
                         />
@@ -240,7 +242,7 @@ export default function RegistrationPage() {
                         </span>
 
                         <input
-                           className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
+                           className="w-full d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                            id="registration_number"
                            name="registration_number"
                         />
@@ -263,7 +265,7 @@ export default function RegistrationPage() {
                         </span>
 
                         <input
-                           className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
+                           className="w-full d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                            id="registration_date"
                            name="registration_date"
                            type="date"
@@ -287,7 +289,7 @@ export default function RegistrationPage() {
                         </span>
 
                         <input
-                           className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
+                           className="w-full d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                            id="number_of_employees"
                            name="number_of_employees"
                            type="number"
@@ -312,7 +314,7 @@ export default function RegistrationPage() {
                         </span>
 
                         <textarea
-                           className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
+                           className="w-full d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                            id="departments"
                            name="departments"
                            placeholder="department 1, department 2, department 3, department 4"
@@ -350,7 +352,7 @@ export default function RegistrationPage() {
                            Username*
                         </span>
                         <input
-                           className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
+                           className="w-full d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                            id="username"
                            name="username"
                            placeholder="example: <org> talent admin"
@@ -375,7 +377,7 @@ export default function RegistrationPage() {
                            Password*
                         </span>
                         <input
-                           className="min-w-[300px] d-block rounded-[20px] border-2 shadow px-5 py-1.5"
+                           className="w-full d-block rounded-[20px] border-2 shadow px-5 py-1.5"
                            id="password"
                            name="password"
                            placeholder="Choose a strong password"
