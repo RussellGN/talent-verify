@@ -18,13 +18,9 @@ export const themeOptions: ThemeOptions = {
          defaultProps: {
             variant: "contained",
             size: "small",
-            sx: {
-               px: 3,
-            },
          },
          styleOverrides: {
             root: {
-               borderRadius: "15px",
                textTransform: "capitalize",
             },
          },
