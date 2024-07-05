@@ -23,3 +23,4 @@
 23.   convert POST /employees/reassign to DELETE /employees/(ID) in backend
 24.   fix remove page not working so great
 25.   prevent highjacking of employees. only unemployed talent should be able to be added to an employer's list of employees
+26.   implement pagination for search results or do a load more on frontend
