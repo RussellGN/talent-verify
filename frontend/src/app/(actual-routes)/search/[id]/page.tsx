@@ -26,7 +26,7 @@ export default function DetailedView({ params: { id } }: { params: { id: string 
       return (
          <div className="min-h-[72vh] pt-[4rem] text-center">
             <CircularProgress />
-            <p>searching...</p>
+            <p>Loading...</p>
          </div>
       );
    }
