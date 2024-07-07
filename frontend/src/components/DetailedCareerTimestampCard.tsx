@@ -10,7 +10,7 @@ export default function DetailedCareerTimestampCard({
    careerTimestamp: HistoricalCareerTimestampInterface;
 }) {
    return (
-      <Box className="block border-slate-300 border-2 bg-slate-50   shadow-md rounded-xl p-3">
+      <Box className="block border-slate-300 border-2 bg-white   shadow-md rounded-xl p-3">
          <Typography sx={{ mb: 0.5 }}>
             <Business sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> Employer:{" "}
             {careerTimestamp.employer || "N/A"}
