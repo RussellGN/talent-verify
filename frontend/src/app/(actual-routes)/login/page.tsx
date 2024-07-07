@@ -27,7 +27,7 @@ export default function LoginPage() {
          {/* had to return everything but conditionally render content in order to not clear form */}
 
          {(isPending || isSuccess) && (
-            <div className="min-h-[72vh] flex items-center justify-center text-center">
+            <div className="min-h-[550px] flex items-center justify-center text-center">
                <div className="w-full max-w-[400px] mx-auto rounded-[20px] shadow-lg bg-white border px-5 sm:px-10 py-20">
                   <CircularProgress />
                   <p>submitting...</p>
@@ -36,7 +36,7 @@ export default function LoginPage() {
          )}
 
          {isError && (
-            <div className="min-h-[72vh] flex items-center justify-center text-center">
+            <div className="min-h-[550px] flex items-center justify-center text-center">
                <div className="w-full max-w-[400px] mx-auto rounded-[20px] shadow-lg bg-white border px-5 sm:px-10 py-20">
                   <WarningOutlined color="error" fontSize="large" />
                   <p>
@@ -51,7 +51,7 @@ export default function LoginPage() {
          )}
 
          <div
-            className={`min-h-[72vh] ${isPending || isError || isSuccess ? "hidden" : "flex"} items-center justify-center`}
+            className={`min-h-[550px] ${isPending || isError || isSuccess ? "hidden" : "flex"} items-center justify-center`}
          >
             <form onSubmit={handleSubmit} className="w-full">
                <div className="w-full max-w-[400px] mx-auto rounded-[20px] shadow-lg bg-white border px-5 sm:px-10 py-20">

@@ -74,7 +74,7 @@ export default function RemovePage() {
             </div>
          )}
 
-         <div className={`min-h-[72vh] ${isPending || isError || isSuccess ? "hidden" : "block"}`}>
+         <div className={`min-h-[550px] ${isPending || isError || isSuccess ? "hidden" : "block"}`}>
             <form key={key} onSubmit={handleSubmit} className="px-3 py-5">
                <Typography variant="subtitle2" sx={{ mb: 3 }} className="max-w-[100ch]">
                   <InfoOutlined fontSize="inherit" color="warning" sx={{ mt: -0.3, mr: 0.5 }} />
