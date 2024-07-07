@@ -3,6 +3,7 @@
 import useUpload from "@/hooks/useUpload";
 import {
    ArrowBack,
+   ArrowForward,
    CheckCircle,
    InfoOutlined,
    KeyboardArrowDown,
@@ -10,11 +11,11 @@ import {
    KeyboardDoubleArrowRight,
    Save,
    UploadFile,
-   Warning,
-   WarningOutlined,
+   WarningRounded,
 } from "@mui/icons-material";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import Link from "next/link";
 import { ReactNode } from "react";
 
 export default function UploadPage() {
@@ -35,19 +36,19 @@ export default function UploadPage() {
    let content: ReactNode = "";
    if (parseError) {
       content = (
-         <p className="text-red-800">
-            <Warning color="inherit" sx={{ mt: -0.3, mr: 0.5 }} />
+         <Typography className="text-red-800">
+            <WarningRounded color="inherit" sx={{ mt: -0.3, mr: 0.5 }} />
             Error processing file: {parseError}
-         </p>
+         </Typography>
       );
    } else if (!fileData) {
       content = (
          <Box sx={{ mb: 3 }} className="text-left">
-            <Typography variant="h6" textAlign="center" sx={{ mb: 4 }}>
+            <Typography variant="h6" textAlign="center" sx={{ mb: 3 }}>
                No data uploaded
             </Typography>
             <Typography sx={{ mb: 3 }}>
-               <InfoOutlined fontSize="inherit" sx={{ mr: 0.5, mt: -0.3 }} />
+               <InfoOutlined color="warning" fontSize="inherit" sx={{ mr: 0.5, mt: -0.3 }} />
                Before uploading, please take note of the following
             </Typography>
             <ul>
@@ -91,14 +92,13 @@ export default function UploadPage() {
                      <div>
                         <Typography variant="subtitle2">
                            Text files should have the following format{" "}
-                           <Button
-                              size="small"
-                              sx={{ textTransform: "capitalize" }}
+                           <button
                               onClick={() => setShowGuidelinesForTxt((prev) => !prev)}
-                              endIcon={showGuidelinesForTxt ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                              className="text-[goldenrod] border-0 p-0 m-0 bg-transparent"
                            >
                               {showGuidelinesForTxt ? "Hide" : "Show"}
-                           </Button>
+                              {showGuidelinesForTxt ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                           </button>
                         </Typography>
 
                         <Typography
@@ -144,21 +144,25 @@ export default function UploadPage() {
                      </Typography>
                   </div>
                </li>
+               <li>
+                  <div className="flex items-start gap-1 ">
+                     <KeyboardDoubleArrowRight fontSize="small" />
+                     <Typography variant="subtitle2">
+                        If you would like to perform a bulk update, ensure the updated detail rows in your file contain the
+                        national_id numbers of the employees you wish to update
+                     </Typography>
+                  </div>
+               </li>
             </ul>
          </Box>
       );
    } else {
       content = (
          <>
-            <Box sx={{ mb: 3 }} className="text-left max-w-prose flex items-start gap-1">
-               <div className="pt-[1px]">
-                  <InfoOutlined fontSize="inherit" />
-               </div>
-               <p>
-                  Verify employee details and press &ldquo;Save&rdquo; to proceed. If the details appearing are not correct
-                  please edit the file and upload again.
-               </p>
-            </Box>
+            <Typography sx={{ mb: 3 }} className="text-left max-w-prose">
+               Verify employee details and press &ldquo;Save&rdquo; to proceed. If the details appearing are not correct
+               please edit the file and upload again.
+            </Typography>
             <DataGrid
                columns={cols}
                rows={fileData}
@@ -186,7 +190,6 @@ export default function UploadPage() {
    }
 
    if (isSuccess && data) {
-      console.log(data);
       const message = (
          <>
             {data.employees_added.length
@@ -203,7 +206,7 @@ export default function UploadPage() {
                     data.existing_employees_updated.length === 1
                        ? "employee's national ID matched an existing employee's"
                        : "employees' national IDs found matches"
-                 } and an update was made instead`
+                 } and an update was made`
                : ""}
          </>
       );
@@ -212,6 +215,17 @@ export default function UploadPage() {
          <div className="text-center max-w-prose mx-auto py-20">
             <CheckCircle fontSize="large" color="success" className="mb-3" />
             <div>{message}</div>
+            <div>
+               <Button
+                  href="/dashboard/employees"
+                  component={Link}
+                  endIcon={<ArrowForward />}
+                  variant="outlined"
+                  sx={{ mt: 3 }}
+               >
+                  View employees
+               </Button>
+            </div>
          </div>
       );
    }
@@ -228,17 +242,11 @@ export default function UploadPage() {
    if (isError && error) {
       return (
          <div className="text-center px-10 py-20">
-            <WarningOutlined color="error" fontSize="large" />
+            <WarningRounded color="error" fontSize="large" />
             <p>
                <strong>Error saving employees</strong> <br /> {error.message}
                <br />
-               <Button
-                  onClick={reset}
-                  type="button"
-                  startIcon={<ArrowBack />}
-                  variant="outlined"
-                  sx={{ mt: 3, textTransform: "capitalize" }}
-               >
+               <Button onClick={reset} type="button" startIcon={<ArrowBack />} variant="outlined" sx={{ mt: 3 }}>
                   Back to upload
                </Button>
             </p>
@@ -254,7 +262,7 @@ export default function UploadPage() {
                color="success"
                size="large"
                onClick={clickInput}
-               sx={{ textTransform: "capitalize" }}
+               sx={{ my: 2 }}
                endIcon={<UploadFile />}
             >
                Click to Upload File <span className="lowercase">(xlsx, xls, csv, txt)</span>
@@ -270,7 +278,7 @@ export default function UploadPage() {
             />
          </div>
 
-         <div className="bg-slate-50 rounded-[10px] p-5 text-center mt-5">{content} </div>
+         <div className="bg-white rounded-[10px] py-5 px-3 text-center mt-5">{content} </div>
       </>
    );
 }

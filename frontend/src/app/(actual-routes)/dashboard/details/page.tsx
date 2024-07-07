@@ -3,7 +3,7 @@
 import useEmployer from "@/hooks/useEmployer";
 import useUpdateEmployer from "@/hooks/useUpdateEmployer";
 import { EmployerUpdatePayload } from "@/types";
-import { ArrowBack, InfoOutlined, WarningOutlined } from "@mui/icons-material";
+import { ArrowBack, CheckCircle, InfoOutlined, WarningOutlined } from "@mui/icons-material";
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { FormEvent } from "react";
 
@@ -54,14 +54,12 @@ export default function DetailsPage() {
       // only add password if password value changed
       if (formData.get("password")) data["employer-admin"].password = formData.get("password")?.toString();
 
-      console.log(data);
       mutate(data);
    }
 
    if (loadingDetails) {
       return (
          <div className="p-5 text-center">
-            {" "}
             <CircularProgress />
          </div>
       );
@@ -69,7 +67,20 @@ export default function DetailsPage() {
 
    if (errorLoadingDetails) throw detailsError;
 
-   if (isSubmitSuccess) alert("changes saved!");
+   if (isSubmitSuccess) {
+      return (
+         <div className="text-center max-w-prose mx-auto py-20">
+            <CheckCircle fontSize="large" color="success" className="mb-3" />
+            <p>
+               Details updated successfully!
+               <br />
+               <Button onClick={reset} type="button" startIcon={<ArrowBack />} variant="outlined" sx={{ mt: 3 }}>
+                  Back to form
+               </Button>
+            </p>
+         </div>
+      );
+   }
 
    return (
       <>
@@ -88,13 +99,7 @@ export default function DetailsPage() {
                <p>
                   <strong>Update error</strong> <br /> {submitError.message}
                   <br />
-                  <Button
-                     onClick={reset}
-                     type="button"
-                     startIcon={<ArrowBack />}
-                     variant="outlined"
-                     sx={{ mt: 3, textTransform: "capitalize" }}
-                  >
+                  <Button onClick={reset} type="button" startIcon={<ArrowBack />} variant="outlined" sx={{ mt: 3 }}>
                      Back to form
                   </Button>
                </p>

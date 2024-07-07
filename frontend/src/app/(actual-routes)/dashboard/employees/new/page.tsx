@@ -25,7 +25,6 @@ export default function DetailsPage() {
          date_started: formData.get("date_started")?.toString() || undefined,
          date_left: formData.get("date_left")?.toString() || undefined,
       };
-      console.log(data);
       mutate([data]);
    }
 
@@ -46,13 +45,7 @@ export default function DetailsPage() {
             <p>
                {message}
                <br />
-               <Button
-                  onClick={reset}
-                  type="button"
-                  startIcon={<ArrowBack />}
-                  variant="outlined"
-                  sx={{ mt: 3, textTransform: "capitalize" }}
-               >
+               <Button onClick={reset} type="button" startIcon={<ArrowBack />} variant="outlined" sx={{ mt: 3 }}>
                   Back to form
                </Button>
             </p>
@@ -77,13 +70,7 @@ export default function DetailsPage() {
                <p>
                   <strong>Update error</strong> <br /> {error.message}
                   <br />
-                  <Button
-                     onClick={reset}
-                     type="button"
-                     startIcon={<ArrowBack />}
-                     variant="outlined"
-                     sx={{ mt: 3, textTransform: "capitalize" }}
-                  >
+                  <Button onClick={reset} type="button" startIcon={<ArrowBack />} sx={{ mt: 3 }}>
                      Back to form
                   </Button>
                </p>

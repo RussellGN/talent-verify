@@ -53,7 +53,6 @@ export default function useUpload() {
    }
 
    function saveEmployees() {
-      console.log(`sending ${fileData?.length} employees to server`);
       if (fileData) {
          const formatedData = fileData.map((emp) => ({
             national_id: emp.national_id,

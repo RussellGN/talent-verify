@@ -11,8 +11,7 @@ export default function useLogout() {
 
    const { mutate: logout, isPending: logoutPending } = useMutation({
       mutationFn: () => API.logoutEmployer(token || ""),
-      onSuccess: async (data) => {
-         console.log(data);
+      onSuccess: async () => {
          deleteCookie("token");
          await queryClient.invalidateQueries({ queryKey: ["employer", "employees", { token }] });
          if (pathname.includes("/dashboard")) router.push("/");

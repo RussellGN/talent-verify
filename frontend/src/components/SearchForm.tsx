@@ -1,11 +1,12 @@
 "use client";
 
-import { Search } from "@mui/icons-material";
+import { InfoOutlined, Search } from "@mui/icons-material";
 import { IconButton, Typography } from "@mui/material";
 import { useRouter } from "next/navigation";
-import React, { FormEvent, useRef } from "react";
+import React, { FormEvent, useRef, useState } from "react";
 
 export default function SearchForm() {
+   const [message, setMessage] = useState<string>();
    const queryRef = useRef<HTMLInputElement>(null);
    const dateStartedRef = useRef<HTMLInputElement>(null);
    const dateLeftRef = useRef<HTMLInputElement>(null);
@@ -16,12 +17,14 @@ export default function SearchForm() {
       const query = queryRef.current?.value;
       const date_started = dateStartedRef.current?.value;
       const date_left = dateLeftRef.current?.value;
-      if (query) {
-         router.push(`/search?query=${query}`);
-      } else if (date_started) {
+      if (date_started) {
          router.push(`/search?date_started=${date_started}`);
-      } else {
+      } else if (date_left) {
          router.push(`/search?date_left=${date_left}`);
+      } else if (query) {
+         router.push(`/search?query=${query}`);
+      } else {
+         setMessage("please type in a search query or select a date");
       }
    }
 
@@ -55,22 +58,29 @@ export default function SearchForm() {
 
    return (
       <form onSubmit={handleSubmit}>
+         {!!message && (
+            <Typography variant="caption" color="firebrick" sx={{ my: 1, display: "block" }}>
+               <InfoOutlined fontSize="inherit" sx={{ mr: 0.5, mt: -0.3 }} />
+               {message}
+            </Typography>
+         )}
+
          <input
             onChange={queryDisableOtherInputs}
-            className="d-block min-w-[70%] md:min-w-[60%] rounded-[20px] border-4 shadow-md px-5 py-1.5"
+            className="d-block min-w-[80%] md:min-w-[60%] rounded-[20px] border-4 shadow-md px-5 py-1.5"
             ref={queryRef}
             name="query"
             placeholder="Search query here..."
          />
 
-         <Typography sx={{ my: 3 }}> Or search by</Typography>
+         <Typography sx={{ my: { xs: 2, sm: 3 } }}> Or search by</Typography>
 
-         <div className="flex items-center justify-center gap-3">
+         <div className="flex items-center justify-center gap-1 md:gap-3">
             <label className="flex flex-col gap-1" htmlFor="date_left">
                <span>Date Started</span>
                <input
                   onChange={dateStartedDisableOtherInputs}
-                  className="d-block rounded-[20px] border-4 shadow-md px-5 py-1.5"
+                  className="scale-90 md:scale-100 d-block w-full rounded-[20px] border-4 shadow-md px-5 py-1.5"
                   ref={dateStartedRef}
                   id="date_started"
                   name="date_started"
@@ -82,7 +92,7 @@ export default function SearchForm() {
                <span>Date Left</span>
                <input
                   onChange={dateLeftDisableOtherInputs}
-                  className="d-block rounded-[20px] border-4 shadow-md px-5 py-1.5"
+                  className="scale-90 md:scale-100 d-block w-full rounded-[20px] border-4 shadow-md px-5 py-1.5"
                   ref={dateLeftRef}
                   id="date_left"
                   name="date_left"
@@ -96,7 +106,6 @@ export default function SearchForm() {
                type="submit"
                size="large"
                sx={{
-                  boxShadow: "2px 2px 10px grey",
                   backgroundColor: "primary.main",
                   color: "white",
                   "&:hover": { backgroundColor: "primary.light", color: "white" },
