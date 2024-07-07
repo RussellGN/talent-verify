@@ -64,13 +64,7 @@ export default function RegistrationPage() {
                   <p>
                      <strong>Registration error</strong> <br /> {error.message}
                      <br />
-                     <Button
-                        onClick={reset}
-                        type="button"
-                        startIcon={<ArrowBack />}
-                        variant="outlined"
-                        sx={{ mt: 3, textTransform: "capitalize" }}
-                     >
+                     <Button onClick={reset} type="button" startIcon={<ArrowBack />} variant="outlined" sx={{ mt: 3 }}>
                         Back to form
                      </Button>
                   </p>

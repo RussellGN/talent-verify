@@ -12,39 +12,21 @@ export default function EmployeesPage() {
    return (
       <div>
          <div className="bg-white flex gap-3 items-center justify-center md:justify-end border shadow-md p-4 rounded-[10px]">
-            <Button
-               sx={{ textTransform: "capitalize" }}
-               startIcon={<Add />}
-               type="submit"
-               color="success"
-               variant="contained"
-               component={Link}
-               href="/dashboard/employees/new"
-            >
+            <Button startIcon={<Add />} type="submit" color="success" component={Link} href="/dashboard/employees/new">
                New
             </Button>
 
             <Button
-               sx={{ textTransform: "capitalize" }}
                startIcon={<UploadFile />}
                type="submit"
                color="success"
-               variant="contained"
                component={Link}
                href="/dashboard/employees/upload"
             >
                {isMobile ? "Upload" : "Add/Update from CSV, Excel or Text file"}
             </Button>
 
-            <Button
-               sx={{ textTransform: "capitalize" }}
-               startIcon={<Remove />}
-               type="submit"
-               color="error"
-               variant="contained"
-               component={Link}
-               href="/dashboard/employees/remove"
-            >
+            <Button startIcon={<Remove />} type="submit" color="error" component={Link} href="/dashboard/employees/remove">
                {isMobile ? "Remove" : "Remove an Employee"}
             </Button>
          </div>

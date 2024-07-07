@@ -46,13 +46,7 @@ export default function DetailsPage() {
             <p>
                {message}
                <br />
-               <Button
-                  onClick={reset}
-                  type="button"
-                  startIcon={<ArrowBack />}
-                  variant="outlined"
-                  sx={{ mt: 3, textTransform: "capitalize" }}
-               >
+               <Button onClick={reset} type="button" startIcon={<ArrowBack />} variant="outlined" sx={{ mt: 3 }}>
                   Back to form
                </Button>
             </p>
@@ -77,13 +71,7 @@ export default function DetailsPage() {
                <p>
                   <strong>Update error</strong> <br /> {error.message}
                   <br />
-                  <Button
-                     onClick={reset}
-                     type="button"
-                     startIcon={<ArrowBack />}
-                     variant="outlined"
-                     sx={{ mt: 3, textTransform: "capitalize" }}
-                  >
+                  <Button onClick={reset} type="button" startIcon={<ArrowBack />} sx={{ mt: 3 }}>
                      Back to form
                   </Button>
                </p>

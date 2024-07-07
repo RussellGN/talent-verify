@@ -11,12 +11,7 @@ export default function GoBack() {
    if (pathname === "/") return;
 
    return (
-      <Button
-         sx={{ textTransform: "capitalize" }}
-         variant="outlined"
-         startIcon={<ArrowBack />}
-         onClick={() => router.back()}
-      >
+      <Button variant="outlined" startIcon={<ArrowBack />} onClick={() => router.back()}>
          Go Back
       </Button>
    );

@@ -57,13 +57,7 @@ export default function RemovePage() {
                <p>
                   <strong>Removal error</strong> <br /> {error.message}
                   <br />
-                  <Button
-                     onClick={reset}
-                     type="button"
-                     startIcon={<ArrowBack />}
-                     variant="outlined"
-                     sx={{ mt: 3, textTransform: "capitalize" }}
-                  >
+                  <Button onClick={reset} type="button" startIcon={<ArrowBack />} variant="outlined" sx={{ mt: 3 }}>
                      Back to form
                   </Button>
                </p>
@@ -76,13 +70,7 @@ export default function RemovePage() {
                <p>
                   {data}
                   <br />
-                  <Button
-                     onClick={reset}
-                     type="button"
-                     startIcon={<ArrowBack />}
-                     variant="outlined"
-                     sx={{ mt: 3, textTransform: "capitalize" }}
-                  >
+                  <Button onClick={reset} type="button" startIcon={<ArrowBack />} variant="outlined" sx={{ mt: 3 }}>
                      Back to form
                   </Button>
                </p>
@@ -128,13 +116,7 @@ export default function RemovePage() {
                </label>
 
                <div className="mt-5">
-                  <Button
-                     sx={{ textTransform: "capitalize" }}
-                     disabled={!selectedValue}
-                     type="submit"
-                     color="error"
-                     variant="contained"
-                  >
+                  <Button disabled={!selectedValue} type="submit" color="error">
                      Remove {selectedValue ? selectedValue.label : ""}
                   </Button>
                </div>

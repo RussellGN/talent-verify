@@ -247,13 +247,7 @@ export default function UploadPage() {
             <p>
                <strong>Error saving employees</strong> <br /> {error.message}
                <br />
-               <Button
-                  onClick={reset}
-                  type="button"
-                  startIcon={<ArrowBack />}
-                  variant="outlined"
-                  sx={{ mt: 3, textTransform: "capitalize" }}
-               >
+               <Button onClick={reset} type="button" startIcon={<ArrowBack />} variant="outlined" sx={{ mt: 3 }}>
                   Back to upload
                </Button>
             </p>
@@ -269,7 +263,7 @@ export default function UploadPage() {
                color="success"
                size="large"
                onClick={clickInput}
-               sx={{ textTransform: "capitalize", my: 2 }}
+               sx={{ my: 2 }}
                endIcon={<UploadFile />}
             >
                Click to Upload File <span className="lowercase">(xlsx, xls, csv, txt)</span>
