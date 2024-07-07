@@ -19,10 +19,7 @@ export default function RemovePage() {
 
    function handleSubmit(e: FormEvent<HTMLFormElement>) {
       e.preventDefault();
-      console.log(selectedValue);
-      console.log(employeeOptions);
       if (selectedValue) {
-         console.log("removing ", selectedValue?.label);
          mutate(selectedValue.id);
       }
       setSelectedValue(undefined);

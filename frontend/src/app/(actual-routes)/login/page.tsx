@@ -17,7 +17,6 @@ export default function LoginPage() {
          password: formData.get("password")?.toString() || "",
          username: formData.get("username")?.toString() || "",
       };
-      console.log(credentials);
       mutate(credentials);
    }
 

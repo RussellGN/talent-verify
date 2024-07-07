@@ -54,7 +54,6 @@ export default function DetailsPage() {
       // only add password if password value changed
       if (formData.get("password")) data["employer-admin"].password = formData.get("password")?.toString();
 
-      console.log(data);
       mutate(data);
    }
 

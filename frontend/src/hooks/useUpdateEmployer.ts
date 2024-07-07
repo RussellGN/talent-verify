@@ -11,7 +11,6 @@ export default function useUpdateEmployer() {
    return useMutation({
       mutationFn: (data: EmployerUpdatePayload) => API.updateEmployer(token || "", data),
       onSuccess: (data) => {
-         console.log(data);
          queryClient.setQueryData(
             ["employer", { token: token }],
             (oldData: { employees: UnormalizedCurrentEmployeeInterface[] }) => ({

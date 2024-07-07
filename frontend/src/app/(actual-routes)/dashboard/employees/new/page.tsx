@@ -25,7 +25,6 @@ export default function DetailsPage() {
          date_started: formData.get("date_started")?.toString() || undefined,
          date_left: formData.get("date_left")?.toString() || undefined,
       };
-      console.log(data);
       mutate([data]);
    }
 

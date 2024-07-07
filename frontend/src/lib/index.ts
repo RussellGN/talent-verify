@@ -50,11 +50,9 @@ export function findMissingFields<T>(expectedArray: T[], actualArray: T[]): stri
 export function assignIdAndFormatDates(emp: UploadEmployee, index: number) {
    emp.id = index;
    if (emp.date_started && emp.date_started.toString().trim() !== "") {
-      console.log("date-started " + String(emp.date_started));
       emp.date_started = new Date(emp.date_started);
    } else emp.date_started = undefined;
    if (emp.date_left && emp.date_left.toString().trim() !== "") {
-      console.log("date-left " + String(emp.date_left));
       emp.date_left = new Date(emp.date_left);
    } else emp.date_left = undefined;
 }
@@ -118,7 +116,6 @@ export function csvToJson<T extends object>(file: File): Promise<T[]> {
 
             if (!json.length) reject("CSV file has no data");
             const actualKeys = Object.keys(json[0]);
-            console.log(json);
 
             // check for compulsory fields only
             const expectedKeys = [
@@ -231,7 +228,8 @@ export function setCookie(cname: string, cvalue: string, exdays: number) {
       const expires = "expires=" + d.toUTCString();
       document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
    } catch (error) {
-      console.log("error getting cookie:", error);
+      return;
+      // console.log("error getting cookie:", error);
    }
 }
 
@@ -239,7 +237,8 @@ export function deleteCookie(cname: string) {
    try {
       document.cookie = `${cname}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
    } catch (error) {
-      console.log("error deleting cookie:", error);
+      return;
+      // console.log("error deleting cookie:", error);
    }
 }
 
@@ -259,7 +258,7 @@ export function getCookie(cname: string) {
       }
       return null;
    } catch (error) {
-      console.log("error getting cookie:", error);
+      // console.log("error getting cookie:", error);
       return null;
    }
 }

@@ -21,7 +21,6 @@ export default function useDashboardEmployeesTable() {
       oldRow: GridRowModel & UnormalizedCurrentEmployeeInterface
    ) {
       resetUpdate();
-      console.log(oldRow, newRow);
 
       let changesWereMade = false;
       Object.keys(oldRow).forEach((key) => {

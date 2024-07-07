@@ -37,7 +37,6 @@ export default function SearchPage({ searchParams: { query, date_started, date_l
    }
 
    if (isError) throw error;
-   console.log(data);
 
    if (data.employed.length === 0 && data.unemployed.length === 0) {
       return (

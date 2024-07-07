@@ -117,7 +117,6 @@ export default abstract class API {
          onSuccess: returns success message (JSON)
          onError: returns error message (JSON)
       */
-      console.log(token);
       return await axiosClient
          .post<string>(
             "employer/logout/",

@@ -190,7 +190,6 @@ export default function UploadPage() {
    }
 
    if (isSuccess && data) {
-      console.log(data);
       const message = (
          <>
             {data.employees_added.length

@@ -33,7 +33,6 @@ export default function NavbarAuthButtons() {
       );
    }
 
-   console.log(pathname, pathname === "/register");
    return (
       <>
          <Button component={Link} href="/login" sx={{ display: pathname === "/login" ? "none" : "inline-flex" }}>

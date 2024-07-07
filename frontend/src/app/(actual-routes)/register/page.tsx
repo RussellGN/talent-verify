@@ -38,7 +38,6 @@ export default function RegistrationPage() {
                .map((dep) => dep.trim())
                .filter((dep) => dep.length > 0) || [],
       };
-      console.log(data);
       mutate(data);
    }
 
