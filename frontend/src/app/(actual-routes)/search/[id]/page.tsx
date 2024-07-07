@@ -1,13 +1,16 @@
 "use client";
 
 import DetailedCareerTimestampCard from "@/components/DetailedCareerTimestampCard";
+import DutiesExpandable from "@/components/DutiesExpandable";
 import useGetTalentWithID from "@/hooks/useGetTalentWithID";
 import { capitalizeWords, friendlyDate } from "@/lib";
 import {
    AccessTime,
+   ArrowDownward,
    Business,
    Contacts,
    InfoOutlined,
+   InfoSharp,
    People,
    PermIdentity,
    SubdirectoryArrowLeft,
@@ -34,7 +37,10 @@ export default function DetailedView({ params: { id } }: { params: { id: string 
       <div className="min-h-[72vh] relative mt-5">
          <Grid container spacing={3}>
             <Grid item xs={12} md={4}>
-               <div className="md:sticky top-[110px] shadow-md border rounded-[20px] p-8">
+               <Box
+                  sx={{ position: { md: "sticky" }, top: "110px", px: { xs: 2, sm: 5 }, py: 5 }}
+                  className="bg-white shadow-md border rounded-[20px]"
+               >
                   <Typography className="border-b" variant="h5" sx={{ mb: 2, pb: 1 }}>
                      {capitalizeWords(data.talent.name)}
                   </Typography>
@@ -80,6 +86,26 @@ export default function DetailedView({ params: { id } }: { params: { id: string 
                               Ongoing
                            </Typography>
                         )}
+                        <br />
+                        <Typography sx={{ mb: 0.5 }}>
+                           <InfoSharp sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />
+                           Duties
+                        </Typography>
+                        <Typography
+                           variant="caption"
+                           sx={{ wordBreak: "break-word" }}
+                           className="block border bg-[whitesmoke] rounded-md px-1 py-2"
+                        >
+                           {data.talent.duties ? (
+                              data.talent.duties.length > 70 ? (
+                                 <DutiesExpandable content={data.talent.duties} />
+                              ) : (
+                                 data.talent.duties
+                              )
+                           ) : (
+                              "N/A"
+                           )}
+                        </Typography>
                      </>
                   ) : (
                      <Typography sx={{ mb: 0.5 }}>
@@ -87,7 +113,7 @@ export default function DetailedView({ params: { id } }: { params: { id: string 
                         <span style={{ fontSize: "90%" }}>No employer at the moment</span>
                      </Typography>
                   )}
-               </div>
+               </Box>
             </Grid>
 
             <Grid item xs={12} md>
@@ -96,41 +122,55 @@ export default function DetailedView({ params: { id } }: { params: { id: string 
                      Employment History
                   </Typography>
 
-                  <div className="bg-white">
-                     <Grid container justifyContent="center" spacing={2}>
-                        {data.employment_history.map((stamp, index) => {
-                           const isEven = (index + 1) % 2 === 0;
-                           const isLastOrSecondLast =
-                              index === data.employment_history.length - 2 || index === data.employment_history.length - 1;
+                  <Grid container justifyContent="center" spacing={2}>
+                     {data.employment_history.map((stamp, index) => {
+                        const isEven = (index + 1) % 2 === 0;
+                        const isLast = index === data.employment_history.length - 1;
+                        const isLastOrSecondLast = index === data.employment_history.length - 2 || isLast;
 
-                           return (
-                              <Grid key={index} item xs={6} md={5}>
-                                 <Box sx={{ pt: isEven ? 8 : 0 }}>
-                                    <SubdirectoryArrowLeft
-                                       sx={{
-                                          fontSize: "4rem",
-                                          color: "grey",
-                                          display: isEven ? "block" : "none",
-                                          transform: "rotateZ(-90deg)",
-                                       }}
-                                    />
-                                    <DetailedCareerTimestampCard careerTimestamp={stamp} />
-                                    <SubdirectoryArrowRight
-                                       sx={{
-                                          fontSize: "4rem",
-                                          color: "grey",
-                                          display: !isEven ? (!isLastOrSecondLast ? "block" : "none") : "none",
-                                          transform: "rotateZ(90deg)",
-                                          mt: 4,
-                                          ml: "auto",
-                                       }}
-                                    />
-                                 </Box>
-                              </Grid>
-                           );
-                        })}
-                     </Grid>
-                  </div>
+                        return (
+                           <Grid key={index} item xs={10.5} md={6}>
+                              <Box sx={{ pt: { md: isEven ? 8 : 0 } }}>
+                                 <SubdirectoryArrowLeft
+                                    sx={{
+                                       fontSize: "4rem",
+                                       color: "grey",
+                                       display: { xs: "none", md: isEven ? "block" : "none" },
+                                       transform: "rotateZ(-90deg)",
+                                    }}
+                                 />
+                                 <DetailedCareerTimestampCard careerTimestamp={stamp} />
+                                 <SubdirectoryArrowRight
+                                    sx={{
+                                       fontSize: "4rem",
+                                       color: "grey",
+                                       display: {
+                                          xs: "none",
+                                          md: !isEven ? (!isLastOrSecondLast ? "block" : "none") : "none",
+                                       },
+                                       transform: "rotateZ(90deg)",
+                                       mt: 4,
+                                       ml: "auto",
+                                    }}
+                                 />
+
+                                 <ArrowDownward
+                                    sx={{
+                                       fontSize: "3rem",
+                                       color: "grey",
+                                       display: {
+                                          xs: isLast ? "none" : "block",
+                                          md: "none",
+                                       },
+                                       mt: 3,
+                                       mx: "auto",
+                                    }}
+                                 />
+                              </Box>
+                           </Grid>
+                        );
+                     })}
+                  </Grid>
                </div>
             </Grid>
          </Grid>
