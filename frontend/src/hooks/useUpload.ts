@@ -39,7 +39,7 @@ export default function useUpload() {
                parseFunction = (file: File) => csvToJson<UploadEmployee>(file);
                break;
             default:
-               alert(`file uploaded '${file.name}' is not of supported types (.xlsx, .xls, .csv and .txt)`);
+               setParseError(`file uploaded '${file.name}' is not of supported types (.xlsx, .xls, .csv and .txt)`);
                return;
          }
 
