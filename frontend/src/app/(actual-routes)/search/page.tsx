@@ -29,7 +29,7 @@ export default function SearchPage({ searchParams: { query, date_started, date_l
 
    if (isPending) {
       return (
-         <div className="min-h-[72vh] pt-[4rem] text-center">
+         <div className="min-h-[550px] pt-[4rem] text-center">
             <CircularProgress />
             <p>searching...</p>
          </div>
@@ -40,14 +40,14 @@ export default function SearchPage({ searchParams: { query, date_started, date_l
 
    if (data.employed.length === 0 && data.unemployed.length === 0) {
       return (
-         <div className="min-h-[72vh] pt-[4rem]">
+         <div className="min-h-[550px] pt-[4rem]">
             <Typography className="text-center p-4">No results found for {`'${showingRsultsFor}'`}</Typography>
          </div>
       );
    }
 
    return (
-      <div className="min-h-[72vh]">
+      <div className="min-h-[550px]">
          <Typography variant="h6" sx={{ mb: 2 }} className="text-center p-4">
             Showing Results for{" "}
             <Box component="span" sx={matchedStyles}>

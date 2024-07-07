@@ -70,6 +70,8 @@ export default function SearchForm() {
             className="d-block min-w-[80%] md:min-w-[60%] rounded-[20px] border-4 shadow-md px-5 py-1.5"
             ref={queryRef}
             name="query"
+            min={3}
+            max={20}
             placeholder="Search query here..."
          />
 

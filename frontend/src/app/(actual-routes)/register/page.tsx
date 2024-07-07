@@ -48,7 +48,7 @@ export default function RegistrationPage() {
          {/* had to return everything but conditionally render content in order to not clear form */}
 
          {(isPending || isSuccess) && (
-            <div className="min-h-[72vh] flex items-center justify-center text-center">
+            <div className="min-h-[550px] flex items-center justify-center text-center">
                <div className="w-full max-w-[500px] mx-auto rounded-[20px] shadow-lg bg-white border px-5 sm:px-10 py-20">
                   <CircularProgress />
                   <p>submitting...</p>
@@ -57,7 +57,7 @@ export default function RegistrationPage() {
          )}
 
          {isError && (
-            <div className="min-h-[72vh] flex items-center justify-center text-center">
+            <div className="min-h-[550px] flex items-center justify-center text-center">
                <div className="w-full max-w-[500px] mx-auto rounded-[20px] shadow-lg bg-white border px-5 sm:px-10 py-20">
                   <WarningOutlined color="error" fontSize="large" />
                   <p>
@@ -72,7 +72,7 @@ export default function RegistrationPage() {
          )}
 
          <div
-            className={`min-h-[72vh] ${
+            className={`min-h-[550px] ${
                isPending || isError || isSuccess ? "hidden" : "flex"
             } items-center justify-center mt-3`}
          >

@@ -106,7 +106,7 @@ export default function DetailsPage() {
             </div>
          )}
 
-         <div className={`min-h-[72vh] ${isSubmitting || isSubmitError ? "hidden" : "flex"} items-center justify-center`}>
+         <div className={`min-h-[550px] ${isSubmitting || isSubmitError ? "hidden" : "flex"} items-center justify-center`}>
             <form onSubmit={handleSubmit}>
                <Box
                   component="fieldset"

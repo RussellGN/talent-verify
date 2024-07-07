@@ -1,8 +1,11 @@
 import { UnormalizedCurrentEmployeeInterface } from "../interfaces";
-import { GridColDef, GridRowModel, GridRowsProp } from "@mui/x-data-grid";
+import { GridColDef, GridRenderCellParams, GridRowModel, GridRowsProp } from "@mui/x-data-grid";
 import useEmployees from "./useEmployees";
 import useUpdateEmployees from "./useUpdateEmployees";
 import { UpdatedEmployee } from "@/types";
+import { Button } from "@mui/material";
+import { ArrowForward } from "@mui/icons-material";
+import Link from "next/link";
 
 export default function useDashboardEmployeesTable() {
    const { data } = useEmployees();
@@ -67,6 +70,23 @@ export default function useDashboardEmployeesTable() {
       { field: "duties", headerName: "Duties", type: "string", editable: true, width: 130 },
       { field: "date_started", headerName: "Date Started", type: "date", editable: true, width: 100 },
       { field: "date_left", headerName: "Date Left", type: "date", editable: true, width: 100 },
+      {
+         field: "history",
+         headerName: "Employment History",
+         width: 150,
+         renderCell: (params: GridRenderCellParams<UnormalizedCurrentEmployeeInterface, Date>) => (
+            <span className="inline-flex items-center justify-center w-full">
+               <Button
+                  variant="outlined"
+                  component={Link}
+                  href={`/search/${params.id}`}
+                  endIcon={<ArrowForward tabIndex={params.hasFocus ? 0 : -1} />}
+               >
+                  View
+               </Button>
+            </span>
+         ),
+      },
    ];
 
    return {
