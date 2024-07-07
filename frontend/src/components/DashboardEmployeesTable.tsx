@@ -39,7 +39,7 @@ export default function DashboardEmployeesTable() {
             </Typography>
          </div>
 
-         <div>
+         <div className="bg-white">
             <DataGrid
                rows={rows}
                columns={columns}

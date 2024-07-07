@@ -9,7 +9,7 @@ export default function NavLink({ href, icon, children }: { href: string; icon: 
    const pathname = usePathname();
 
    return (
-      <Button size="small" variant={pathname === href ? "outlined" : "text"} startIcon={icon} component={Link} href={href}>
+      <Button variant={pathname === href ? "outlined" : "text"} startIcon={icon} component={Link} href={href}>
          {children}
       </Button>
    );

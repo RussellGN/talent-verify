@@ -89,8 +89,8 @@ export default function RemovePage() {
             </div>
          )}
 
-         <div className={`${isPending || isError || isSuccess ? "hidden" : "block"}`}>
-            <form key={key} onSubmit={handleSubmit} className="p-5">
+         <div className={`min-h-[72vh] ${isPending || isError || isSuccess ? "hidden" : "block"}`}>
+            <form key={key} onSubmit={handleSubmit} className="px-3 py-5">
                <Typography variant="subtitle2" sx={{ mb: 3 }} className="max-w-[100ch]">
                   <InfoOutlined fontSize="inherit" color="warning" sx={{ mt: -0.3, mr: 0.5 }} />
                   If you remove an employee, they will be excluded from your list of employees and assigned to no employer.
@@ -113,14 +113,16 @@ export default function RemovePage() {
                      />{" "}
                      Employee to remove*
                   </span>
+
                   <Autocomplete
                      // value={selectedValue}
                      // clearOnBlur
                      onChange={onChange}
+                     ListboxProps={{ sx: { maxHeight: "150px" } }}
                      disablePortal
                      id="combo-box-employee"
                      options={employeeOptions}
-                     sx={{ width: 500 }}
+                     sx={{ maxWidth: "500px" }}
                      renderInput={(params) => <TextField {...params} label="Search employees" name="employee" />}
                   />
                </label>

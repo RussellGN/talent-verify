@@ -5,7 +5,7 @@ import DashboardSidebar from "@/components/DashboardSidebar";
 export default function DashboardLayout({ children }: PropsWithChildren) {
    return (
       <div className="min-h-[72vh] relative mt-5">
-         <Grid container spacing={2} wrap="nowrap">
+         <Grid container spacing={2}>
             <Grid item xs={12} md={2}>
                <DashboardSidebar />
             </Grid>
