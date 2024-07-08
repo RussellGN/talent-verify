@@ -22,81 +22,67 @@ def endpoints(request):
          "onSuccess" : "returns a list of all api endpoints and their documentation (JSON)",
       },
       {
-         "endpoint" : "GET /employer",
+         "endpoint" : "GET employer/",
          "expects": "auth token in request headers",
+         "onSuccess" : "onSuccess : returns details of employer and list of employees for employer assigned with auth token in request headers (JSON)",
          "onError" : "returns error message if employer not found (JSON)",
-         "onSuccess" : """onSuccess : returns details of employer and list of employees for employer assigned with auth token in request headers (JSON)
-            {
-               employer: {id, administrator: {username, password}, name, email, registration_number, registration_date, address, contact_person, number_of_employees, contact_phone, departments: [string]}
-
-               employees : [{id, national_id, name, employee_id, employer, department, role, duties, date_started, date_left}]
-            }
-            """
       }, 
       {
-         "endpoint" : "POST /employer/register",
+         "endpoint" : "POST employer/register/",
          "expects" : "employer-admin credentials and partial/complete employer details (JSON)",
          "onSuccess" : "returns employer details (with nested employer-admin) and auth token on successful registration (JSON)",
          "onError" : "returns error message on failed registration (JSON)",
       }, 
       {
-         "endpoint" : "POST /employer/login",
+         "endpoint" : "POST employer/login/",
          "expects" : "employer-admin credentials  (JSON)",
+         "onSuccess" : "returns employer details (with nested employer-admin), list of employees and auth token on successful login (JSON)",
          "onError" : "returns error message on failed login (JSON)",
-         "onSuccess" : """returns employer details (with nested employer-admin), list of employees and auth token on successful login (JSON)
-            {
-            token: string
-
-            employer: {id, administrator: {username, password}, name, email, registration_number, registration_date, address, contact_person, number_of_employees, contact_phone, departments: [string]}
-
-            employees : [{id, national_id, name, employee_id, employer, department, role, duties, date_started, date_left}]
-            }
-            """
 
       }, 
       {
-         "endpoint" : "PATCH /employer/update",
-         "expects" : "partial/complete employer and employer-admin details as well as auth token in request headers (JSON)",
-         "onSuccess" : "returns updated employer details (with nested employer-admin) on successful patch (JSON)",
-         "onError" : "returns error message on failed patch (JSON)",
-      }, 
-      {
-         "endpoint" : "POST /employer/logout",
+         "endpoint" : "POST employer/logout/",
          "expects" : "auth token in request headers",
          "onSuccess" : "returns success message (JSON)",
          "onError" : "returns error message (JSON)",
       }, 
       {
-         "endpoint" : "POST /employees",
-         "expects" : "a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)",
-         "onSuccess" : "returns a list of employees added if successful (JSON)",
-         "onError" : "returns an error message if unsuccessful (JSON)",
+         "endpoint" : "PATCH employer/update/",
+         "expects" : "partial/complete employer and employer-admin details as well as auth token in request headers (JSON)",
+         "onSuccess" : "returns updated employer details (with nested employer-admin) on successful patch (JSON)",
+         "onError" : "returns error message on failed patch (JSON)",
       }, 
       {
-         "endpoint" : "PATCH /employees",
-         "expects" : "a list of one or more employees's partial/complete details for updating as well as an auth token in request headers (JSON)",
-         "onSuccess" : "returns a list of updated employees if successful (JSON)",
-         "onError" : "returns an error message on failed patch (JSON)",
-      },
-      {
-         "endpoint" : "GET /employees",
+         "endpoint" : "GET employees/",
          "expects" : "expects an auth token in request headers  (JSON)",
          "onSuccess" : "returns a list of zero or more employees belonging to an employer (JSON)",
          "onError" : "returns an error message if unsuccessfull (JSON)",
       }, 
       {
-         "endpoint" : "DELETE /employees/(ID)",
+         "endpoint" : "POST employees/",
+         "expects" : "a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)",
+         "onSuccess" : "returns a list of employees added if successful (JSON)",
+         "onError" : "returns an error message if unsuccessful (JSON)",
+      }, 
+      {
+         "endpoint" : "PATCH employees/",
+         "expects" : "a list of one or more employees's partial/complete details for updating as well as an auth token in request headers (JSON)",
+         "onSuccess" : "returns a list of updated employees if successful (JSON)",
+         "onError" : "returns an error message on failed patch (JSON)",
+      },
+      {
+         "endpoint" : "DELETE employees/(ID)/",
          "expects" : "the (ID) of the employee to remove, along with an auth token in request headers (JSON)",
          "onSuccess" : "returns a success message (JSON)",
          "onError" : "returns an error message (JSON)",
       }, 
       {
-         "endpoint" : "GET /talent?query=(query),is_date=(is_date)",
+         "endpoint" : "GET talent?query=(query),is_date=(is_date)/",
          "expects" : "'query' and optional 'is_date' search parameters used to filter the employees retrieved (JSON)",
          "onSuccess" : "returns a list of zero or more employees matching the query criteria (JSON)",
       },
       {
-         "endpoint": "GET /talent/(ID)",
+         "endpoint": "GET talent/(ID)/",
          "onSuccess" : "returns details of talent with given ID if found (JSON)",
          "onError" : "returns an error message if talent not found (JSON)",
       }
@@ -108,7 +94,7 @@ def endpoints(request):
 @authentication_classes([TokenAuthentication])
 def get_employer(request):
    """
-   endpoint : GET /employer
+   endpoint : GET employer/
    expects: auth token in request headers
    onError : returns error message if employer not found (JSON)
    onSuccess : returns details of employer and list of employees for employer assigned with auth token in request headers (JSON)
@@ -128,7 +114,7 @@ def get_employer(request):
 @api_view(['POST'])
 def register_employer(request):
    """
-   endpoint : POST /employer/register
+   endpoint : POST employer/register/
    expects : employer-admin credentials and partial/complete employer details (JSON)
    onSuccess : returns employer details (with nested employer-admin) and auth token on successful registration (JSON
    onError : returns error message on failed registration (JSON)
@@ -177,7 +163,7 @@ def register_employer(request):
 @api_view(['POST'])
 def login_employer(request):
    """
-   endpoint : POST /employer/login
+   endpoint : POST employer/login/
    expects : employer-admin credentials  (JSON)
    onError : returns error message on failed login (JSON)
    onSuccess : returns employer details (with nested employer-admin), list of employees and auth token on successful login (JSON)
@@ -204,12 +190,29 @@ def login_employer(request):
    compact_employee_serializer = CompactEmployeeSerializer(latest_career_timestamps, many=True)
    return Response({'employer': employer_serializer.data, 'employees': compact_employee_serializer.data, "token": token.key})
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def logout_employer(request):
+   """
+   endpoint : POST employer/logout/
+   expects : auth token in request headers
+   onSuccess : returns success message (JSON)
+   onError : returns error message (JSON)
+   """
+   try:
+      token = request.auth
+      token.delete()
+   except:
+      return Response("error logging out", status=status.HTTP_400_BAD_REQUEST)
+   return Response("successfully logged out")
+
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([TokenAuthentication])
 def patch_employer(request):
    """
-   endpoint : PATCH /employer/update
+   endpoint : PATCH employer/update/
    expects : partial/complete employer and employer-admin details as well as auth token in request headers (JSON)
    onSuccess : returns updated employer details (with nested employer-admin) on successful patch (JSON)
    onError : returns error message on failed patch (JSON)
@@ -253,27 +256,10 @@ def patch_employer(request):
 
    return Response(resData, status=resStatus)
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-@authentication_classes([TokenAuthentication])
-def logout_employer(request):
-   """
-   endpoint : POST /employer/logout
-   expects : auth token in request headers
-   onSuccess : returns success message (JSON)
-   onError : returns error message (JSON)
-   """
-   try:
-      token = request.auth
-      token.delete()
-   except:
-      return Response("error logging out", status=status.HTTP_400_BAD_REQUEST)
-   return Response("successfully logged out")
-
 # for handle employees_____________
 def get_employees(request):
    """
-   endpoint : GET /employees
+   endpoint : GET employees/
    expects : expects an auth token in request headers  (JSON)
    onSuccess : returns a list of zero or more employees belonging to an employer (JSON)
    onError : returns an error message if unsuccessfull (JSON)
@@ -285,7 +271,7 @@ def get_employees(request):
 
 def add_employees(request):
    """
-   endpoint : POST /employees
+   endpoint : POST employees/
    expects : a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)
    onSuccess : returns a list of employees added and existing employees updated if successful (JSON)
    onError : returns an error message if unsuccessful (JSON)
@@ -332,7 +318,7 @@ def add_employees(request):
 
 def update_employees(request):
    """
-   endpoint : PATCH /employees
+   endpoint : PATCH employees/
    expects : a list of one or more employees's partial/complete details for updating as well as an auth token in request headers (JSON)
    onSuccess : returns a list of updated employees if successful (JSON)
    onError : returns an error message on failed patch (JSON)
@@ -388,7 +374,7 @@ def update_employees(request):
 # _____________
 
 @api_view(['GET', 'POST', 'PATCH'])
-@permission_classes([IsAuthenticatedOrReadOnly])
+@permission_classes([IsAuthenticated])
 @authentication_classes([TokenAuthentication])
 def handle_employees(request):
    if (request.method == 'GET'):
@@ -403,7 +389,7 @@ def handle_employees(request):
 @authentication_classes([TokenAuthentication])
 def remove_employee(request, id):
    """
-   endpoint : DELETE /employees/(ID)
+   endpoint : DELETE employees/(ID)/
    expects : the (ID) of the employee to remove, along with an auth token in request headers (JSON)
    onSuccess : returns a success message (JSON)
    onError : returns an error message (JSON)
@@ -422,44 +408,12 @@ def remove_employee(request, id):
    except Exception as e:
       return Response(f"encountered error removing employee with id {id}: {e}")
 
-
-# @api_view(['POST'])
-# @permission_classes([IsAuthenticated])
-# @authentication_classes([TokenAuthentication])
-# def reassign_employee(request):
-#    """
-#    endpoint : POST /employees/reassign
-#    expects : the id of the employee to reassign and employer id (if any) to reassign employee to, along with an auth token in request headers (JSON)
-#    onSuccess : returns a success message (JSON)
-#    onError : returns an error message (JSON)
-#    """
-#    data = json.loads(request.body)
-#    employee = Employee.objects.get(id=int(data.get('employee_id')))
-#    current_employer = employee.employer
-#    re_assign_to = None
-#    if data.get('employer_id') is not None:
-#       employer_queryset = Employer.objects.filter(id=int(data.get('employer_id')))
-#       re_assign_to = employer_queryset.first() if employer_queryset.exists() else None
-
-#    employee.employer = re_assign_to
-#    employee.save()
-
-#    if current_employer is not None:
-#       incomplete_career_timestamps_at_current_employer = CareerTimestamp.objects.filter(employee=employee, role__department__employer=current_employer, date_left=None)
-#       for stamp in incomplete_career_timestamps_at_current_employer:
-#          stamp.date_left = date.today().isoformat()
-#          stamp.save()
-   
-#    current_employer_name = current_employer.name if current_employer else "no employer"
-#    re_assigning_to = re_assign_to.name if re_assign_to else "no employer"
-#    return Response(f"successfully reassigned {employee.name} with id {employee.id} from '{current_employer_name}' to '{re_assigning_to}'")
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 @authentication_classes([TokenAuthentication])
 def reassign_employee(request):
    """
-   endpoint : POST /employees/reassign
+   endpoint : POST employees/reassign/
    expects : the id of the employee to reassign and employer id (if any) to reassign employee to, along with an auth token in request headers (JSON)
    onSuccess : returns a success message (JSON)
    onError : returns an error message (JSON)
@@ -488,7 +442,7 @@ def reassign_employee(request):
 @api_view(['GET'])
 def get_talent(request):
    """
-   endpoint : GET /talent?query=(query),is_date=(is_date)
+   endpoint : GET talent?query=(query),is_date=(is_date)/
    expects : 'query' and optional 'is_date' search parameters used to filter the employees retrieved (JSON)
    onSuccess : returns a list of zero or more employees and a list of zero or more unemployed talent matching the query criteria (JSON)
 
@@ -539,9 +493,9 @@ def get_talent(request):
    return Response({'employed' : career_timestamp_serializer.data, 'unemployed': unemployed_talent_serializer.data})
 
 @api_view(['GET'])
-def get_detailed_info_on_talent(request, id):
+def get_talent_info_and_employemnt_history(request, id):
    """
-   endpoint: GET /talent/(ID)
+   endpoint: GET talent/(ID)/
    onSuccess : returns details of talent with given ID if found (JSON)
    onError : returns an error message if talent not found (JSON)
    """   

@@ -12,9 +12,8 @@ urlpatterns = [
    path('employer/update/', views.patch_employer),
 
    path('employees/', views.handle_employees),
-   # path('employees/reassign/', views.reassign_employee),
    path('employees/<int:id>/', views.remove_employee),
 
    path('talent/', views.get_talent),
-   path('talent/<int:id>/', views.get_detailed_info_on_talent),
+   path('talent/<int:id>/', views.get_talent_info_and_employemnt_history),
 ]
