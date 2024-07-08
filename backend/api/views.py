@@ -493,7 +493,7 @@ def get_talent(request):
    return Response({'employed' : career_timestamp_serializer.data, 'unemployed': unemployed_talent_serializer.data})
 
 @api_view(['GET'])
-def get_talent_info_and_employemnt_history(request, id):
+def get_talent_info_and_employment_history(request, id):
    """
    endpoint: GET talent/(ID)/
    onSuccess : returns details of talent with given ID if found (JSON)
