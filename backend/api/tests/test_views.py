@@ -166,6 +166,47 @@ class TestViews(TestSetup):
 
    # ______test POST 'employer/logout/' endpoint______
 
+   def test_can_logout_with_valid_auth_token(self):
+      registration_res = self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      token = registration_res.data['token']
+      res = self.client.post(self.logout_employer_url, headers={'Authorization': f'Token {token}'})
+      self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+   def test_cannot_logout_without_auth_token(self):
+      res = self.client.post(self.logout_employer_url)
+      self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+   def test_cannot_logout_with_invalid_auth_token(self):
+      res = self.client.post(self.logout_employer_url, headers={'Authorization': 'Token invalid_token'})
+      self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+   def test_cannot_use_http_methods_other_than_POST_on_logout_employer_route(self):
+      registration_res = self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      token = registration_res.data['token']
+      res0 = self.client.post(self.logout_employer_url, headers={'Authorization': f'Token {token}'})
+
+      login_res = self.client.post(self.login_employer_url, self.employer_admin_credentials, format='json')
+      token = login_res.data['token']
+      res1 = self.client.get(self.logout_employer_url, headers={'Authorization': f'Token {token}'})
+
+      login_res = self.client.post(self.login_employer_url, self.employer_admin_credentials, format='json')
+      token = login_res.data['token']
+      res2 = self.client.patch(self.logout_employer_url, headers={'Authorization': f'Token {token}'})
+
+      login_res = self.client.post(self.login_employer_url, self.employer_admin_credentials, format='json')
+      token = login_res.data['token']
+      res3 = self.client.put(self.logout_employer_url, headers={'Authorization': f'Token {token}'})
+
+      login_res = self.client.post(self.login_employer_url, self.employer_admin_credentials, format='json')
+      token = login_res.data['token']
+      res4 = self.client.delete(self.logout_employer_url, headers={'Authorization': f'Token {token}'})
+
+      self.assertEqual(res0.status_code, status.HTTP_200_OK)
+      self.assertEqual(res1.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+      self.assertEqual(res2.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+      self.assertEqual(res3.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+      self.assertEqual(res4.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
    # ______test PATCH 'employer/update/' endpoint______
 
    # ______test GET 'employees/' endpoint______
