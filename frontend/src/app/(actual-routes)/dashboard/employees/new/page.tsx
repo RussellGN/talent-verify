@@ -68,7 +68,7 @@ export default function DetailsPage() {
             <div className="text-center px-10 py-20">
                <WarningOutlined color="error" fontSize="large" />
                <p>
-                  <strong>Update error</strong> <br /> {error.message}
+                  <strong>Error</strong> <br /> {error.message}
                   <br />
                   <Button onClick={reset} type="button" startIcon={<ArrowBack />} sx={{ mt: 3 }}>
                      Back to form
@@ -267,7 +267,7 @@ export default function DetailsPage() {
                      />
                   </label>
 
-                  <label className="flex mb-4 flex-col gap-1" htmlFor="date_left">
+                  {/* <label className="flex mb-4 flex-col gap-1" htmlFor="date_left">
                      <span className="px-5">
                         <InfoOutlined
                            fontSize="inherit"
@@ -289,7 +289,7 @@ export default function DetailsPage() {
                         name="date_left"
                         type="date"
                      />
-                  </label>
+                  </label> */}
                </Box>
 
                <div className="text-center mt-5">
