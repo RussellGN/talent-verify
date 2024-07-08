@@ -11,7 +11,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 
 from .models import Employer, Employee, Department, Role, CareerTimestamp
-from .serializers import DepartmentSerializer, EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, HistoricalCareerTimestampSerializer, CompactEmployeeSerializer, UnemployedTalentSerializer
+from .serializers import DepartmentSerializer, EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, CareerTimestampSerializer, EmployeeRetrievalSerializer, UnemployedTalentSerializer
 from .utils import get_latest_career_timestamp
 
 @api_view(['GET'])
@@ -96,20 +96,15 @@ def get_employer(request):
    """
    endpoint : GET employer/
    expects: auth token in request headers
-   onError : returns error message if employer not found (JSON)
    onSuccess : returns details of employer and list of employees for employer assigned with auth token in request headers (JSON)
-      {
-         employer: {id, administrator: {username, password}, name, email, registration_number, registration_date, address, contact_person, number_of_employees, contact_phone, departments: [string]}
-
-         employees : [{id, national_id, name, employee_id, employer, department, role, duties, date_started, date_left}]
-      }
+   onError : returns error message if employer not found (JSON)
    """
    employer = request.user.employer
    employees = employer.employee_set.all()
    latest_career_timestamps = [get_latest_career_timestamp(employee) for employee in employees]
    employer_serializer = EmployerSerializer(employer)
-   compact_employee_serializer = CompactEmployeeSerializer(latest_career_timestamps, many=True)
-   return Response({'employer': employer_serializer.data, 'employees': compact_employee_serializer.data})
+   employee_serializer = EmployeeRetrievalSerializer(latest_career_timestamps, many=True)
+   return Response({'employer': employer_serializer.data, 'employees': employee_serializer.data})
 
 @api_view(['POST'])
 def register_employer(request):
@@ -187,7 +182,7 @@ def login_employer(request):
    employees = employerAdmin.employer.employee_set.all()
    latest_career_timestamps = [get_latest_career_timestamp(employee) for employee in employees]
    employer_serializer = EmployerSerializer(instance=employerAdmin.employer)
-   compact_employee_serializer = CompactEmployeeSerializer(latest_career_timestamps, many=True)
+   compact_employee_serializer = EmployeeRetrievalSerializer(latest_career_timestamps, many=True)
    return Response({'employer': employer_serializer.data, 'employees': compact_employee_serializer.data, "token": token.key})
 
 @api_view(['POST'])
@@ -266,7 +261,7 @@ def get_employees(request):
    """
    employees = request.user.employer.employee_set.all()
    latest_career_timestamps = [get_latest_career_timestamp(employee) for employee in employees]
-   compact_employee_serializer = CompactEmployeeSerializer(latest_career_timestamps, many=True)
+   compact_employee_serializer = EmployeeRetrievalSerializer(latest_career_timestamps, many=True)
    return Response(compact_employee_serializer.data)
 
 def add_employees(request):
@@ -308,12 +303,12 @@ def add_employees(request):
             existing_employees_updated.append(career_timestamp)
    except Exception as e:
       status_to_use = status.HTTP_207_MULTI_STATUS if len(employees_added) else status.HTTP_400_BAD_REQUEST
-      employees_added_serializer = CompactEmployeeSerializer(instance=employees_added, many=True)
-      existing_employees_updated_serializer = CompactEmployeeSerializer(instance=existing_employees_updated, many=True)
+      employees_added_serializer = EmployeeRetrievalSerializer(instance=employees_added, many=True)
+      existing_employees_updated_serializer = EmployeeRetrievalSerializer(instance=existing_employees_updated, many=True)
       return Response({"error": f"failed to complete upload starting from data item #{data_item}", "details": f"{e}", "employees_added": employees_added_serializer.data, "existing_employees_updated":  existing_employees_updated_serializer.data }, status=status_to_use)
 
-   employees_added_serializer = CompactEmployeeSerializer(instance=employees_added, many=True)
-   existing_employees_updated_serializer = CompactEmployeeSerializer(instance=existing_employees_updated, many=True)
+   employees_added_serializer = EmployeeRetrievalSerializer(instance=employees_added, many=True)
+   existing_employees_updated_serializer = EmployeeRetrievalSerializer(instance=existing_employees_updated, many=True)
    return Response({"employees_added": employees_added_serializer.data, "existing_employees_updated":  existing_employees_updated_serializer.data }, status=status.HTTP_201_CREATED)
 
 def update_employees(request):
@@ -366,10 +361,10 @@ def update_employees(request):
          employees_updated.append(career_timestamp)
    except Exception as e:
       status_to_use = status.HTTP_207_MULTI_STATUS if len(employees_updated) else status.HTTP_400_BAD_REQUEST
-      employees_updated_serializer = CompactEmployeeSerializer(instance=employees_updated, many=True)
+      employees_updated_serializer = EmployeeRetrievalSerializer(instance=employees_updated, many=True)
       return Response({"error": f"failed to complete updates starting from data item #{data_item}", "details": f"{e}", "employees_updated":  employees_updated_serializer.data }, status=status_to_use)
 
-   employees_updated_serializer = CompactEmployeeSerializer(instance=employees_updated, many=True)
+   employees_updated_serializer = EmployeeRetrievalSerializer(instance=employees_updated, many=True)
    return Response({"employees_updated": employees_updated_serializer.data}, status=status.HTTP_200_OK)
 # _____________
 
@@ -489,7 +484,7 @@ def get_talent(request):
    )
 
    unemployed_talent_serializer = UnemployedTalentSerializer(matched_unemployed_talent, many=True)
-   career_timestamp_serializer = CompactEmployeeSerializer(matched_career_timestamps, many=True)
+   career_timestamp_serializer = EmployeeRetrievalSerializer(matched_career_timestamps, many=True)
    return Response({'employed' : career_timestamp_serializer.data, 'unemployed': unemployed_talent_serializer.data})
 
 @api_view(['GET'])
@@ -502,8 +497,8 @@ def get_talent_info_and_employment_history(request, id):
    employment_history_timestamps = CareerTimestamp.objects.filter(employee__id=int(id)).order_by('id')
    latest_career_timestamp = employment_history_timestamps.last()
 
-   talent_s_current_employment_serializer = CompactEmployeeSerializer(latest_career_timestamp)
-   employment_history_serializer = HistoricalCareerTimestampSerializer(employment_history_timestamps, many=True)
+   talent_s_current_employment_serializer = EmployeeRetrievalSerializer(latest_career_timestamp)
+   employment_history_serializer = CareerTimestampSerializer(employment_history_timestamps, many=True)
 
    return Response({'talent': talent_s_current_employment_serializer.data, 'employment_history': employment_history_serializer.data})
 
