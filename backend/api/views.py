@@ -114,6 +114,9 @@ def register_employer(request):
    onSuccess : returns employer details (with nested employer-admin) and auth token on successful registration (JSON
    onError : returns error message on failed registration (JSON)
    """
+   if not request.body:
+      return Response(f"Error no registration data provided", status=status.HTTP_400_BAD_REQUEST)
+
    data = json.loads(request.body)
    department_list = data.get('departments', [])
    department_list.append('general') 
