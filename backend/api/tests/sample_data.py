@@ -21,7 +21,6 @@ employer_registration_data = {
    'contact_person': 'Nelson Manyika',
    'number_of_employees': 20,
    'contact_phone': '+263 7183 328',
-   'departments': ['finance', 'IT'],
 }
 employer_registration_data_no_name = {
    'email': 'info@greenfuel.com',
@@ -31,7 +30,6 @@ employer_registration_data_no_name = {
    'contact_person': 'Nelson Manyika',
    'number_of_employees': 20,
    'contact_phone': '+263 7183 328',
-   'departments': ['finance', 'IT'],
 }
 employer_registration_data_only_name = {
    'name': 'Green Fuel inc',
@@ -45,7 +43,23 @@ employer_registration_data_incorrect_date_format = {
    'contact_person': 'Nelson Manyika',
    'number_of_employees': 20,
    'contact_phone': '+263 7183 328',
-   'departments': ['finance', 'IT'],
+}
+employer_and_employer_admin_registration_data_complete = {
+   'employer': {
+      'name': 'Green Fuel inc',
+      'email': 'info@greenfuel.com',
+      'registration_number': 'T123',
+      'registration_date': '2024-02-21',
+      'address': '22F 1st Street Harare',
+      'contact_person': 'Nelson Manyika',
+      'number_of_employees': 20,
+      'contact_phone': '+263 7183 328',
+   },
+   'employer-admin': {
+      'username': 'org HR Officer', 
+      'password': '123456789', 
+   },
+   'departments': ['finance', 'IT']
 }
 
 # ________________employer_patch_data
@@ -59,12 +73,12 @@ employer_and_employer_admin_patch_data_complete = {
       'contact_person': 'Nelson Manyika',
       'number_of_employees': 20,
       'contact_phone': '+263 7183 328',
-      'departments': ['finance', 'IT']
    },
    'employer-admin': {
       'username': 'org HR Officer', 
       'password': '123456789', 
-   }
+   },
+   'departments': ['finance', 'IT']
 }
 employer_and_employer_admin_patch_data_empty = {}
 
