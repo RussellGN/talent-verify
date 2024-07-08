@@ -91,11 +91,18 @@ class TestViews(TestSetup):
 
    # ______test GET 'employer/' endpoint______
 
-   def test_cannot_call_get_employer_route_without_auth_token(self):
+   def test_can_get_employer_details_with_valid_auth_token(self):
+      registration_res = self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      token = registration_res.data['token']
+
+      res = self.client.get(self.get_employer_url, headers={'Authorization': f'Token {token}'})
+      self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+   def test_cannot_get_employer_details_without_auth_token(self):
       res = self.client.get(self.get_employer_url)
       self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
-   def test_cannot_call_get_employer_route_with_invalid_auth_token(self):
+   def test_cannot_get_employer_details_with_invalid_auth_token(self):
       res = self.client.get(self.get_employer_url, headers={'Authorization': 'Token invalid_token'})
       self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -114,14 +121,6 @@ class TestViews(TestSetup):
       self.assertEqual(res2.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
       self.assertEqual(res3.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
       self.assertEqual(res4.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-
-   # def test_can_register_with_proper_data(self):
-   #    res = self.client.post(self.register_employer_url, {
-   #       'employer-admin': self.employer_admin_credentials,
-   #       'employer': self.employer_registration_data,
-   #    }, format='json')
-   #    self.assertEqual(res.status_code, status.HTTP_201_CREATED)
-
 
    # ______test POST 'employer/login/' endpoint______
 
