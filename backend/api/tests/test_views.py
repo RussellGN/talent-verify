@@ -95,6 +95,10 @@ class TestViews(TestSetup):
       res = self.client.get(self.get_employer_url)
       self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
+   def test_cannot_call_get_employer_route_with_invalid_auth_token(self):
+      res = self.client.get(self.get_employer_url, headers={'Authorization': 'Token invalid_token'})
+      self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
    def test_cannot_use_http_methods_other_than_GET_on_get_employer_route(self):
       registration_res = self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
       token = registration_res.data['token']
