@@ -272,7 +272,14 @@ def add_employees(request):
    try:
       for item in data:
          # handle employee
-         employee, created_employee = Employee.objects.update_or_create(national_id=item.get("national_id"), defaults={"name": item.get("name"), "employee_id": item.get("employee_id"), "employer": employer})
+         national_id = item.get("national_id")
+         if national_id:
+            qs = Employee.objects.filter(national_id=national_id) 
+            if qs.exists() and qs.first().employer and (qs.first().employer.id != employer.id):
+               # this employee belongs to another employer, raise an error
+               raise Exception(f"Employee with national ID '{national_id}' is currently listed by another employer '{qs.first().employer.name}'")
+               
+         employee, created_employee = Employee.objects.update_or_create(national_id=national_id, defaults={"name": item.get("name"), "employee_id": item.get("employee_id"), "employer": employer})
 
          # handle department
          department_name = item.get("department_name", "general")
@@ -317,8 +324,14 @@ def update_employees(request):
       for item in data:
          # handle employee
          employee = Employee.objects.get(id=item.get("id"))
-         if item.get("national_id"):
-            employee.national_id = item.get("national_id")
+         national_id = item.get("national_id")
+         if national_id:
+            qs = Employee.objects.filter(national_id=national_id) 
+            if qs.exists() and qs.first().employer and (qs.first().employer.id != employer.id):
+               # the edited national_id belongs to an employee of another employer, raise an error
+               raise Exception(f"Employee with national ID '{national_id}' already exists and is currently listed by another employer '{qs.first().employer.name}'")
+
+            employee.national_id = national_id
          if item.get("name"):
             employee.name = item.get("name")
          if item.get("employee_id"):
