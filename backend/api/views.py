@@ -136,8 +136,8 @@ def register_employer(request):
    dep_errors = []
    if department_list:
       for dep in department_list:
-         if not Department.objects.filter(name=str(dep).lower(), employer=employer).exists():
-            dep_serializer = DepartmentSerializer(data={'name': str(dep).lower()})
+         if not Department.objects.filter(name=dep, employer=employer).exists():
+            dep_serializer = DepartmentSerializer(data={'name': dep})
             if not dep_serializer.is_valid():
                dep_errors.append(dep_serializer.errors)
             else:
@@ -226,7 +226,7 @@ def patch_employer(request):
    if new_departments_list:
       for dep in new_departments_list:
          if not Department.objects.filter(name=dep, employer=employer).exists():
-            dep_serializer = DepartmentSerializer(data={'name': str(dep).lower()})
+            dep_serializer = DepartmentSerializer(data={'name': dep})
             if not dep_serializer.is_valid():
                dep_errors.append(dep_serializer.errors)
             else:
