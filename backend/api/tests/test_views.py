@@ -209,6 +209,68 @@ class TestViews(TestSetup):
 
    # ______test PATCH 'employer/update/' endpoint______
 
+   def test_can_update_employer_with_proper_data(self):
+      registration_res = self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      token = registration_res.data['token']
+      res = self.client.patch(self.patch_employer_url, self.employer_and_employer_admin_patch_data_complete, format='json', headers={'Authorization': f'Token {token}'})
+      self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+   def test_cannot_use_http_methods_other_than_PATCH_on_update_employer_route(self):
+      registration_res = self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      token = registration_res.data['token']
+
+      res0 = self.client.patch(self.patch_employer_url, self.employer_and_employer_admin_patch_data_complete, format='json', headers={'Authorization': f'Token {token}'})
+      res1 = self.client.get(self.patch_employer_url, self.employer_and_employer_admin_patch_data_complete, format='json', headers={'Authorization': f'Token {token}'})
+      res2 = self.client.post(self.patch_employer_url, self.employer_and_employer_admin_patch_data_complete, format='json', headers={'Authorization': f'Token {token}'})
+      res3 = self.client.put(self.patch_employer_url, self.employer_and_employer_admin_patch_data_complete, format='json', headers={'Authorization': f'Token {token}'})
+      res4 = self.client.delete(self.patch_employer_url, self.employer_and_employer_admin_patch_data_complete, format='json', headers={'Authorization': f'Token {token}'})
+
+      self.assertEqual(res0.status_code, status.HTTP_200_OK)
+      self.assertEqual(res1.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+      self.assertEqual(res2.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+      self.assertEqual(res3.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+      self.assertEqual(res4.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+   def test_cannot_update_employer_without_auth_token(self):
+      res = self.client.patch(self.patch_employer_url, self.employer_and_employer_admin_patch_data_complete, format='json')
+      self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+   def test_cannot_update_employer_without_providing_any_json_data(self):
+      registration_res = self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      token = registration_res.data['token']
+      res = self.client.patch(self.patch_employer_url, headers={'Authorization': f'Token {token}'})
+      self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+   def test_can_update_employer_with_partial_data(self):
+      registration_res = self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      token = registration_res.data['token']
+
+      res1 = self.client.patch(self.patch_employer_url, {}, format='json', headers={'Authorization': f'Token {token}'})
+      res2 = self.client.patch(self.patch_employer_url, {'employer': self.employer_registration_data_only_name}, format='json', headers={'Authorization': f'Token {token}'})
+      res3 = self.client.patch(self.patch_employer_url, {'employer-admin': self.employer_admin_credentials_no_username}, format='json', headers={'Authorization': f'Token {token}'})
+      res4 = self.client.patch(self.patch_employer_url, {'employer-admin': self.employer_admin_credentials_no_password}, format='json', headers={'Authorization': f'Token {token}'})
+      res4 = self.client.patch(self.patch_employer_url, {
+         'employer-admin': self.employer_admin_credentials_no_password,
+         'employer': self.employer_registration_data_only_name,
+         'departments': ['customer service'],
+      }, format='json', headers={'Authorization': f'Token {token}'})
+
+      self.assertEqual(res1.status_code, status.HTTP_200_OK)
+      self.assertEqual(res2.status_code, status.HTTP_200_OK)
+      self.assertEqual(res3.status_code, status.HTTP_200_OK)
+      self.assertEqual(res4.status_code, status.HTTP_200_OK)
+
+   def test_cannot_update_employer_with_non_ISO_date_value_for_registration_date(self):
+      registration_res = self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      token = registration_res.data['token']
+
+      res = self.client.patch(self.patch_employer_url, {
+         'employer-admin': self.employer_admin_credentials,
+         'employer': self.employer_registration_data_incorrect_date_format,
+      }, format='json', headers={'Authorization': f'Token {token}'})
+
+      self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
    # ______test GET 'employees/' endpoint______
 
    # ______test POST 'employees/' endpoint______
