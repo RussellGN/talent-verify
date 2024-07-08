@@ -35,7 +35,6 @@ class TestViews(TestSetup):
 
    def test_cannot_register_without_providing_any_json_data(self):
       res = self.client.post(self.register_employer_url)
-      print(res.content)
       self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
 
    def test_cannot_register_with_empty_data(self):
