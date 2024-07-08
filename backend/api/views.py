@@ -210,6 +210,9 @@ def patch_employer(request):
    onSuccess : returns updated employer details (with nested employer-admin) on successful patch (JSON)
    onError : returns error message on failed patch (JSON)
    """
+   if not request.body:
+      return Response(f"Error no registration data provided", status=status.HTTP_400_BAD_REQUEST)
+
    data = json.loads(request.body)
    new_departments_list = data.get('departments', []) 
    admin = request.user 
