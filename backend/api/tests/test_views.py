@@ -124,6 +124,46 @@ class TestViews(TestSetup):
 
    # ______test POST 'employer/login/' endpoint______
 
+   def test_can_login_with_credentials(self):
+      self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      res = self.client.post(self.login_employer_url, self.employer_admin_credentials, format='json')
+      self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+   def test_cannot_use_http_methods_other_than_POST_on_login_employer_route(self):
+      self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+
+      res0 = self.client.post(self.login_employer_url, self.employer_admin_credentials, format='json')
+      res1 = self.client.get(self.login_employer_url, self.employer_admin_credentials, format='json')
+      res2 = self.client.patch(self.login_employer_url, self.employer_admin_credentials, format='json')
+      res3 = self.client.put(self.login_employer_url, self.employer_admin_credentials, format='json')
+      res4 = self.client.delete(self.login_employer_url, self.employer_admin_credentials, format='json')
+
+      self.assertEqual(res0.status_code, status.HTTP_200_OK)
+      self.assertEqual(res1.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+      self.assertEqual(res2.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+      self.assertEqual(res3.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+      self.assertEqual(res4.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+   def test_cannot_login_without_providing_any_json_data(self):
+      self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      res = self.client.post(self.login_employer_url)
+      self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+   def test_cannot_login_with_empty_data(self):
+      self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      res = self.client.post(self.login_employer_url, {}, format='json')
+      self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+   def test_cannot_login_without_providing_employer_admin_username(self):
+      self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      res = self.client.post(self.login_employer_url, self.employer_admin_credentials_no_username, format='json')
+      self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+   def test_cannot_login_without_providing_employer_admin_password(self):
+      self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      res = self.client.post(self.login_employer_url, self.employer_admin_credentials_no_password, format='json')
+      self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
    # ______test POST 'employer/logout/' endpoint______
 
    # ______test PATCH 'employer/update/' endpoint______
