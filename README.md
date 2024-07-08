@@ -28,7 +28,7 @@
 
 ## For preview and usage
 
-The final product is accessible at [talent-verify-russellgns-project.vercel.app](https://talent-verify-russellgns-project.vercel.app)
+The final product is accessible at [talent-verify.vercel.app](https://talent-verify.vercel.app)
 
 The API alone is accessible at [talent-verify-onrender.com](https://talent-verify-onrender.com)
 
