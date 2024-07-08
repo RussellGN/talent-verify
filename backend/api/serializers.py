@@ -11,6 +11,11 @@ class EmployerAdminRegistrationSerializer(serializers.ModelSerializer):
       model = EmployerAdmin
       fields = ['password', 'username']
 
+class EmployerAdminPatchSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = EmployerAdmin
+      fields = '__all__'
+
 class EmployerSerializer(serializers.ModelSerializer):
    administrator = EmployerAdminSerializer(many=False, read_only=True)
    departments = serializers.SerializerMethodField()

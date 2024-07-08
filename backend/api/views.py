@@ -8,11 +8,11 @@ from rest_framework.authtoken.models import Token
 from rest_framework.response import Response   
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 
-from .models import Employer, Employee, Department, Role, CareerTimestamp
-from .serializers import DepartmentSerializer, EmployerAdminRegistrationSerializer, EmployerSerializer, EmployerRegistrationSerializer, CareerTimestampSerializer, EmployeeRetrievalSerializer, UnemployedTalentSerializer
 from .utils import get_latest_career_timestamp
+from .models import Employer, Employee, Department, Role, CareerTimestamp
+from .serializers import EmployerAdminRegistrationSerializer, EmployerAdminPatchSerializer, EmployerRegistrationSerializer, EmployerSerializer, DepartmentSerializer, UnemployedTalentSerializer, EmployeeRetrievalSerializer, CareerTimestampSerializer 
 
 @api_view(['GET'])
 def endpoints(request):
@@ -115,75 +115,67 @@ def register_employer(request):
    onError : returns error message on failed registration (JSON)
    """
    data = json.loads(request.body)
-   print(data)
    department_list = data.get('departments', [])
    department_list.append('general') 
-   adminSerializer = EmployerAdminRegistrationSerializer(data=data.get('employer-admin'))
-   employerSerializer = EmployerRegistrationSerializer(data=data.get('employer'))
-   if not adminSerializer.is_valid():
-      return Response({"error": "registration failed", "details": {"employer-admin": adminSerializer.errors}}, status=status.HTTP_400_BAD_REQUEST)
-   if not employerSerializer.is_valid():
-      return Response({"error": "registration failed", "details": {"employer": employerSerializer.errors}}, status=status.HTTP_400_BAD_REQUEST)
+   admin_serializer = EmployerAdminRegistrationSerializer(data=data.get('employer-admin'))
+   employer_serializer = EmployerRegistrationSerializer(data=data.get('employer'))
+   if not admin_serializer.is_valid():
+      return Response(f"Error, registration failed due to employer-admin details provided: {str(admin_serializer.errors)}", status=status.HTTP_400_BAD_REQUEST)
+   if not employer_serializer.is_valid():
+      return Response(f"Error, registration failed due to employer details provided: {str(employer_serializer.errors)}", status=status.HTTP_400_BAD_REQUEST)
 
-   admin = adminSerializer.save()
+   admin = admin_serializer.save()
    admin.set_password(data.get('employer-admin').get('password'))
    admin.save()
    token, created = Token.objects.get_or_create(user=admin)      
 
-   employer = employerSerializer.save()
+   employer = employer_serializer.save()
    employer.administrator = admin
    employer.save()
 
    dep_errors = []
    if department_list:
       for dep in department_list:
-         if not Department.objects.filter(name=dep, employer=employer).exists():
-            depSerializer = DepartmentSerializer(data={'name': dep})
-            if not depSerializer.is_valid():
-               dep_errors.append(depSerializer.errors)
+         if not Department.objects.filter(name=str(dep).lower(), employer=employer).exists():
+            dep_serializer = DepartmentSerializer(data={'name': str(dep).lower()})
+            if not dep_serializer.is_valid():
+               dep_errors.append(dep_serializer.errors)
             else:
-               dep = depSerializer.save()
+               dep = dep_serializer.save()
                dep.employer = employer
                dep.save()
 
-   employerSerializer = EmployerSerializer(instance=employer)
-   resData = {"message": "registration successful", "employer": employerSerializer.data, "token": token.key}
-   resStatus = status.HTTP_201_CREATED
+   employer_serializer = EmployerSerializer(instance=employer)
+   res_data = {"message": "registration successful", "employer": employer_serializer.data, "token": token.key}
+   res_status = status.HTTP_201_CREATED
    if len(dep_errors) > 0:
-      resData['departemnt_list_error'] = {'message': 'failed to create all departments provided', 'errors': dep_errors}
-      resStatus = status.HTTP_207_MULTI_STATUS
+      res_data['departemnt_list_error'] = {'message': 'failed to create all departments provided', 'errors': dep_errors}
+      res_status = status.HTTP_207_MULTI_STATUS
 
-   return Response(resData, status=resStatus)
+   return Response(res_data, status=res_status)
 
 @api_view(['POST'])
 def login_employer(request):
    """
    endpoint : POST employer/login/
-   expects : employer-admin credentials  (JSON)
+   expects : employer-admin credentials (JSON)
    onError : returns error message on failed login (JSON)
    onSuccess : returns employer details (with nested employer-admin), list of employees and auth token on successful login (JSON)
-      {
-      token: string
-
-      employer: {id, administrator: {username, password}, name, email, registration_number, registration_date, address, contact_person, number_of_employees, contact_phone, departments: [string]}
-
-      employees : [{id, national_id, name, employee_id, employer, department, role, duties, date_started, date_left}]
-      }
    """
    data = json.loads(request.body)
    username = data.get('username')   
    password = data.get('password')   
 
-   employerAdmin = authenticate(request, username=username, password=password)
-   if employerAdmin is None:
-      return Response({"error": "login failed", "details": "incorrect credentials"}, status=status.HTTP_400_BAD_REQUEST)
+   employer_admin = authenticate(request, username=username, password=password)
+   if employer_admin is None:
+      return Response("Login failed. Incorrect credentials", status=status.HTTP_400_BAD_REQUEST)
 
-   token, created = Token.objects.get_or_create(user=employerAdmin)
-   employees = employerAdmin.employer.employee_set.all()
+   token, created = Token.objects.get_or_create(user=employer_admin)
+   employees = employer_admin.employer.employee_set.all()
    latest_career_timestamps = [get_latest_career_timestamp(employee) for employee in employees]
-   employer_serializer = EmployerSerializer(instance=employerAdmin.employer)
-   compact_employee_serializer = EmployeeRetrievalSerializer(latest_career_timestamps, many=True)
-   return Response({'employer': employer_serializer.data, 'employees': compact_employee_serializer.data, "token": token.key})
+   employer_serializer = EmployerSerializer(instance=employer_admin.employer)
+   employee_serializer = EmployeeRetrievalSerializer(latest_career_timestamps, many=True)
+   return Response({'employer': employer_serializer.data, 'employees': employee_serializer.data, "token": token.key})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -198,8 +190,8 @@ def logout_employer(request):
    try:
       token = request.auth
       token.delete()
-   except:
-      return Response("error logging out", status=status.HTTP_400_BAD_REQUEST)
+   except Exception as e:
+      return Response(f"Error logging out: {e}", status=status.HTTP_400_BAD_REQUEST)
    return Response("successfully logged out")
 
 @api_view(['PATCH'])
@@ -213,43 +205,43 @@ def patch_employer(request):
    onError : returns error message on failed patch (JSON)
    """
    data = json.loads(request.body)
-   print(data)
-   new_department_list = data.get('departments', []) 
+   new_departments_list = data.get('departments', []) 
    admin = request.user 
-   adminSerializer = EmployerAdminRegistrationSerializer(instance=admin, data=data.get('employer-admin', {}), partial=True)
-   employerSerializer = EmployerRegistrationSerializer(instance=admin.employer, data=data.get('employer', {}), partial=True)
-   if not adminSerializer.is_valid():
-      return Response({"error": "patch failed", "details": {"employer-admin": adminSerializer.errors}}, status=status.HTTP_400_BAD_REQUEST)
-   if not employerSerializer.is_valid():
-      return Response({"error": "patch failed", "details": {"employer": employerSerializer.errors}}, status=status.HTTP_400_BAD_REQUEST)
+   admin_serializer = EmployerAdminPatchSerializer(instance=admin, data=data.get('employer-admin', {}), partial=True)
+   employer_serializer = EmployerRegistrationSerializer(instance=admin.employer, data=data.get('employer', {}), partial=True)
+   if not admin_serializer.is_valid():
+      return Response(f"Error, patch failed due to employer-admin details provided: {str(admin_serializer.errors)}", status=status.HTTP_400_BAD_REQUEST)
+   if not employer_serializer.is_valid():
+      return Response(f"Error, patch failed due to employer details provided: {str(employer_serializer.errors)}", status=status.HTTP_400_BAD_REQUEST)
 
-   admin = adminSerializer.save()
-   if data.get('employer-admin', {}).get('password', None):
-      admin.set_password(data.get('employer-admin').get('password'))
+   admin = admin_serializer.save()
+   password = data.get('employer-admin', {}).get('password', None) 
+   if password:
+      admin.set_password(password)
       admin.save()
 
-   employer = employerSerializer.save()
+   employer = employer_serializer.save()
 
    dep_errors = []
-   if new_department_list:
-      for dep in new_department_list:
+   if new_departments_list:
+      for dep in new_departments_list:
          if not Department.objects.filter(name=dep, employer=employer).exists():
-            depSerializer = DepartmentSerializer(data={'name': dep})
-            if not depSerializer.is_valid():
-               dep_errors.append(depSerializer.errors)
+            dep_serializer = DepartmentSerializer(data={'name': str(dep).lower()})
+            if not dep_serializer.is_valid():
+               dep_errors.append(dep_serializer.errors)
             else:
-               dep = depSerializer.save()
+               dep = dep_serializer.save()
                dep.employer = employer
                dep.save()
 
-   employerSerializer = EmployerSerializer(instance=employer)
-   resData = {"message": "patch successful", "employer": employerSerializer.data}
-   resStatus = status.HTTP_200_OK
+   employer_serializer = EmployerSerializer(instance=employer)
+   res_data = {"message": "patch successful", "employer": employer_serializer.data}
+   res_status = status.HTTP_200_OK
    if len(dep_errors) > 0:
-      resData['departemnt_list_error'] = {'message': 'failed to create all departments provided', 'errors': dep_errors}
-      resStatus = status.HTTP_207_MULTI_STATUS
+      res_data['departemnt_list_error'] = {'message': 'failed to create all departments provided', 'errors': dep_errors}
+      res_status = status.HTTP_207_MULTI_STATUS
 
-   return Response(resData, status=resStatus)
+   return Response(res_data, status=res_status)
 
 # for handle employees_____________
 def get_employees(request):
@@ -261,8 +253,8 @@ def get_employees(request):
    """
    employees = request.user.employer.employee_set.all()
    latest_career_timestamps = [get_latest_career_timestamp(employee) for employee in employees]
-   compact_employee_serializer = EmployeeRetrievalSerializer(latest_career_timestamps, many=True)
-   return Response(compact_employee_serializer.data)
+   employee_serializer = EmployeeRetrievalSerializer(latest_career_timestamps, many=True)
+   return Response(employee_serializer.data)
 
 def add_employees(request):
    """
@@ -270,12 +262,8 @@ def add_employees(request):
    expects : a list of one or more employees's partial/complete details for adding to an employers list of employees as well as an auth token in request headers (JSON)
    onSuccess : returns a list of employees added and existing employees updated if successful (JSON)
    onError : returns an error message if unsuccessful (JSON)
-
-   data = [{...employee}, {...employee}, {...employee}]
-   employee = {name, national_id, employee_id, department_name, role_tile, role_duties, date_started, date_left}   
    """ 
    data = json.loads(request.body)
-   print(data)
    employer = request.user.employer
 
    employees_added = []
@@ -283,29 +271,31 @@ def add_employees(request):
    data_item = 1
    try:
       for item in data:
-         # handle department
-         department, created = Department.objects.get_or_create(name=item.get("department_name", "general"), employer=employer)
-
-         # handle role
-         role, created = Role.objects.update_or_create(title=item.get("role_title"), department=department, defaults={"duties": item.get("role_duties")})
-
          # handle employee
          employee, created_employee = Employee.objects.update_or_create(national_id=item.get("national_id"), defaults={"name": item.get("name"), "employee_id": item.get("employee_id"), "employer": employer})
+
+         # handle department
+         department_name = item.get("department_name", "general")
+         department, created = Department.objects.get_or_create(name=department_name, employer=employer)
+
+         # handle role
+         role_title = item.get("role_title", "general")
+         role, created = Role.objects.update_or_create(title=role_title, department=department, defaults={"duties": item.get("role_duties")})
 
          # handle career-timestamp
          career_timestamp, created = CareerTimestamp.objects.get_or_create(employee=employee, role=role, date_started=item.get("date_started"), date_left=item.get("date_left"))
 
-         # increment counter and add to employeesAdded
+         # increment counter and add to employees_added
          data_item += 1
          if created_employee:
             employees_added.append(career_timestamp)
          else:
             existing_employees_updated.append(career_timestamp)
    except Exception as e:
-      status_to_use = status.HTTP_207_MULTI_STATUS if len(employees_added) else status.HTTP_400_BAD_REQUEST
+      status_to_use = status.HTTP_207_MULTI_STATUS if len(employees_added) or len(existing_employees_updated) else status.HTTP_400_BAD_REQUEST
       employees_added_serializer = EmployeeRetrievalSerializer(instance=employees_added, many=True)
       existing_employees_updated_serializer = EmployeeRetrievalSerializer(instance=existing_employees_updated, many=True)
-      return Response({"error": f"failed to complete upload starting from data item #{data_item}", "details": f"{e}", "employees_added": employees_added_serializer.data, "existing_employees_updated":  existing_employees_updated_serializer.data }, status=status_to_use)
+      return Response({"error": f"failed to complete upload starting from data item #{data_item}: {e}", "employees_added": employees_added_serializer.data, "existing_employees_updated":  existing_employees_updated_serializer.data }, status=status_to_use)
 
    employees_added_serializer = EmployeeRetrievalSerializer(instance=employees_added, many=True)
    existing_employees_updated_serializer = EmployeeRetrievalSerializer(instance=existing_employees_updated, many=True)
@@ -317,12 +307,8 @@ def update_employees(request):
    expects : a list of one or more employees's partial/complete details for updating as well as an auth token in request headers (JSON)
    onSuccess : returns a list of updated employees if successful (JSON)
    onError : returns an error message on failed patch (JSON)
-
-   data = [{...employee}, {...employee}, {...employee}]
-   employee = {id, name, national_id, employee_id, department_name, role_tile, role_duties, date_started, date_left}   
    """ 
    data = json.loads(request.body)
-   print(data)
    employer = request.user.employer
 
    employees_updated = []
@@ -343,7 +329,7 @@ def update_employees(request):
          department, created = Department.objects.get_or_create(name=item.get("department_name", "general"), employer=employer)
 
          # handle role
-         role, created = Role.objects.update_or_create(title=item.get("role_title"), department=department, defaults={"duties": item.get("role_duties")})
+         role, created = Role.objects.update_or_create(title=item.get("role_title", "general"), department=department, defaults={"duties": item.get("role_duties")})
 
          # handle career-timestamp
          career_timestamp_queryset = CareerTimestamp.objects.filter(employee=employee, role=role)
@@ -362,7 +348,7 @@ def update_employees(request):
    except Exception as e:
       status_to_use = status.HTTP_207_MULTI_STATUS if len(employees_updated) else status.HTTP_400_BAD_REQUEST
       employees_updated_serializer = EmployeeRetrievalSerializer(instance=employees_updated, many=True)
-      return Response({"error": f"failed to complete updates starting from data item #{data_item}", "details": f"{e}", "employees_updated":  employees_updated_serializer.data }, status=status_to_use)
+      return Response({"error": f"failed to complete updates starting from data item #{data_item}: {e}", "employees_updated":  employees_updated_serializer.data }, status=status_to_use)
 
    employees_updated_serializer = EmployeeRetrievalSerializer(instance=employees_updated, many=True)
    return Response({"employees_updated": employees_updated_serializer.data}, status=status.HTTP_200_OK)
@@ -403,50 +389,16 @@ def remove_employee(request, id):
    except Exception as e:
       return Response(f"encountered error removing employee with id {id}: {e}")
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-@authentication_classes([TokenAuthentication])
-def reassign_employee(request):
-   """
-   endpoint : POST employees/reassign/
-   expects : the id of the employee to reassign and employer id (if any) to reassign employee to, along with an auth token in request headers (JSON)
-   onSuccess : returns a success message (JSON)
-   onError : returns an error message (JSON)
-   """
-   data = json.loads(request.body)
-   employee = Employee.objects.get(id=int(data.get('employee_id')))
-   current_employer = employee.employer
-   re_assign_to = None
-   if data.get('employer_id') is not None:
-      employer_queryset = Employer.objects.filter(id=int(data.get('employer_id')))
-      re_assign_to = employer_queryset.first() if employer_queryset.exists() else None
-
-   employee.employer = re_assign_to
-   employee.save()
-
-   if current_employer is not None:
-      incomplete_career_timestamps_at_current_employer = CareerTimestamp.objects.filter(employee=employee, role__department__employer=current_employer, date_left=None)
-      for stamp in incomplete_career_timestamps_at_current_employer:
-         stamp.date_left = date.today().isoformat()
-         stamp.save()
-   
-   current_employer_name = current_employer.name if current_employer else "no employer"
-   re_assigning_to = re_assign_to.name if re_assign_to else "no employer"
-   return Response(f"successfully reassigned {employee.name} with id {employee.id} from '{current_employer_name}' to '{re_assigning_to}'")
-
 @api_view(['GET'])
 def get_talent(request):
    """
    endpoint : GET talent?query=(query),is_date=(is_date)/
    expects : 'query' and optional 'is_date' search parameters used to filter the employees retrieved (JSON)
    onSuccess : returns a list of zero or more employees and a list of zero or more unemployed talent matching the query criteria (JSON)
-
-   res = {'employed': [{}, {}, {}], 'unemployed': [{}, {}]}
    """
    query = request.GET.get("query")
    is_date = request.GET.get("is_date")
-   print(query, is_date)
-   if not query or len(query) < 2:
+   if not query or len(query) < 3:
       return Response("query is too short", status=status.HTTP_400_BAD_REQUEST)
 
    filter_options = Q()
