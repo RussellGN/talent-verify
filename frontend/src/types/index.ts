@@ -27,7 +27,7 @@ export type UploadEmployee = {
    name: string | undefined;
    employee_id?: string | number | undefined;
    department?: string | undefined;
-   role: string | undefined;
+   role?: string | undefined;
    duties?: string | undefined;
    date_started?: Date | string | undefined;
    date_left?: Date | string | undefined;
