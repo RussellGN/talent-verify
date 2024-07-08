@@ -55,7 +55,7 @@ export default function useDashboardEmployeesTable() {
       const properlyFormatedData = data.map((employee) => ({
          ...employee,
          date_started: employee.date_started ? new Date(employee.date_started) : undefined,
-         date_left: employee.date_left ? new Date(employee.date_left) : undefined,
+         // date_left: employee.date_left ? new Date(employee.date_left) : undefined,
       }));
       rows = properlyFormatedData;
    }
@@ -69,7 +69,7 @@ export default function useDashboardEmployeesTable() {
       { field: "role", headerName: "Role", type: "string", editable: true, width: 120 },
       { field: "duties", headerName: "Duties", type: "string", editable: true, width: 130 },
       { field: "date_started", headerName: "Date Started", type: "date", editable: true, width: 100 },
-      { field: "date_left", headerName: "Date Left", type: "date", editable: true, width: 100 },
+      // { field: "date_left", headerName: "Date Left", type: "date", editable: true, width: 100 },
       {
          field: "history",
          headerName: "Employment History",

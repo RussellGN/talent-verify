@@ -62,22 +62,13 @@ export default function useUpload() {
             role_title: emp.role,
             role_duties: emp.duties,
             date_started: emp.date_started ? new Date(emp.date_started).toISOString().split("T")[0] : emp.date_started,
-            date_left: emp.date_left ? new Date(emp.date_left).toISOString().split("T")[0] : emp.date_left,
+            // date_left: emp.date_left ? new Date(emp.date_left).toISOString().split("T")[0] : emp.date_left,
+            date_left: undefined,
          }));
          mutate(formatedData);
       }
    }
 
-   // const cols: GridColDef[] = [
-   //    { field: "national_id", headerName: "National ID", type: "string" },
-   //    { field: "name", headerName: "Name", type: "string" },
-   //    { field: "employee_id", headerName: "Employee ID", type: "string" },
-   //    { field: "department", headerName: "Department", type: "string" },
-   //    { field: "role", headerName: "Role", type: "string" },
-   //    { field: "duties", headerName: "Duties", type: "string" },
-   //    { field: "date_started", headerName: "Date Started", type: "date" },
-   //    { field: "date_left", headerName: "Date Left", type: "date" },
-   // ];
    const cols: GridColDef[] = [
       { field: "id", headerName: "ID", type: "string", width: 65 },
       { field: "name", headerName: "Name", type: "string", editable: true, width: 120 },
@@ -87,7 +78,7 @@ export default function useUpload() {
       { field: "role", headerName: "Role", type: "string", editable: true, width: 120 },
       { field: "duties", headerName: "Duties", type: "string", editable: true, width: 130 },
       { field: "date_started", headerName: "Date Started", type: "date", editable: true, width: 100 },
-      { field: "date_left", headerName: "Date Left", type: "date", editable: true, width: 100 },
+      // { field: "date_left", headerName: "Date Left", type: "date", editable: true, width: 100 },
    ];
 
    return {

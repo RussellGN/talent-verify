@@ -64,12 +64,12 @@ export default function CareerTimestampCard({
                <br />
                <Typography sx={{ mb: 0.5 }}>
                   <AccessTime sx={{ mr: 0.8, mt: -0.4, color: "success.light" }} fontSize="inherit" />
-                  Date started:
+                  Date started:{" "}
                   <Box component="span" sx={matched.find((item) => item === "date_started") ? matchedStyles : {}}>
                      {careerTimestamp.date_started ? friendlyDate(careerTimestamp.date_started) : "N/A"}
                   </Box>
                </Typography>
-               {careerTimestamp.date_left ? (
+               {/* {careerTimestamp.date_left ? (
                   <Typography sx={{ mb: 0.5 }}>
                      <AccessTime sx={{ mr: 0.8, mt: -0.4, color: "success.light" }} fontSize="inherit" />
                      Date left:
@@ -82,7 +82,7 @@ export default function CareerTimestampCard({
                      <AccessTime sx={{ mr: 0.8, mt: -0.4, color: "success.light" }} fontSize="inherit" />
                      Ongoing
                   </Typography>
-               )}
+               )} */}
             </div>
 
             <div className="w-full">

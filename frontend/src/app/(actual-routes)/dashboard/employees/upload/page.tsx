@@ -56,8 +56,8 @@ export default function UploadPage() {
                   <div className="flex items-start gap-1">
                      <KeyboardDoubleArrowRight fontSize="small" />
                      <Typography variant="subtitle2">
-                        Expected fields (in order): national_id, name, employee_id, department, role, duties, date_started,
-                        date_left
+                        Expected fields (in order): national_id, name, employee_id, department, role, duties, date_started
+                        {/* , date_left */}
                      </Typography>
                   </div>
                </li>
@@ -73,7 +73,8 @@ export default function UploadPage() {
                   <div className="flex items-start gap-1">
                      <KeyboardDoubleArrowRight fontSize="small" />
                      <Typography variant="subtitle2">
-                        &lsquo;national_id&rsquo;, &lsquo;name&rsquo;, and &lsquo;role&rsquo; must have values
+                        &lsquo;national_id&rsquo; and &lsquo;name&rsquo; must have values
+                        {/* &lsquo;national_id&rsquo;, &lsquo;name&rsquo;, and &lsquo;role&rsquo; must have values */}
                      </Typography>
                   </div>
                </li>
