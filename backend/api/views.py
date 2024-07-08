@@ -165,6 +165,9 @@ def login_employer(request):
    onError : returns error message on failed login (JSON)
    onSuccess : returns employer details (with nested employer-admin), list of employees and auth token on successful login (JSON)
    """
+   if not request.body:
+      return Response(f"Error no registration data provided", status=status.HTTP_400_BAD_REQUEST)
+
    data = json.loads(request.body)
    username = data.get('username')   
    password = data.get('password')   
