@@ -160,7 +160,7 @@ export default function UploadPage() {
    } else {
       content = (
          <>
-            <Typography sx={{ mb: 3 }} className="text-left max-w-prose">
+            <Typography variant="subtitle2" sx={{ mb: 3 }} className="text-left">
                Verify employee details and press &ldquo;Save&rdquo; to proceed. If the details appearing are not correct
                please edit the file and upload again.
             </Typography>
@@ -175,9 +175,17 @@ export default function UploadPage() {
                // autosizeOnMount
                // disableColumnResize
                density="compact"
+               pageSizeOptions={[10, 20, 30, 50, 100]}
+               autoHeight
                initialState={{
                   sorting: {
                      sortModel: [{ field: "name", sort: "asc" }],
+                  },
+                  pagination: {
+                     paginationModel: {
+                        page: 1,
+                        pageSize: 10,
+                     },
                   },
                }}
             />

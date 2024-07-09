@@ -51,9 +51,17 @@ export default function DashboardEmployeesTable() {
                scrollbarSize={5}
                loading={isUpdating}
                showCellVerticalBorder
+               pageSizeOptions={[10, 20, 30, 50, 100]}
+               autoHeight
                initialState={{
                   sorting: {
                      sortModel: [{ field: "id", sort: "desc" }],
+                  },
+                  pagination: {
+                     paginationModel: {
+                        page: 1,
+                        pageSize: 10,
+                     },
                   },
                }}
             />
