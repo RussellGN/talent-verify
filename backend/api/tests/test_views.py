@@ -273,6 +273,21 @@ class TestViews(TestSetup):
 
    # ______test GET 'employees/' endpoint______
 
+   def test_can_get_employees_with_valid_auth_token(self):
+      registration_res = self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      token = registration_res.data['token']
+
+      res = self.client.get(self.handle_employees_url, headers={'Authorization': f'Token {token}'})
+      self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+   def test_cannot_get_employees_without_auth_token(self):
+      res = self.client.get(self.handle_employees_url)
+      self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+   def test_cannot_get_employees_with_invalid_auth_token(self):
+      res = self.client.get(self.handle_employees_url, headers={'Authorization': 'Token invalid_token'})
+      self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
    # ______test POST 'employees/' endpoint______
 
    # ______test PATCH 'employees/' endpoint______
