@@ -164,7 +164,7 @@ export function txtToJson(file: File): Promise<UploadEmployee[]> {
             */
 
             const data = e.target?.result as string;
-            const lines = data.split("\n");
+            const lines = data.trim().split("\n");
             type JsonObj = { [key: string]: string | undefined } & UploadEmployee;
             const json: JsonObj[] = [];
 
