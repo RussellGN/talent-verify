@@ -8,7 +8,7 @@ import { ArrowForward } from "@mui/icons-material";
 import Link from "next/link";
 
 export default function useDashboardEmployeesTable() {
-   const { data } = useEmployees();
+   const { data, isPending: isFetchingEmployees } = useEmployees();
    const {
       mutate,
       reset: resetUpdate,
@@ -99,5 +99,6 @@ export default function useDashboardEmployeesTable() {
       isUpdateError,
       updateError,
       resetUpdate,
+      isFetchingEmployees,
    };
 }

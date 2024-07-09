@@ -4,7 +4,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
 import useDashboardEmployeesTable from "../hooks/useDashboardEmployeesTable";
-import { Typography } from "@mui/material";
+import { CircularProgress, Typography } from "@mui/material";
 import { InfoOutlined } from "@mui/icons-material";
 
 export default function DashboardEmployeesTable() {
@@ -18,13 +18,20 @@ export default function DashboardEmployeesTable() {
       isUpdateError,
       updateError,
       resetUpdate,
+      isFetchingEmployees,
    } = useDashboardEmployeesTable();
 
-   if (rows.length === 0) {
+   if (isFetchingEmployees) {
+      return (
+         <div className="text-center bg-slate-50 p-5">
+            <CircularProgress />
+         </div>
+      );
+   } else if (rows.length === 0) {
       return (
          <div className="text-center bg-slate-50 p-5">
             <Typography variant="h6">No employees</Typography>
-            <Typography>table of employees will appear after you&apos;ve added or uploaded some</Typography>
+            <Typography>table will appear here once you have added employees</Typography>
          </div>
       );
    }
@@ -59,7 +66,7 @@ export default function DashboardEmployeesTable() {
                   },
                   pagination: {
                      paginationModel: {
-                        page: 1,
+                        page: 0,
                         pageSize: 10,
                      },
                   },
