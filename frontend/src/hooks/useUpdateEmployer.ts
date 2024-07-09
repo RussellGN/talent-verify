@@ -18,6 +18,7 @@ export default function useUpdateEmployer() {
                employees: oldData.employees,
             })
          );
+         queryClient.setQueryData(["employer-details", { id: data.employer.id }], () => data.employer);
       },
    });
 }
