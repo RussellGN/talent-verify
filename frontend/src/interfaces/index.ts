@@ -58,9 +58,10 @@ export interface UnormalizedCurrentEmployeeInterface {
    id: number | string;
    national_id: string;
    name: string;
+   employer_id?: number | string;
    employer?: string | null;
-   employee_id?: string | null;
    department?: string | null;
+   employee_id?: string | null;
    role?: string | null;
    duties?: string | null;
    date_started?: Date | string | null;
@@ -70,6 +71,7 @@ export interface UnormalizedCurrentEmployeeInterface {
 export interface HistoricalCareerTimestampInterface {
    id: number | string;
    employer?: string | undefined;
+   employer_id?: number | string;
    department?: string | undefined;
    role?: string | undefined;
    duties?: string | undefined;

@@ -17,7 +17,8 @@ import {
    SubdirectoryArrowRight,
    Work,
 } from "@mui/icons-material";
-import { Box, CircularProgress, Grid, Typography } from "@mui/material";
+import { Link as MuiLink, Box, CircularProgress, Grid, Typography } from "@mui/material";
+import Link from "next/link";
 
 export default function DetailedView({ params: { id } }: { params: { id: string } }) {
    const { isPending, isError, data, error } = useGetTalentWithID(id);
@@ -54,7 +55,14 @@ export default function DetailedView({ params: { id } }: { params: { id: string 
                      <>
                         <Typography sx={{ mb: 0.5 }}>
                            <Business sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}
-                           <span style={{ fontSize: "90%" }}>Current Employer:</span> {data.talent.employer || "N/A"}
+                           <span style={{ fontSize: "90%" }}>Current Employer:</span>{" "}
+                           {data.talent.employer ? (
+                              <MuiLink underline="always" component={Link} href={`/employer/${data.talent.employer_id || ""}`}>
+                                 {data.talent.employer}
+                              </MuiLink>
+                           ) : (
+                              "N/A"
+                           )}
                         </Typography>
                         <Typography sx={{ mb: 0.5 }}>
                            <People sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" />{" "}

@@ -1,8 +1,9 @@
-import { Box, Typography } from "@mui/material";
+import { Link as MuiLink, Box, Typography } from "@mui/material";
 import { HistoricalCareerTimestampInterface } from "../interfaces";
 import { friendlyDate } from "../lib";
 import { Business, People, AccessTime, Work, InfoSharp } from "@mui/icons-material";
 import DutiesExpandable from "./DutiesExpandable";
+import Link from "next/link";
 
 export default function DetailedCareerTimestampCard({
    careerTimestamp,
@@ -13,7 +14,13 @@ export default function DetailedCareerTimestampCard({
       <Box className="block border-slate-300 border-2 bg-white   shadow-md rounded-xl p-3">
          <Typography sx={{ mb: 0.5 }}>
             <Business sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> Employer:{" "}
-            {careerTimestamp.employer || "N/A"}
+            {careerTimestamp.employer_id ? (
+               <MuiLink underline="always" component={Link} href={`/employer/${careerTimestamp.employer_id || ""}`}>
+                  {careerTimestamp.employer}
+               </MuiLink>
+            ) : (
+               "N/A"
+            )}
          </Typography>
          <Typography sx={{ mb: 0.5 }}>
             <People sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> Department:{" "}
