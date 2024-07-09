@@ -209,4 +209,11 @@ export default abstract class API {
          })
          .then((res) => res.data);
    }
+
+   static async getEmployerWithID(id: string | number) {
+      // endpoint: GET /employer/(ID)
+      // onSuccess: returns details of employer with given ID if found (JSON)
+      // onError: returns an error message if talent not found (JSON)
+      return await axiosClient.get<EmployerInterface>(`employer/${id}`).then((res) => res.data);
+   }
 }
