@@ -179,11 +179,11 @@ export default function UploadPage() {
                autoHeight
                initialState={{
                   sorting: {
-                     sortModel: [{ field: "name", sort: "asc" }],
+                     sortModel: [{ field: "id", sort: "asc" }],
                   },
                   pagination: {
                      paginationModel: {
-                        page: 1,
+                        page: 0,
                         pageSize: 10,
                      },
                   },
@@ -224,7 +224,10 @@ export default function UploadPage() {
          <div className="text-center max-w-prose mx-auto py-20">
             <CheckCircle fontSize="large" color="success" className="mb-3" />
             <div>{message}</div>
-            <div>
+            <div className="flex justify-center items-center gap-2">
+               <Button onClick={reset} type="button" startIcon={<ArrowBack />} variant="outlined" sx={{ mt: 3 }}>
+                  Back to upload
+               </Button>
                <Button
                   href="/dashboard/employees"
                   component={Link}
