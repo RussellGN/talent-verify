@@ -11,7 +11,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from .utils import get_latest_career_timestamp
-from .models import Employer, Employee, Department, Role, CareerTimestamp
+from .models import Employee, Department, Role, CareerTimestamp
 from .serializers import EmployerAdminRegistrationSerializer, EmployerAdminPatchSerializer, EmployerRegistrationSerializer, EmployerSerializer, DepartmentSerializer, UnemployedTalentSerializer, EmployeeRetrievalSerializer, CareerTimestampSerializer 
 
 @api_view(['GET'])
@@ -115,7 +115,7 @@ def register_employer(request):
    onError : returns error message on failed registration (JSON)
    """
    if not request.body:
-      return Response(f"Error no registration data provided", status=status.HTTP_400_BAD_REQUEST)
+      return Response(f"Error no data provided", status=status.HTTP_400_BAD_REQUEST)
 
    data = json.loads(request.body)
    department_list = data.get('departments', [])
@@ -166,7 +166,7 @@ def login_employer(request):
    onSuccess : returns employer details (with nested employer-admin), list of employees and auth token on successful login (JSON)
    """
    if not request.body:
-      return Response(f"Error no registration data provided", status=status.HTTP_400_BAD_REQUEST)
+      return Response(f"Error no data provided", status=status.HTTP_400_BAD_REQUEST)
 
    data = json.loads(request.body)
    username = data.get('username')   
@@ -211,7 +211,7 @@ def patch_employer(request):
    onError : returns error message on failed patch (JSON)
    """
    if not request.body:
-      return Response(f"Error no registration data provided", status=status.HTTP_400_BAD_REQUEST)
+      return Response(f"Error no data provided", status=status.HTTP_400_BAD_REQUEST)
 
    data = json.loads(request.body)
    new_departments_list = data.get('departments', []) 
@@ -272,6 +272,9 @@ def add_employees(request):
    onSuccess : returns a list of employees added and existing employees updated if successful (JSON)
    onError : returns an error message if unsuccessful (JSON)
    """ 
+   if not request.body:
+      return Response(f"Error no data provided", status=status.HTTP_400_BAD_REQUEST)
+
    data = json.loads(request.body)
    employer = request.user.employer
 
@@ -324,6 +327,9 @@ def update_employees(request):
    onSuccess : returns a list of updated employees if successful (JSON)
    onError : returns an error message on failed patch (JSON)
    """ 
+   if not request.body:
+      return Response(f"Error no data provided", status=status.HTTP_400_BAD_REQUEST)
+
    data = json.loads(request.body)
    employer = request.user.employer
 
