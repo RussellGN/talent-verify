@@ -1,7 +1,7 @@
 "use client";
 
 import { Business } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import { Button, Skeleton } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import useEmployer from "../hooks/useEmployer";
@@ -12,7 +12,13 @@ export default function NavbarAuthButtons() {
    const { logout, logoutPending } = useLogout();
    const pathname = usePathname();
 
-   if (isPending) return;
+   if (isPending)
+      return (
+         <span className="inline-flex gap-1.5">
+            <Skeleton variant="rectangular" sx={{ borderRadius: "5px" }} animation="wave" width="8ch" height="3ch" />
+            <Skeleton variant="rectangular" sx={{ borderRadius: "5px" }} animation="wave" width="10ch" height="3ch" />
+         </span>
+      );
 
    if (isSuccess) {
       return (
