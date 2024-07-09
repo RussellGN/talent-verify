@@ -18,7 +18,7 @@ export default function useUpdateEmployer() {
                employees: oldData.employees,
             })
          );
-         queryClient.setQueryData(["employer-details", { id: data.employer.id }], () => data.employer);
+         queryClient.setQueryData(["employer-details", { id: String(data.employer.id) }], () => data.employer);
       },
    });
 }
