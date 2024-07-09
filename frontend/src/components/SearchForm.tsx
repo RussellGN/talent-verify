@@ -67,7 +67,7 @@ export default function SearchForm() {
 
          <input
             onChange={queryDisableOtherInputs}
-            className="d-block min-w-[80%] md:min-w-[60%] rounded-[20px] border-4 shadow-md px-5 py-1.5"
+            className="d-block min-w-[85%] md:min-w-[60%] rounded-[20px] border-4 shadow-md px-5 py-1.5"
             ref={queryRef}
             name="query"
             minLength={3}
@@ -79,10 +79,12 @@ export default function SearchForm() {
 
          <div className="flex items-center justify-center gap-1 md:gap-3">
             <label className="flex flex-col gap-1" htmlFor="date_left">
-               <span>Date Started</span>
+               <Typography variant="caption" component="span">
+                  Date Started
+               </Typography>
                <input
                   onChange={dateStartedDisableOtherInputs}
-                  className="scale-90 md:scale-100 d-block w-full rounded-[20px] border-4 shadow-md px-5 py-1.5"
+                  className="scale-95 md:scale-100 d-block w-full rounded-[20px] border-4 shadow-md px-5 py-1.5"
                   ref={dateStartedRef}
                   id="date_started"
                   name="date_started"
@@ -91,10 +93,12 @@ export default function SearchForm() {
             </label>
 
             <label className="flex flex-col gap-1" htmlFor="date_left">
-               <span>Date Left</span>
+               <Typography variant="caption" component="span">
+                  Date Left
+               </Typography>
                <input
                   onChange={dateLeftDisableOtherInputs}
-                  className="scale-90 md:scale-100 d-block w-full rounded-[20px] border-4 shadow-md px-5 py-1.5"
+                  className="scale-95 md:scale-100 d-block w-full rounded-[20px] border-4 shadow-md px-5 py-1.5"
                   ref={dateLeftRef}
                   id="date_left"
                   name="date_left"
