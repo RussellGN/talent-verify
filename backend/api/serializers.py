@@ -68,6 +68,7 @@ class EmployeeRetrievalSerializer(serializers.ModelSerializer):
    name = serializers.CharField(source='employee.name') 
    employee_id = serializers.CharField(source='employee.employee_id') 
    employer = serializers.SerializerMethodField() 
+   employer_id = serializers.SerializerMethodField() 
    department = serializers.SerializerMethodField() 
    role = serializers.SerializerMethodField() 
    duties = serializers.SerializerMethodField() 
@@ -80,6 +81,7 @@ class EmployeeRetrievalSerializer(serializers.ModelSerializer):
          'name',
          'employee_id',
          'employer',
+         'employer_id',
          'department',
          'role',
          'duties',
@@ -90,6 +92,11 @@ class EmployeeRetrievalSerializer(serializers.ModelSerializer):
    def get_employer(self, obj):
       if obj.employee and obj.employee.employer and obj.employee.employer.name is not None:
          return obj.employee.employer.name
+      else: return None
+
+   def get_employer_id(self, obj):
+      if obj.employee and obj.employee.employer is not None:
+         return obj.employee.employer.id
       else: return None
 
    def get_department(self, obj):
@@ -109,6 +116,7 @@ class EmployeeRetrievalSerializer(serializers.ModelSerializer):
 
 class CareerTimestampSerializer(serializers.ModelSerializer):
    employer = serializers.SerializerMethodField()
+   employer_id = serializers.SerializerMethodField() 
    department = serializers.SerializerMethodField()
    role = serializers.SerializerMethodField()
    duties = serializers.SerializerMethodField()
@@ -118,6 +126,7 @@ class CareerTimestampSerializer(serializers.ModelSerializer):
       fields = [
          'id',
          'employer',
+         'employer_id',
          'department',
          'role',
          'duties',
@@ -128,6 +137,11 @@ class CareerTimestampSerializer(serializers.ModelSerializer):
    def get_employer(self, obj):
       if obj.role and obj.role.department and obj.role.department.employer and obj.role.department.employer.name is not None:
          return obj.role.department.employer.name
+      else: return None
+
+   def get_employer_id(self, obj):
+      if obj.role and obj.role.department and obj.role.department.employer is not None:
+         return obj.role.department.employer.id
       else: return None
 
    def get_department(self, obj):
