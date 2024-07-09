@@ -70,13 +70,13 @@ export default function useUpload() {
    }
 
    const cols: GridColDef[] = [
-      { field: "id", headerName: "ID", type: "string", width: 65 },
-      { field: "name", headerName: "Name", type: "string", editable: true, width: 120 },
+      // { field: "id", headerName: "ID", type: "string", width: 65 },
+      { field: "name", headerName: "Name", type: "string", editable: true, width: 150 },
       { field: "national_id", headerName: "National ID", type: "string", editable: true, width: 120 },
       { field: "employee_id", headerName: "Employee ID", type: "string", editable: true, width: 100 },
-      { field: "department", headerName: "Department", type: "string", editable: true, width: 120 },
-      { field: "role", headerName: "Role", type: "string", editable: true, width: 120 },
-      { field: "duties", headerName: "Duties", type: "string", editable: true, width: 130 },
+      { field: "department", headerName: "Department", type: "string", editable: true, width: 130 },
+      { field: "role", headerName: "Role", type: "string", editable: true, width: 150 },
+      { field: "duties", headerName: "Duties", type: "string", editable: true, width: 200 },
       { field: "date_started", headerName: "Date Started", type: "date", editable: true, width: 100 },
       // { field: "date_left", headerName: "Date Left", type: "date", editable: true, width: 100 },
    ];
