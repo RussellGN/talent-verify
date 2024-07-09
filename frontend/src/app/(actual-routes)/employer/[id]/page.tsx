@@ -25,9 +25,9 @@ export default function EmployerDetailsPage({ params: { id } }: { params: { id: 
             <Business sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> {employer.name}
          </Typography>
 
-         <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
+         <Grid container spacing={2} justifyContent="center" alignItems="stretch">
             <Grid item xs={12} md={5}>
-               <div className="bg-white shadow-md border rounded-[15px] px-4 py-8">
+               <div className="h-full bg-white shadow-md border rounded-[15px] px-4 py-8">
                   <Typography sx={{ mb: 2 }}>
                      <Email sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> Email: {employer.email || "N/A"}
                   </Typography>
@@ -47,7 +47,7 @@ export default function EmployerDetailsPage({ params: { id } }: { params: { id: 
             </Grid>
 
             <Grid item xs={12} md={5}>
-               <div className="bg-white shadow-md border rounded-[15px] px-4 py-8">
+               <div className="h-full bg-white shadow-md border rounded-[15px] px-4 py-8">
                   <Typography sx={{ mb: 2 }}>
                      <Business sx={{ mr: 0.5, mt: -0.4, color: "grey" }} fontSize="inherit" /> Reg number:{" "}
                      {employer.registration_number || "N/A"}
