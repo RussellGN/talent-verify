@@ -14,7 +14,7 @@ class EmployerAdmin(AbstractUser):
 class Employer(models.Model):
    administrator = models.OneToOneField(EmployerAdmin, on_delete=models.SET_NULL, null=True, blank=True)
    name = models.CharField(max_length=100, unique=True)
-   email = models.EmailField(max_length=100, unique=True)
+   email = models.EmailField(max_length=100, unique=True, null=True, blank=True)
    registration_number = models.CharField(max_length=100, unique=True, null=True, blank=True)
    registration_date = models.DateField(null=True, blank=True)
    address = models.CharField(max_length=100, null=True, blank=True)
