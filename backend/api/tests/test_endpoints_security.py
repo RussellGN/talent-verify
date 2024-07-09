@@ -255,6 +255,36 @@ class TestEndpointsSecurity(TestSetup):
 
    # ______test security for DELETE 'employees/(ID)/' endpoint______
 
+   def test_can_remove_employee_with_valid_auth_token_and_valid_id(self):
+      registration_res = self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      token = registration_res.data['token']
+
+      creation_res = self.client.post(self.handle_employees_url, self.employees_creation_data_single_and_complete, format='json', headers={'Authorization': f'Token {token}'})
+      id = creation_res.data['employees_added'][0]['id']
+      
+      res = self.client.delete(f"/employees/{id}/", headers={'Authorization': f'Token {token}'})
+      self.assertEqual(res.status_code, status.HTTP_200_OK)
+
+   def test_cannot_remove_employee_without_auth_token(self):
+      registration_res = self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      token = registration_res.data['token']
+
+      creation_res = self.client.post(self.handle_employees_url, self.employees_creation_data_single_and_complete, format='json', headers={'Authorization': f'Token {token}'})
+      id = creation_res.data['employees_added'][0]['id']
+      
+      res = self.client.delete(f"/employees/{id}/")
+      self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+   def test_cannot_remove_employee_with_invalid_auth_token(self):
+      registration_res = self.client.post(self.register_employer_url, self.employer_and_employer_admin_registration_data_complete , format='json')
+      token = registration_res.data['token']
+
+      creation_res = self.client.post(self.handle_employees_url, self.employees_creation_data_single_and_complete, format='json', headers={'Authorization': f'Token {token}'})
+      id = creation_res.data['employees_added'][0]['id']
+      
+      res = self.client.delete(f"/employees/{id}/", headers={'Authorization': f'Token invalid-token'})
+      self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
    # ______test security for GET 'talent?query=(query),is_date=(is_date)/' endpoint______
 
    # ______test security for GET 'talent/(ID)/' endpoint______
