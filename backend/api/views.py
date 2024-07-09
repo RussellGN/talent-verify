@@ -11,7 +11,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from .utils import get_latest_career_timestamp
-from .models import Employee, Department, Role, CareerTimestamp
+from .models import Employer, Employee, Department, Role, CareerTimestamp
 from .serializers import EmployerAdminRegistrationSerializer, EmployerAdminPatchSerializer, EmployerRegistrationSerializer, EmployerSerializer, DepartmentSerializer, UnemployedTalentSerializer, EmployeeRetrievalSerializer, CareerTimestampSerializer 
 
 @api_view(['GET'])
@@ -24,7 +24,12 @@ def endpoints(request):
       {
          "endpoint" : "GET employer/",
          "expects": "auth token in request headers",
-         "onSuccess" : "onSuccess : returns details of employer and list of employees for employer assigned with auth token in request headers (JSON)",
+         "onSuccess" : "returns details of employer and list of employees for employer assigned with auth token in request headers (JSON)",
+         "onError" : "returns error message if employer not found (JSON)",
+      }, 
+      {
+         "endpoint" : "GET employer/(ID)/",
+         "onSuccess" : "returns details of employer with given `(ID)` if found (JSON)",
          "onError" : "returns error message if employer not found (JSON)",
       }, 
       {
@@ -105,6 +110,20 @@ def get_employer(request):
    employer_serializer = EmployerSerializer(employer)
    employee_serializer = EmployeeRetrievalSerializer(latest_career_timestamps, many=True)
    return Response({'employer': employer_serializer.data, 'employees': employee_serializer.data})
+
+@api_view(['GET'])
+def get_employer_details(request, id):
+   """
+   endpoint : GET employer/(ID)/
+   onSuccess : returns details of employer with given `(ID)` if found (JSON)
+   onError : returns error message if employer not found (JSON)
+   """
+   qs = Employer.objects.filter(id=id)
+   if not qs.exists():
+      return Response(f'employer with id: {id} not found', status=status.HTTP_404_NOT_FOUND)
+
+   employer_serializer = EmployerSerializer(qs.first())
+   return Response(employer_serializer.data)
 
 @api_view(['POST'])
 def register_employer(request):

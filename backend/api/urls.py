@@ -6,6 +6,7 @@ urlpatterns = [
    path('', views.endpoints, name='get_endpoints'),
 
    path('employer/', views.get_employer, name='get_employer'),
+   path('employer/<int:id>/', views.get_employer_details, name='get_employer_details'),
    path('employer/register/', views.register_employer, name='register_employer'),
    path('employer/login/', views.login_employer, name='login_employer'),
    path('employer/logout/', views.logout_employer, name='logout_employer'),
