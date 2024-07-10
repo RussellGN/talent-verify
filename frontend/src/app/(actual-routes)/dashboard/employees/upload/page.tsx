@@ -78,12 +78,21 @@ export default function UploadPage() {
                      </Typography>
                   </div>
                </li>
-               <li>
+               {/* <li>
                   <div className="flex items-start gap-1">
                      <KeyboardDoubleArrowRight fontSize="small" />
 
                      <Typography variant="subtitle2">
                         Date fields should be of the format &lsquo;mm/dd/yyyy&rsquo;
+                     </Typography>
+                  </div>
+               </li> */}
+               <li>
+                  <div className="flex items-start gap-1">
+                     <KeyboardDoubleArrowRight fontSize="small" />
+
+                     <Typography variant="subtitle2">
+                        For the purposes of efficiency, employee records being uploaded may not exceed 100
                      </Typography>
                   </div>
                </li>
