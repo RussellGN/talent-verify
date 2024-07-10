@@ -32,5 +32,5 @@ The working solution is accessible at [talent-verify.vercel.app](https://talent-
 
 ### NOTE
 
--  <strong>The above deployments are on free hosting plans and thus may have long response times and limited usage</strong>
+-  <strong>The deployed API and fronted are on free hosting plans and thus may have long response times and limited usage</strong>
 -  <strong>The API's database has been prefilled with data for demo purposes</strong>
