@@ -76,5 +76,3 @@ This api has the following endpoints
       -  returns an error message if talent not found (JSON)
 
 <strong>IMPORTANT NOTE: All excel, csv and txt file uploads are processed to JSON on the frontend. Data sent to the backend is only in the form of JSON<strong>
-
-The API is accessible at [talent-verify-onrender.com](https://talent-verify-onrender.com)
