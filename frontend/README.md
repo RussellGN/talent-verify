@@ -3,3 +3,7 @@
 -  It is built using [Next.js](https://nextjs.org/), a react framework and is bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 -  The live preview is accesible at [talent-verify.vercel.app](https://talent-verify.vercel.app)
+
+### NOTE
+
+-  <strong>The api deployment is on a free hosting plan and thus may have long response times and limited usage</strong>

@@ -46,7 +46,15 @@ export default function useUpload() {
          parseFunction(file)
             .then((json) => {
                json.forEach((emp, index) => assignIdAndFormatDates(emp, index));
-               setFileData(json);
+               if (json.length > 100) {
+                  alert(
+                     "File uploaded has more than 100 employee records. Employees after the first 100 will be discarded"
+                  );
+                  console.log(json.length);
+                  setFileData(json.splice(0, 100));
+               } else {
+                  setFileData(json);
+               }
             })
             .catch((err: string) => setParseError(err));
       }
@@ -54,31 +62,42 @@ export default function useUpload() {
 
    function saveEmployees() {
       if (fileData) {
-         const formatedData = fileData.map((emp) => ({
-            national_id: emp.national_id,
-            name: emp.name,
-            employee_id: emp.employee_id,
-            department_name: emp.department,
-            role_title: emp.role,
-            role_duties: emp.duties,
-            date_started: emp.date_started ? new Date(emp.date_started).toISOString().split("T")[0] : emp.date_started,
-            // date_left: emp.date_left ? new Date(emp.date_left).toISOString().split("T")[0] : emp.date_left,
-            date_left: undefined,
-         }));
+         const formatedData = fileData.map((emp) => {
+            let date_started = undefined;
+            try {
+               if (emp.date_started) {
+                  date_started = new Date(emp.date_started).toISOString().split("T")[0];
+               }
+            } catch {
+               console.log(`invalid date_started ${date_started}`);
+            }
+
+            return {
+               national_id: emp.national_id,
+               name: emp.name,
+               employee_id: emp.employee_id,
+               department_name: emp.department,
+               role_title: emp.role,
+               role_duties: emp.duties,
+               date_started: date_started,
+               // date_left: emp.date_left ? new Date(emp.date_left).toISOString().split("T")[0] : emp.date_left,
+               date_left: undefined,
+            };
+         });
          mutate(formatedData);
       }
    }
 
    const cols: GridColDef[] = [
       // { field: "id", headerName: "ID", type: "string", width: 65 },
-      { field: "name", headerName: "Name", type: "string", editable: true, width: 150 },
-      { field: "national_id", headerName: "National ID", type: "string", editable: true, width: 120 },
-      { field: "employee_id", headerName: "Employee ID", type: "string", editable: true, width: 100 },
-      { field: "department", headerName: "Department", type: "string", editable: true, width: 130 },
-      { field: "role", headerName: "Role", type: "string", editable: true, width: 150 },
-      { field: "duties", headerName: "Duties", type: "string", editable: true, width: 200 },
-      { field: "date_started", headerName: "Date Started", type: "date", editable: true, width: 100 },
-      // { field: "date_left", headerName: "Date Left", type: "date", editable: true, width: 100 },
+      { field: "name", headerName: "Name", type: "string", width: 150 },
+      { field: "national_id", headerName: "National ID", type: "string", width: 120 },
+      { field: "employee_id", headerName: "Employee ID", type: "string", width: 100 },
+      { field: "department", headerName: "Department", type: "string", width: 130 },
+      { field: "role", headerName: "Role", type: "string", width: 150 },
+      { field: "duties", headerName: "Duties", type: "string", width: 200 },
+      { field: "date_started", headerName: "Date Started", type: "date", width: 100 },
+      // { field: "date_left", headerName: "Date Left", type: "date", width: 100 },
    ];
 
    return {
