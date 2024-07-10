@@ -1,6 +1,3 @@
-
-
-
 national_id: 4567a89
 name: John Doe
 employee_id: E12345
@@ -112,6 +109,3 @@ department: Human Resources
 role: Recruitment Specialist
 duties: Handling recruitment and selection processes
 date_started: 08/19/2019
-
-
-

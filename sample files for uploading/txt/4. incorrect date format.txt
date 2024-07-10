@@ -1,0 +1,15 @@
+national_id: 4567a89
+name: John Doe
+employee_id: E12345
+department: IT Systems
+role: Software Engineer
+duties: Development and maintenance of software applications
+date_started: wed
+
+national_id: 7890b12
+name: Jane Smith
+employee_id: E67890
+department: Management
+role: COO
+duties: Management and oversight of operations
+date_started: tue

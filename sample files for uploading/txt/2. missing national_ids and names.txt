@@ -1,0 +1,83 @@
+employee_id: E12345
+department: IT Systems
+role: Software Engineer
+duties: Development and maintenance of software applications
+date_started: 03/15/2021
+
+employee_id: E67890
+department: Management
+role: COO
+duties: Management and oversight of operations
+date_started: 02/23/2019
+
+employee_id: E11223
+department: Human Resources
+role: HR Manager
+duties: Managing recruitment and employee relations
+date_started: 05/10/2018
+
+employee_id: E44556
+department: Finance
+role: Financial Analyst
+duties: Financial planning and analysis
+date_started: 11/05/2020
+
+employee_id: E77889
+department: Marketing
+role: Marketing Director
+duties: Development and execution of marketing strategies
+date_started: 08/25/2017
+
+employee_id: E99876
+department: IT Systems
+role: Network Administrator
+duties: Management and maintenance of network infrastructure
+date_started: 04/12/2019
+
+employee_id: E33445
+department: Research and Development
+role: R&D Specialist
+duties: Conducting research and developing new products
+date_started: 01/09/2020
+
+employee_id: E55667
+department: Sales
+role: Sales Manager
+duties: Leading sales teams and driving sales growth
+date_started: 06/14/2016
+
+employee_id: E88990
+department: Customer Support
+role: Support Specialist
+duties: Providing technical support to customers
+date_started: 09/29/2021
+
+employee_id: E11234
+department: Administration
+role: Office Administrator
+duties: Managing office operations and administration tasks
+date_started: 12/02/2018
+
+employee_id: E44567
+department: Legal
+role: Legal Advisor
+duties: Providing legal advice and support
+date_started: 07/18/2017
+
+employee_id: E77890
+department: Operations
+role: Operations Manager
+duties: Overseeing daily operations and ensuring efficiency
+date_started: 10/23/2015
+
+employee_id: E33456
+department: IT Systems
+role: Database Administrator
+duties: Managing and maintaining database systems
+date_started: 03/07/2021
+
+employee_id: E55678
+department: Human Resources
+role: Recruitment Specialist
+duties: Handling recruitment and selection processes
+date_started: 08/19/2019
