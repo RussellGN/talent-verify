@@ -28,11 +28,9 @@
 
 ## For preview and usage
 
-The final product is accessible at [talent-verify.vercel.app](https://talent-verify.vercel.app)
-
-The API alone is accessible at [talent-verify-onrender.com](https://talent-verify-onrender.com)
+The working solution is accessible at [talent-verify.vercel.app](https://talent-verify.vercel.app)
 
 ### NOTE
 
--  <strong>The above deployments are on free hosting plans and thus may have long response times</strong>
+-  <strong>The above deployments are on free hosting plans and thus may have long response times and limited usage</strong>
 -  <strong>The API's database has been prefilled with data for demo purposes</strong>
