@@ -219,6 +219,9 @@ axiosClient.interceptors.response.use(
    (res) => res,
    (error) => {
       if (isAxiosError(error) && error.response?.data) {
+         if (error.response.status === 401) {
+            deleteCookie("token");
+         }
          return Promise.reject(new Error(JSON.stringify(error.response.data)));
       } else return Promise.reject(error);
    }
