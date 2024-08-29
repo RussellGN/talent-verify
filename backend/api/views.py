@@ -1,7 +1,7 @@
 from datetime import datetime, date
 import json
 
-from django.db.models import Q
+from django.db.models import Q, Max
 from rest_framework import status 
 from rest_framework.authentication import authenticate
 from rest_framework.authtoken.models import Token  
@@ -10,7 +10,6 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
-from .utils import get_latest_career_timestamp
 from .models import Employer, Employee, Department, Role, CareerTimestamp
 from .serializers import EmployerAdminRegistrationSerializer, EmployerAdminPatchSerializer, EmployerRegistrationSerializer, EmployerSerializer, DepartmentSerializer, UnemployedTalentSerializer, EmployeeRetrievalSerializer, CareerTimestampSerializer 
 
@@ -105,8 +104,9 @@ def get_employer(request):
    onError : returns error message if employer not found (JSON)
    """
    employer = request.user.employer
-   employees = employer.employee_set.all()
-   latest_career_timestamps = [get_latest_career_timestamp(employee) for employee in employees]
+   filter = Q(employee__employer=employer)
+   ids = CareerTimestamp.objects.values("employee__id").annotate(Max('id')).filter(filter).values_list('id__max', flat=True)
+   latest_career_timestamps = CareerTimestamp.objects.filter(id__in=ids)
    employer_serializer = EmployerSerializer(employer)
    employee_serializer = EmployeeRetrievalSerializer(latest_career_timestamps, many=True)
    return Response({'employer': employer_serializer.data, 'employees': employee_serializer.data})
@@ -196,8 +196,12 @@ def login_employer(request):
       return Response("Login failed. Incorrect credentials", status=status.HTTP_400_BAD_REQUEST)
 
    token, created = Token.objects.get_or_create(user=employer_admin)
-   employees = employer_admin.employer.employee_set.all()
-   latest_career_timestamps = [get_latest_career_timestamp(employee) for employee in employees]
+
+
+   filter = Q(employee__employer=employer_admin.employer)
+   ids = CareerTimestamp.objects.values("employee__id").annotate(Max('id')).filter(filter).values_list('id__max', flat=True)
+   latest_career_timestamps = CareerTimestamp.objects.filter(id__in=ids)
+
    employer_serializer = EmployerSerializer(instance=employer_admin.employer)
    employee_serializer = EmployeeRetrievalSerializer(latest_career_timestamps, many=True)
    return Response({'employer': employer_serializer.data, 'employees': employee_serializer.data, "token": token.key})
@@ -279,8 +283,9 @@ def get_employees(request):
    onSuccess : returns a list of zero or more employees belonging to an employer (JSON)
    onError : returns an error message if unsuccessfull (JSON)
    """
-   employees = request.user.employer.employee_set.all()
-   latest_career_timestamps = [get_latest_career_timestamp(employee) for employee in employees]
+   filter = Q(employee__employer=request.user.employer)
+   ids = CareerTimestamp.objects.values("employee__id").annotate(Max('id')).filter(filter).values_list('id__max', flat=True)
+   latest_career_timestamps = CareerTimestamp.objects.filter(id__in=ids)
    employee_serializer = EmployeeRetrievalSerializer(latest_career_timestamps, many=True)
    return Response(employee_serializer.data)
 
@@ -465,25 +470,16 @@ def get_talent(request):
          Q(role__department__name__icontains=query)
       )
 
-   # the folllowing logic is very ugly and inneficient, find a better implementation
-   all_employees = Employee.objects.all()
-   latest_career_timestamps = []
-   for employee in all_employees:
-      career_timestamp = get_latest_career_timestamp(employee)
-      latest_career_timestamps.append(career_timestamp)
-
-   latest_career_timestamps = CareerTimestamp.objects.filter(
-      id__in=[stamp.id for stamp in latest_career_timestamps]
-   )
-   matched_career_timestamps = latest_career_timestamps.filter(Q(employee__employer__isnull=False) & filter_options)
-   matched_unemployed_talent = Employee.objects.filter(
-      Q(employer__isnull=True) &
-      Q(name__icontains=query) | 
-      Q(national_id__icontains=query)
-   )
-
-   unemployed_talent_serializer = UnemployedTalentSerializer(matched_unemployed_talent, many=True)
+   filter = Q(employee__employer__isnull=False) & filter_options
+   ids = CareerTimestamp.objects.values("employee__id").annotate(Max('id')).filter(filter).values_list('id__max', flat=True)
+   matched_career_timestamps = CareerTimestamp.objects.filter(id__in=ids)
    career_timestamp_serializer = EmployeeRetrievalSerializer(matched_career_timestamps, many=True)
+
+   filter = Q(employee__employer__isnull=True) & (Q(employee__name__icontains=query) | Q(employee__national_id__icontains=query))
+   ids = CareerTimestamp.objects.values("employee__id").annotate(Max('id')).filter(filter).values_list('employee__id', flat=True)
+   matched_unemployed_talent = Employee.objects.filter(id__in=ids)
+   unemployed_talent_serializer = UnemployedTalentSerializer(matched_unemployed_talent, many=True)
+
    return Response({'employed' : career_timestamp_serializer.data, 'unemployed': unemployed_talent_serializer.data})
 
 @api_view(['GET'])
